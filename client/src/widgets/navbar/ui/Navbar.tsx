@@ -1,27 +1,43 @@
 import React from 'react';
-// import './Navbar.css';
+import { Link } from 'react-router';
 
 export default function Navbar(): React.JSX.Element {
   return (
-    <header className="navbar">
-      <div className="navbar-logo">Логотип</div>
-      <nav className="navbar-center">
-        <a href="main" className="navbar-link">
+    <header className="bg-black text-white flex items-center justify-between px-6 h-16">
+      <div className="text-lg font-bold">Логотип</div>
+      <nav className="flex space-x-8 mx-auto">
+        <Link
+          to="/"
+          className="text-white text-base font-medium hover:text-gray-400 transition-colors duration-300"
+        >
           Главная
-        </a>
-        <a href="news" className="navbar-link">
-          Новости
-        </a>
-        <a href="franchise" className="navbar-link">
+        </Link>
+        <Link
+          to="/about"
+          className="text-white text-base font-medium hover:text-gray-400 transition-colors duration-300"
+        >
+          О нас
+        </Link>
+        <Link
+          to="/franchise"
+          className="text-white text-base font-medium hover:text-gray-400 transition-colors duration-300"
+        >
           Франшиза
-        </a>
-        <a href="contacts" className="navbar-link">
+        </Link>
+        <Link
+          to="/contacts"
+          className="text-white text-base font-medium hover:text-gray-400 transition-colors duration-300"
+        >
           Контакты
-        </a>
+        </Link>
       </nav>
-      <div className="navbar-right">
-        <button className="navbar-button">Вход</button>
-        <button className="navbar-button">Регистрация</button>
+      <div className="flex space-x-4">
+        <button className="text-white border border-white px-3 py-1 rounded hover:bg-white hover:text-black transition-colors duration-300">
+          Вход
+        </button>
+        <button className="text-white border border-white px-3 py-1 rounded hover:bg-white hover:text-black transition-colors duration-300">
+          Регистрация
+        </button>
       </div>
     </header>
   );
