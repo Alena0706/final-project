@@ -11,6 +11,10 @@ export const registerUser = createAsyncThunk('user/register', (user: UserRegiste
   UserServices.register(user),
 );
 
+export const uploadAvatar = createAsyncThunk('user/uploadAvatar', async (formData: FormData) =>
+  UserServices.uploadAvatar(formData),
+);
+
 export const loginUser = createAsyncThunk('user/login', (user: UserLoginT) =>
   UserServices.login(user),
 );

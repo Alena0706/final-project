@@ -25,7 +25,6 @@ module.exports = {
       },
       phone: {
         type: Sequelize.STRING,
-        allowNull: false,
       },
       city: {
         type: Sequelize.STRING,

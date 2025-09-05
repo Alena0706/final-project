@@ -9,6 +9,14 @@ class UserServices {
     return AuthResponseSchema.parse(response.data);
   }
 
+  static async uploadAvatar(formData: FormData): Promise<void> {
+    await axios.post('/api/upload', formData, {
+        responseType: 'blob',
+        headers: {
+          'Content-Type': 'multipart/form-data', // Указываем, что отправляем файл
+        }});
+  }
+
   static async login(user: UserLoginT): Promise<AuthResponseT> {
     const response = await axios.post('/api/auth/signin', user);
     return AuthResponseSchema.parse(response.data);

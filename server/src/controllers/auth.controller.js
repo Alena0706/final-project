@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
 class AuthController {
+
   static async signup(req, res) {
     try {
       const user = await AuthService.signup(req.body);
