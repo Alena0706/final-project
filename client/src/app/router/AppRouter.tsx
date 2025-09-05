@@ -9,7 +9,7 @@ export default function AppRouter(): React.JSX.Element {
   return (
     <Routes>
       <Route element={<Layout />}>
-        <Route path="/main" element={<MainPage/>} />
+        <Route path="/" element={<MainPage/>} />
         <Route path="/signin" element={<SignInPage />} />
         <Route path="/signup" element={<SignUpPage />} />
       </Route>
