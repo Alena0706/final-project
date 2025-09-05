@@ -1,8 +1,7 @@
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const morgan = require('morgan');
-const authRouter = require('./routes/auth.router');
-
+const path = require('path');
 const app = express();
 
 app.use(morgan('dev'));
@@ -11,6 +10,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static('public'));
 
-app.use('/api/auth', authRouter);
+app.use('/api/uploads', express.static(path.join(__dirname, './public/Uploads')));
 
 module.exports = app;

@@ -1,7 +1,27 @@
+const sharp = require('sharp');
 const { User } = require('../../db/models');
 const bcrypt = require('bcrypt');
+const { path } = require('../app');
 
 class AuthService {
+  static async uploadAvatar(avatarFile) {
+    const uploadDir = path.join(__dirname, './public/Uploads');
+    // Уникальное имя файла
+    const fileName = `${Date.now()}.webp`;
+    const filePath = path.join(uploadDir, fileName);
+
+    // Конвертация и сохранение изображения в WebP с помощью Sharp
+    await sharp(avatarFile.buffer)
+      .webp({ quality: 80 }) // Указываем формат WebP и качество 80%
+      .resize(50, 50) // Указываем размер изображения
+      .toFile(filePath);
+    const avatarPath = path.join('media', fileName);
+    if(!avatarPath) {
+      throw new Error('Не удалось загрузить изображение');
+    }
+     await User.update({ avatar: avatarPath }, { where: { id: 1 } });
+  }
+
   static async signup({ name, email, password }) {
     if (!email || !password) {
       throw new Error('Заполните все поля');

@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { UserStateT } from './types';
-import { loginUser, logoutUser, refreshUser, registerUser, verify2FA } from './thunks';
+import { loginUser, logoutUser, refreshUser, registerUser, uploadAvatar, verify2FA } from './thunks';
 
 const initialState: UserStateT = {
   user: null,
@@ -48,6 +48,13 @@ export const userSlice = createSlice({
         state.status = 'loading';
         state.error = null;
       });
+
+    builder.addCase(uploadAvatar.fulfilled, (state, action) => {
+      state.error = null;
+      console.log(action.payload);
+    }).addCase(uploadAvatar.rejected, (state, action) => {
+      state.error = action.error.message ?? 'Unknown error';
+    })
 
     builder
       .addCase(logoutUser.fulfilled, (state) => {
