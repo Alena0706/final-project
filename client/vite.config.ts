@@ -16,6 +16,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': 'http://localhost:3000',
+      '/image': 'http://localhost:3000',
     },
   },
 });
