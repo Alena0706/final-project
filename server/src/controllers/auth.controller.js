@@ -6,6 +6,16 @@ require('dotenv').config();
 
 class AuthController {
 
+  static async uploadAvatar(req, res) {
+    try {
+      await AuthService.uploadAvatar(req.file);
+      res.status(200).json({ message: `Изображение успешно сохранено` });
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({ message: err.message });
+    }
+  }
+
   static async signup(req, res) {
     try {
       const user = await AuthService.signup(req.body);
