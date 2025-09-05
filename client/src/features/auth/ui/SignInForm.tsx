@@ -1,58 +1,71 @@
-import React from 'react';
-import type { FormProps } from 'antd';
-import { Button, Checkbox, Form, Input } from 'antd';
+import React, { useState } from 'react';
 
 export default function SignInForm(): React.JSX.Element {
-  type FieldType = {
-    username?: string;
-    password?: string;
-    remember?: string;
+  const [form, setForm] = useState({
+    username: '',
+    password: '',
+    remember: false,
+  });
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const { name, value, type, checked } = e.target;
+    setForm(prev => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value,
+    }));
   };
 
-  const onFinish: FormProps<FieldType>['onFinish'] = (values) => {
-    console.log('Success:', values);
-  };
-
-  const onFinishFailed: FormProps<FieldType>['onFinishFailed'] = (errorInfo) => {
-    console.log('Failed:', errorInfo);
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log('Sign In:', form);
+    // логика входа сюда
   };
 
   return (
-    <Form
-      name="basic"
-      labelCol={{ span: 8 }}
-      wrapperCol={{ span: 16 }}
-      style={{ maxWidth: 600 }}
-      initialValues={{ remember: true }}
-      onFinish={onFinish}
-      onFinishFailed={onFinishFailed}
-      autoComplete="off"
-    >
-      <Form.Item<FieldType>
-        label="Username"
-        name="username"
-        rules={[{ required: true, message: 'Please input your username!' }]}
+    <form onSubmit={handleSubmit} className="max-w-md mx-auto p-6 bg-white rounded shadow space-y-4">
+      <label className="block">
+        <span className="text-gray-700">Имя пользователя</span>
+        <input
+          type="text"
+          name="username"
+          value={form.username}
+          onChange={handleChange}
+          required
+          className="mt-1 block w-full border rounded px-3 py-2"
+        />
+      </label>
+
+      <label className="block">
+        <span className="text-gray-700">Пароль</span>
+        <input
+          type="password"
+          name="password"
+          value={form.password}
+          onChange={handleChange}
+          required
+          className="mt-1 block w-full border rounded px-3 py-2"
+        />
+      </label>
+
+      <label className="inline-flex items-center">
+        <input
+          type="checkbox"
+          name="remember"
+          checked={form.remember}
+          onChange={handleChange}
+          className="form-checkbox"
+        />
+        <span className="ml-2 text-gray-700">Запомнить меня</span>
+      </label>
+
+      <button
+        type="submit"
+        className="w-full bg-black text-white py-2 rounded hover:bg-gray-800 transition"
       >
-        <Input />
-      </Form.Item>
-
-      <Form.Item<FieldType>
-        label="Password"
-        name="password"
-        rules={[{ required: true, message: 'Please input your password!' }]}
-      >
-        <Input.Password />
-      </Form.Item>
-
-      <Form.Item<FieldType> name="remember" valuePropName="checked" label={null}>
-        <Checkbox>Remember me</Checkbox>
-      </Form.Item>
-
-      <Form.Item label={null}>
-        <Button type="primary" htmlType="submit">
-          Submit
-        </Button>
-      </Form.Item>
-    </Form>
+        Войти
+      </button>
+    </form>
   );
 }
