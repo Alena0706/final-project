@@ -1,4 +1,5 @@
 const express = require('express');
+const {User} = require('../db/models');
 const cookieParser = require('cookie-parser');
 const morgan = require('morgan');
 const sharp = require('sharp'); // Подключаем Sharp для обработки изображений
@@ -33,7 +34,10 @@ app.post('/api/upload', upload.single('avatar'), async (req, res) => {
       .webp({ quality: 80 }) // Указываем формат WebP и качество 80%
     //   .resize(50, 50) // Указываем размер изображения
       .toFile(filePath);
-      
+     const avatarPath = path.join('media', fileName);
+     const update = await User.update({ avatar: avatarPath }, { where: { id: 1 } });
+
+
     res.status(200).json({ message: `Изображение успешно сохранено: ${fileName}` });
   } catch (error) {
     console.error(error);
