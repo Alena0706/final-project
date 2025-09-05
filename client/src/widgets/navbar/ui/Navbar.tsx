@@ -1,46 +1,47 @@
 import React from 'react';
-import {  Layout, Menu, theme } from 'antd';
+import { Layout, Menu, theme } from 'antd';
 
-const { Header, Content} = Layout;
-
-const items = Array.from({ length: 3 }).map((_, index) => ({
-  key: String(index + 1),
-  label: `nav ${index + 1}`,
-}));
+const { Header } = Layout;
 
 const App: React.FC = () => {
-  const {
-    token: { colorBgContainer, borderRadiusLG },
-  } = theme.useToken();
+  const { token } = theme.useToken();
+
+  const customToken = {
+    ...token,
+    colorPrimary: '#000000',
+  };
+  console.log(customToken);
 
   return (
     <Layout>
       <Header
         style={{
-          position: 'sticky',
+          position: 'fixed',
           top: 0,
           zIndex: 1,
           width: '100%',
           display: 'flex',
           alignItems: 'center',
           padding: 0,
-          margin: 0
+          margin: 0,
         }}
       >
         <div className="demo-logo" />
         <Menu
           theme="dark"
           mode="horizontal"
-          defaultSelectedKeys={['2']}
-          items={items}
-          style={{ flex: 1, minWidth: 0 }}
-        />
+          style={{ flex: 1, minWidth: 0, display: 'flex'}}
+        >
+          <Menu.Item key="home">Главная</Menu.Item>
+          <Menu.Item key="news">Новости</Menu.Item>
+          <Menu.Item key="franchise">Франшиза</Menu.Item>
+          <Menu.Item key="contacts">Контакты</Menu.Item>
+        </Menu>
+        <Menu theme="dark" mode="horizontal" style={{flex: 2, justifyContent: 'flex-end'}}>
+          <Menu.Item key="signin">Вход</Menu.Item>
+          <Menu.Item key="signup">Регистрация</Menu.Item>
+        </Menu>
       </Header>
-      <Content style={{ padding:'0' }}>
-   
-
-      </Content>
-
     </Layout>
   );
 };
