@@ -32,10 +32,10 @@ export default function Navbar(): React.JSX.Element {
         </Link>
       </nav>
       <div className="flex space-x-4">
-        <button className="text-white border border-white px-3 py-1 rounded hover:bg-white hover:text-black transition-colors duration-300">
+        <button className="text-white px-4 py-2 rounded hover:bg-white hover:text-black transition-colors duration-300">
           Вход
         </button>
-        <button className="text-white border border-white px-3 py-1 rounded hover:bg-white hover:text-black transition-colors duration-300">
+        <button className="bg-blue-600 text-white px-6 py-2 rounded-xl font-medium hover:bg-blue-700 transition-colors duration-300">
           Регистрация
         </button>
       </div>
