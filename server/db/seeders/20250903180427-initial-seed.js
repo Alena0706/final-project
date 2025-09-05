@@ -7,13 +7,14 @@ module.exports = {
       'Users',
       [
         {
-          name: 'Ivan Ivanov',
-          email: 'ivan@example.com',
-          hashpass: 'hashedpass123',
+          name: 'admin',
+          email: 'admin@admin.com',
+          hashpass: '$2a$10$a.AHZ99cmtM.iP9NzvjpK.jwMqkmg/uHv.vLWSMfRrw3E6jKyLHv2',
           phone: '78901234567',
           city: 'Moscow',
           avatar: null,
-          secret: 'top-secret',
+          secret: '',
+          admin: true,
         },
         {
           name: 'Anna Petrova',

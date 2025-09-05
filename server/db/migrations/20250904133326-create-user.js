@@ -37,6 +37,10 @@ module.exports = {
       secret: {
         type: Sequelize.STRING,
       },
+      admin: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false,
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
