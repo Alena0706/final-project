@@ -1,0 +1,23 @@
+/* .navbar {
+  @apply fixed top-0 left-0 w-full bg-black text-white flex items-center px-4 py-2 z-50;
+}
+
+.navbar-logo {
+  @apply mr-4 text-xl font-bold;
+}
+
+.navbar-center {
+  @apply flex-1 flex justify-center space-x-8;
+}
+
+.navbar-link {
+  @apply hover:text-gray-400;
+}
+
+.navbar-right {
+  @apply flex space-x-4;
+}
+
+.navbar-button {
+  @apply hover:text-gray-400 bg-transparent border-none cursor-pointer;
+} */
