@@ -5,7 +5,8 @@ import type {
   userRegisterSchema,
   userSchema,
 } from './schemas';
-import type { userRegister2faSchemaT } from '@/entities/2fa/model/types';
+import type { userRegister2faSchemaT } from '@/entietis/2fa/model/types';
+
 
 export type UserT = z.infer<typeof userSchema>;
 export type UserRegisterT = z.infer<typeof userRegisterSchema>;
