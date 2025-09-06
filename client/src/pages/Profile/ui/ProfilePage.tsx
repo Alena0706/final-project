@@ -32,6 +32,7 @@ export default function ProfilePage(): React.JSX.Element {
       data.append('avatar', selectedFile);
     }
     // void dispatch(uploadAvatar(data));
+    setEdit(null);
   };
 
   return (
