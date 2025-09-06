@@ -1,6 +1,13 @@
 import axios from 'axios';
-import { AuthResponseSchema } from '../model/schemas';
-import type { AuthResponseT, UserLoginT, UserRegisterT } from '../model/types';
+import { AuthResponseSchema, userUpdateResponseSchema } from '../model/schemas';
+import type {
+  AuthResponseT,
+  UserLoginT,
+  UserRegisterT,
+  UserUpdateResponseT,
+  UserUpdateT,
+} from '../model/types';
+import axiosInstance from '@/shared/api/axiosInstance';
 
 // eslint-disable-next-line @typescript-eslint/no-extraneous-class
 class UserServices {
@@ -9,12 +16,19 @@ class UserServices {
     return AuthResponseSchema.parse(response.data);
   }
 
+  static async updateUser(user: UserUpdateT): Promise<AuthResponseT> {
+    const updateUser = await axiosInstance.patch('/auth/update', user);
+    console.log(updateUser);
+    return AuthResponseSchema.parse(updateUser.data);
+  }
+
   static async uploadAvatar(formData: FormData): Promise<void> {
-    await axios.post('/api/upload', formData, {
-        responseType: 'blob',
-        headers: {
-          'Content-Type': 'multipart/form-data', // Указываем, что отправляем файл
-        }});
+    await axiosInstance.post('/auth/upload', formData, {
+      responseType: 'blob',
+      headers: {
+        'Content-Type': 'multipart/form-data', // Указываем, что отправляем файл
+      },
+    });
   }
 
   static async login(user: UserLoginT): Promise<AuthResponseT> {
@@ -24,6 +38,7 @@ class UserServices {
 
   static async refresh(): Promise<AuthResponseT> {
     const response = await axios.get('/api/auth/refresh');
+    console.log(response.data);
     return AuthResponseSchema.parse(response.data);
   }
 

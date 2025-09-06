@@ -9,7 +9,7 @@ function App(): React.JSX.Element {
 
   useEffect(() => {
     void dispatch(refreshUser());
-  }, [dispatch]);
+  }, []);
 
   return <AppRouter />;
 }

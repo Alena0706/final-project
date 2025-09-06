@@ -1,6 +1,5 @@
 import { userSchema } from '@/entities/auth/model/schemas';
 import z from 'zod';
-import '@ant-design/v5-patch-for-react-19';
 
 export const userRegister2faSchema = z.object({
   ascii: z.string(),
