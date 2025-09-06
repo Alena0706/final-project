@@ -1,6 +1,14 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { UserStateT } from './types';
-import { loginUser, logoutUser, refreshUser, registerUser, uploadAvatar, verify2FA } from './thunks';
+import {
+  loginUser,
+  logoutUser,
+  refreshUser,
+  registerUser,
+  updateUser,
+  uploadAvatar,
+  verify2FA,
+} from './thunks';
 
 const initialState: UserStateT = {
   user: null,
@@ -16,6 +24,7 @@ export const userSlice = createSlice({
   extraReducers(builder) {
     builder
       .addCase(refreshUser.fulfilled, (state, action) => {
+        console.log(action.payload);
         state.user = action.payload;
         state.status = 'logged';
       })
@@ -49,12 +58,14 @@ export const userSlice = createSlice({
         state.error = null;
       });
 
-    builder.addCase(uploadAvatar.fulfilled, (state, action) => {
-      state.error = null;
-      console.log(action.payload);
-    }).addCase(uploadAvatar.rejected, (state, action) => {
-      state.error = action.error.message ?? 'Unknown error';
-    })
+    builder
+      .addCase(uploadAvatar.fulfilled, (state, action) => {
+        state.error = null;
+        console.log(action.payload);
+      })
+      .addCase(uploadAvatar.rejected, (state, action) => {
+        state.error = action.error.message ?? 'Unknown error';
+      });
 
     builder
       .addCase(logoutUser.fulfilled, (state) => {
@@ -70,7 +81,6 @@ export const userSlice = createSlice({
 
     builder
       .addCase(loginUser.fulfilled, (state, action) => {
-        console.log(action.payload);
         state.user = action.payload;
         state.status = 'logged';
         state.error = null;
@@ -96,6 +106,23 @@ export const userSlice = createSlice({
       .addCase(verify2FA.pending, (state) => {
         state.error = null;
         state.status = 'loading';
+      });
+
+    builder
+      .addCase(updateUser.fulfilled, (state, action) => {
+        console.log(action.payload);
+        if(state.user) {
+          state.user = action.payload;
+        }
+        state.error = null;
+      })
+      .addCase(updateUser.rejected, (state, action) => {
+        state.status = 'guest';
+        if (action.error.name !== `AxiosError`) {
+          state.error = action.error.message ?? 'Unknown error';
+        } else {
+          state.error = null;
+        }
       });
   },
 });

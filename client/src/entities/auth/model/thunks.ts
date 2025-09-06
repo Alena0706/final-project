@@ -1,11 +1,19 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import type { UserLoginT, UserRegisterT } from './types';
+import type { UserLoginT, UserRegisterT, UserUpdateT } from './types';
 import UserServices from '../api/userServices';
 
 type verify2FAT = {
   token: string;
   email: string
 };
+
+export const updateUser = createAsyncThunk('user/updateUser', async (user: UserUpdateT) => {
+
+  const update = await UserServices.updateUser(user);
+  console.log(update);
+  return update;
+}
+);
 
 export const registerUser = createAsyncThunk('user/register', (user: UserRegisterT) =>
   UserServices.register(user),
