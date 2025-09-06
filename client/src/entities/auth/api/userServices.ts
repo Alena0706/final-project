@@ -1,10 +1,9 @@
 import axios from 'axios';
-import { AuthResponseSchema, userUpdateResponseSchema } from '../model/schemas';
+import { AuthResponseSchema } from '../model/schemas';
 import type {
   AuthResponseT,
   UserLoginT,
   UserRegisterT,
-  UserUpdateResponseT,
   UserUpdateT,
 } from '../model/types';
 import axiosInstance from '@/shared/api/axiosInstance';

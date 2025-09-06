@@ -26,7 +26,7 @@ class AuthController {
     try {
       const updatedUser = await AuthService.updateUser(userId, updateData);
       console.log(updatedUser);
-      const { refreshToken, accessToken } = generateTokens(updatedUser);
+      const { refreshToken, accessToken } = generateTokens({ user: updatedUser });
     res
       .cookie('refreshToken', refreshToken, cookieConfig.refresh)
       .status(200)
