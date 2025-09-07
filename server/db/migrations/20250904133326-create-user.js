@@ -40,6 +40,13 @@ module.exports = {
         type: Sequelize.BOOLEAN,
         defaultValue: false,
       },
+      balance: {
+        type: Sequelize.INTEGER,
+        defaultValue: 0,
+      },
+      transactions: {
+        type: Sequelize.JSONB,
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,

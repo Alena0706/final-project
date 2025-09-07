@@ -9,6 +9,8 @@ export const userSchema = z.object({
   secret: z.string().nullable(),
   admin: z.boolean(),
   avatar: z.string().nullable(),
+  balance: z.number(),
+  transactions: z.array(z.object({ id: z.string(), amount: z.number().min(1), date: z.string() })).nullable(),
 });
 
 export const userUpdateSchema = z.object({
@@ -17,6 +19,8 @@ export const userUpdateSchema = z.object({
   password: z.string().min(6, { message: 'Пароль должен быть не короче 6 символов' }).optional(),
   phone: z.string().optional(),
   city: z.string().optional(),
+  balance: z.number().min(1),
+  transactions: z.array(z.object({ id: z.string(), amount: z.number().min(1), date: z.string() })).nullable(),
 });
 
 export const userUpdateResponseSchema = z.object({

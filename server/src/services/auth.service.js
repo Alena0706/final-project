@@ -1,19 +1,22 @@
 const sharp = require('sharp');
 const { User } = require('../../db/models');
 const bcrypt = require('bcrypt');
-const { path } = require('../app');
+const path = require('path');
 
 class AuthService {
   static async getUser(userId) {
+    console.log(userId, 'service');
     const user = await User.findByPk(userId);
+    if (!user) {
+      throw new Error(`Пользователь с id ${userId} не найден`);
+    }
     const plainUser = user.get();
+    console.log(plainUser);
     delete plainUser.hashpass;
     return plainUser;
   }
 
   static async updateUser(userId, updateData) {
-    console.log(updateData);
-    console.log(userId);
     await User.update(updateData, { where: { id: userId } });
     const updatedUser = await User.findByPk(userId);
     const plainUser = updatedUser.get();
@@ -21,8 +24,8 @@ class AuthService {
     return plainUser;
   }
 
-  static async uploadAvatar(avatarFile) {
-    const uploadDir = path.join(__dirname, './public/Uploads');
+  static async uploadAvatar(avatarFile, userId) {
+    const uploadDir = path.join(__dirname, '../public/Uploads');
     // Уникальное имя файла
     const fileName = `${Date.now()}.webp`;
     const filePath = path.join(uploadDir, fileName);
@@ -30,13 +33,14 @@ class AuthService {
     // Конвертация и сохранение изображения в WebP с помощью Sharp
     await sharp(avatarFile.buffer)
       .webp({ quality: 80 }) // Указываем формат WebP и качество 80%
-      .resize(50, 50) // Указываем размер изображения
+      .resize(256, 256, { fit: 'cover' }) // Указываем размер изображения
       .toFile(filePath);
-    const avatarPath = path.join('media', fileName);
+    const avatarPath = path.join('Uploads', fileName);
+    console.log(avatarPath);
     if (!avatarPath) {
       throw new Error('Не удалось загрузить изображение');
     }
-    await User.update({ avatar: avatarPath }, { where: { id: 1 } });
+    await User.update({ avatar: avatarPath }, { where: { id: userId } });
   }
 
   static async signup({ name, email, password, city, phone }) {

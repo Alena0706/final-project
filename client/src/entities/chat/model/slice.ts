@@ -1,22 +1,24 @@
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 
-type Message = {
+export type Message = {
   id: number; // или _id если используете UUID
   roomId: string;
   sender: 'user' | 'admin';
   message: string;
-  timestamp: string;
+  createdAt: string;
 };
 
 type ChatState = {
   messages: Message[];
   roomId: string | null;
+  rooms: string[]; // добавляем для списка комнат
 };
 
 const initialState: ChatState = {
   messages: [],
   roomId: null,
+  rooms: [],
 };
 
 const chatSlice = createSlice({
@@ -33,9 +35,12 @@ const chatSlice = createSlice({
     setHistory(state, action: PayloadAction<Message[]>) {
       state.messages = action.payload;
     },
+    setRooms(state, action: PayloadAction<string[]>) {
+      state.rooms = action.payload;
+    },
   },
 });
 
-export const { joinRoom, addMessage, setHistory } = chatSlice.actions;
+export const { joinRoom, addMessage, setHistory, setRooms } = chatSlice.actions;
 
 export default chatSlice.reducer;
