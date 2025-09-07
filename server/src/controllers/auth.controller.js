@@ -11,12 +11,12 @@ class AuthController {
     const userId = res.locals.user.id;
     console.log(req.body);
     console.log(userId);
-    const { name, email, password, phone, city, balance, transactions } = req.body;
+    const { name, email, password, phone, city, balance, transactions, oldpassword } = req.body;
 
     if (email && !validateEmail(email)) {
       return res.status(400).json({ error: 'Некорректный email' });
     }
-
+    
     const updateData = {};
     if (name) updateData.name = name;
     if (email) updateData.email = email;
@@ -26,9 +26,14 @@ class AuthController {
     if (balance) updateData.balance = balance;
     if (transactions) {
       const user = await AuthService.getUser(userId);
-      console.log(user);
       const currentTransactions = user?.transactions || [];
       updateData.transactions = [...currentTransactions, ...transactions];
+    }
+    if (oldpassword) {
+      const user = await AuthService.validatePassword(oldpassword, userId);
+      if (user){
+        if (password) updateData.hashpass = await bcrypt.hash(password, 10);
+      }
     }
 
     try {

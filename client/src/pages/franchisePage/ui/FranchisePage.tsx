@@ -1,6 +1,15 @@
+import { useAppSelector } from '@/shared/hooks/hooks';
+import PartnerFormModal from '@/widgets/modalMain/ui/PartnerFormModal';
+import { ArrowRightIcon } from 'lucide-react';
 import React, { useState } from 'react';
 import {
-  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
 } from 'recharts';
 
 type CardProps = React.HTMLAttributes<HTMLDivElement> & {
@@ -32,38 +41,17 @@ const Badge = ({ children, variant = 'filled', className = '', ...props }: Badge
   );
 };
 
-const Modal = ({
-  isOpen,
-  onClose,
-  children,
-}: {
-  isOpen: boolean;
-  onClose: () => void;
-  children: React.ReactNode;
-}) => {
-  if (!isOpen) return null;
-  return (
-    <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
-      <div className="bg-background p-6 rounded-xl max-w-lg w-full relative">
-        <button
-          onClick={onClose}
-          className="absolute top-3 right-3 text-white hover:text-primary transition"
-          aria-label="Закрыть"
-        >
-          ✕
-        </button>
-        {children}
-      </div>
-    </div>
-  );
-};
-
-const FranchisePage = () => {
+const FranchisePage = (): React.JSX.Element => {
+  const user = useAppSelector((store) => store.user.user?.user);
   // Состояния для калькулятора
   const [avgMonthlyRevenue, setAvgMonthlyRevenue] = useState(100000);
   const [monthlyCosts, setMonthlyCosts] = useState(50000);
   const [paushalnyVznos, setPaushalnyVznos] = useState(300000);
   const [investment, setInvestment] = useState(500000);
+  const [isModalOpen, setModalOpen] = useState(false);
+
+  const openModal = () => setModalOpen(true);
+  const closeModal = () => setModalOpen(false);
 
   const netMonthlyProfit = avgMonthlyRevenue - monthlyCosts;
   const paybackPeriodMonths =
@@ -76,9 +64,6 @@ const FranchisePage = () => {
     { id: 3, name: 'Бизнес-план.pdf', url: '#' },
   ];
 
-  // Модальное состояние
-  const [modalOpen, setModalOpen] = useState(false);
-
   // Для загрузки файлов
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
 
@@ -89,9 +74,9 @@ const FranchisePage = () => {
 
   // Пример данных отзывов
   const reviews = [
-    { id: 1, user: "Иван", text: "Отличная франшиза, быстрый старт и поддержка на высоте." },
-    { id: 2, user: "Мария", text: "Очень выручает маркетинговая помощь, рекомендую!" },
-    { id: 3, user: "Олег", text: "Учебные материалы помогли быстро освоиться." },
+    { id: 1, user: 'Иван', text: 'Отличная франшиза, быстрый старт и поддержка на высоте.' },
+    { id: 2, user: 'Мария', text: 'Очень выручает маркетинговая помощь, рекомендую!' },
+    { id: 3, user: 'Олег', text: 'Учебные материалы помогли быстро освоиться.' },
   ];
 
   // Данные для графика окупаемости — месяцы и накопленная прибыль
@@ -178,7 +163,15 @@ const FranchisePage = () => {
             </div>
           </div>
         </div>
-
+        <button
+          className="bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 shadow-lg shadow-purple-700/50 text-lg px-8 py-6 group"
+          onClick={openModal}
+        >
+          <>
+            Стать партнером
+            <ArrowRightIcon className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+          </>
+        </button>
         {/* Документы и загрузка */}
         <div>
           <h2 className="text-4xl font-bold mb-6 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
@@ -268,26 +261,7 @@ const FranchisePage = () => {
         </div>
 
         {/* Модалка */}
-        <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)}>
-          <h3 className="text-2xl font-bold mb-6 text-foreground">Обратная связь</h3>
-          <form className="space-y-4">
-            <input
-              type="text"
-              placeholder="Ваше имя"
-              className="w-full rounded border border-border bg-background px-3 py-2 text-foreground"
-            />
-            <input
-              type="email"
-              placeholder="Email"
-              className="w-full rounded border border-border bg-background px-3 py-2 text-foreground"
-            />
-            <textarea
-              placeholder="Ваше сообщение"
-              className="w-full rounded border border-border bg-background px-3 py-2 text-foreground min-h-[100px]"
-            />
-            <button type="submit">Отправить</button>
-          </form>
-        </Modal>
+        <PartnerFormModal isOpen={isModalOpen} onClose={closeModal} user={user} />
       </section>
     </main>
   );

@@ -4,6 +4,19 @@ const bcrypt = require('bcrypt');
 const path = require('path');
 
 class AuthService {
+  static async validatePassword(password, userId) {
+    const user = await User.findByPk(userId);
+    if (!user) {
+      throw new Error(`Пользователь с id ${userId} не найден`);
+    }
+    const correct = await bcrypt.compare(password, user.hashpass);
+    if (!correct) {
+      throw new Error('Неверный пароль');
+    }
+
+    return true;
+  }
+
   static async getUser(userId) {
     console.log(userId, 'service');
     const user = await User.findByPk(userId);

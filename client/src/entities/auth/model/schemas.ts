@@ -19,8 +19,9 @@ export const userUpdateSchema = z.object({
   password: z.string().min(6, { message: 'Пароль должен быть не короче 6 символов' }).optional(),
   phone: z.string().optional(),
   city: z.string().optional(),
-  balance: z.number().min(1),
-  transactions: z.array(z.object({ id: z.string(), amount: z.number().min(1), date: z.string() })).nullable(),
+  balance: z.number().min(1).optional(),
+  transactions: z.array(z.object({ id: z.string(), amount: z.number().min(1), date: z.string() })).nullable().optional(),
+  oldpassword: z.string().optional(),
 });
 
 export const userUpdateResponseSchema = z.object({

@@ -1,6 +1,9 @@
+import { updateUser } from '@/entities/auth/model/thunks';
+import { useAppDispatch } from '@/shared/hooks/hooks';
 import React, { useState } from 'react';
 
 const ChangePassword = (): React.JSX.Element => {
+  const dispatch = useAppDispatch();
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -20,7 +23,7 @@ const ChangePassword = (): React.JSX.Element => {
       return;
     }
     setError(null);
-    // Логика изменения пароля, например, API запрос
+    void dispatch(updateUser({oldpassword: currentPassword, password: newPassword }));
     console.log('Изменение пароля');
     setSuccess(true);
     setCurrentPassword('');
