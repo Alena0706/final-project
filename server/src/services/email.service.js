@@ -59,7 +59,7 @@ class EmailService {
         
         Теперь вы можете пользоваться всеми возможностями нашего сервиса.
         
-        Войти в аккаунт: ${process.env.CLIENT_URL || 'http://localhost:5173'}/login
+        Войти в аккаунт: ${process.env.CLIENT_URL || 'http://localhost:5173'}/signin
         
         С уважением,
         Команда проекта
