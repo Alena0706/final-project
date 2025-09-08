@@ -25,17 +25,17 @@ export default function Navbar(): React.JSX.Element {
             <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-primary group-hover:w-full transition-all duration-300"></span>
           </Link>
           <Link
-            to="/about"
-            className="text-foreground hover:text-primary font-medium relative group"
-          >
-            О нас
-            <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-primary group-hover:w-full transition-all duration-300"></span>
-          </Link>
-          <Link
             to="/franchise"
             className="text-foreground hover:text-primary font-medium relative group"
           >
             Франшиза
+            <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-primary group-hover:w-full transition-all duration-300"></span>
+          </Link>
+          <Link
+            to="/about"
+            className="text-foreground hover:text-primary font-medium relative group"
+          >
+            О нас
             <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-primary group-hover:w-full transition-all duration-300"></span>
           </Link>
           <Link
@@ -69,7 +69,10 @@ export default function Navbar(): React.JSX.Element {
               >
                 Вход
               </Link>
-              <Link to="/signup" className="btn-primary">
+              <Link
+                to="/signup"
+                className="bg-gradient-to-r from-[hsl(200_80%_60%)] to-[hsl(210_80%_40%)] text-primary-foreground px-5 py-2 rounded-xl shadow-iris hover:shadow-gold transition-all duration-300"
+              >
                 Регистрация
               </Link>
             </>
