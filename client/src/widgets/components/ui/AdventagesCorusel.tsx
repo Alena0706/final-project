@@ -13,14 +13,18 @@ import {
 
 const Badge = ({ children, className }: { children: React.ReactNode; className?: string }) => (
   <span
-    className={`inline-block rounded-full px-4 py-1 font-semibold text-sm uppercase tracking-wide ${className}`}
+    className={`inline-block rounded-full px-4 py-1 font-semibold text-sm uppercase tracking-wide bg-[hsl(200_75%_55%)] text-white ${className}`}
   >
     {children}
   </span>
 );
 
 const Card = ({ children, className }: { children: React.ReactNode; className?: string }) => (
-  <div className={`rounded-3xl bg-white bg-opacity-10 shadow-lg ${className}`}>{children}</div>
+  <div
+    className={`glass-effect rounded-xl p-6 border border-border/30 hover:border-[hsl(200_80%_70%)]/50 transition-all duration-300 animate-slide-up backdrop-blur-md ${className}`}
+  >
+    {children}
+  </div>
 );
 
 const CardContent = ({
