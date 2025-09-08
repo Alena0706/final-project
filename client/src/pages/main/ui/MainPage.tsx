@@ -12,10 +12,10 @@ export default function MainPage(): React.JSX.Element {
     <>
     <HeroSection />
     <AboutSection />
+    <BrandSection />
     <GallerySection />
     <AdvantagesCarousel />
     <AdvantagesSection />
-    <BrandSection />
     <ContactSection />
     </>
   )

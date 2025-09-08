@@ -95,25 +95,25 @@ const ContactSection = () => {
     {
       icon: Phone,
       title: 'Телефон',
-      details: ['+7 (800) 123-45-67', '+7 (495) 123-45-67'],
+      details: ['+7 (908) 520-98-86'],
       subtitle: 'Звонки по России бесплатно',
     },
     {
       icon: Mail,
       title: 'Email',
-      details: ['info@irisphoto.ru', 'franchise@irisphoto.ru'],
-      subtitle: 'Ответим в течение часа',
+      details: ['@tvooyvzglyad'],
+      subtitle: 'Подписываетесь на наш телеграмм',
     },
     {
       icon: MapPin,
       title: 'Офис',
-      details: ['г. Москва, ул. Тверская, 12', 'БЦ "Центральный", офис 45'],
+      details: [' г. Пенза, ул. Московская, 37., ТЦ Высшая лига, 4 этаж.'],
       subtitle: 'Приём по предварительной записи',
     },
     {
       icon: Clock,
       title: 'График работы',
-      details: ['Пн-Пт: 9:00 - 19:00', 'Сб-Вс: 10:00 - 16:00'],
+      details: ['Пн-Пт: 12:00 - 21:00', 'Сб-Вс: 10:00 - 21:00'],
       subtitle: 'Московское время',
     },
   ];
