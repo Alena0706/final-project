@@ -71,8 +71,8 @@ const ChangePassword = (): React.JSX.Element => {
           required
         />
 
-        {error && <p className="text-red-600 mb-2">{error}</p>}
-        {success && <p className="text-green-600 mb-2">Пароль успешно изменен</p>}
+        {error && <p className="text-destructive text-center">{error}</p>}
+        {success && <p className="text-green-500 text-center">Пароль успешно изменен</p>}
 
         <button
           type="submit"
