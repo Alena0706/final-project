@@ -2,6 +2,7 @@ const sharp = require('sharp');
 const { User } = require('../../db/models');
 const bcrypt = require('bcrypt');
 const path = require('path');
+const EmailService = require('./email.service');
 
 class AuthService {
   static async validatePassword(password, userId) {
@@ -60,7 +61,7 @@ class AuthService {
     if (!email || !password) {
       throw new Error('Заполните все поля');
     }
-    console.log(name);
+    console.log('Creating user:', name);
     const hashpass = await bcrypt.hash(password, 10);
 
     const [user, isCreated] = await User.findOrCreate({
@@ -73,8 +74,17 @@ class AuthService {
     }
 
     const plainUser = user.get();
-
     delete plainUser.hashpass;
+
+    // Отправляем приветственный email
+    try {
+      await EmailService.sendWelcomeEmail(email, name);
+      console.log('✅ Welcome email sent to:', email);
+    } catch (error) {
+      console.error('❌ Failed to send welcome email:', error.message);
+      // Не прерываем регистрацию, если email не отправился
+      // В продакшене можно добавить в очередь для повторной отправки
+    }
 
     return plainUser;
   }
