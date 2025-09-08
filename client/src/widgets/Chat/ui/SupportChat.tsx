@@ -3,7 +3,7 @@ import { useAppDispatch, useAppSelector } from '@/shared/hooks/hooks';
 import React, { useEffect, useRef, useState } from 'react';
 import { io } from 'socket.io-client';
 
-const socket = io('http://localhost:3000', { autoConnect: true });
+const socket = io('/', { autoConnect: true });
 
 export default function SupportChat(): React.JSX.Element {
   const dispatch = useAppDispatch();

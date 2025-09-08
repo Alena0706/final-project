@@ -24,7 +24,6 @@ export const userSlice = createSlice({
   extraReducers(builder) {
     builder
       .addCase(refreshUser.fulfilled, (state, action) => {
-        console.log(action.payload);
         state.user = action.payload;
         state.status = 'logged';
       })
@@ -61,7 +60,10 @@ export const userSlice = createSlice({
     builder
       .addCase(uploadAvatar.fulfilled, (state, action) => {
         state.error = null;
-        console.log(action.payload);
+        // Обновляем аватар пользователя, если он есть в ответе
+        if (action.payload?.user && state.user?.user) {
+          state.user.user.avatar = action.payload.user.avatar;
+        }
       })
       .addCase(uploadAvatar.rejected, (state, action) => {
         state.error = action.error.message ?? 'Unknown error';
@@ -110,8 +112,7 @@ export const userSlice = createSlice({
 
     builder
       .addCase(updateUser.fulfilled, (state, action) => {
-        console.log(action.payload);
-        if(state.user) {
+        if (state.user) {
           state.user = action.payload;
         }
         state.error = null;

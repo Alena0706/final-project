@@ -19,13 +19,11 @@ class AuthService {
   }
 
   static async getUser(userId) {
-    console.log(userId, 'service');
     const user = await User.findByPk(userId);
     if (!user) {
       throw new Error(`Пользователь с id ${userId} не найден`);
     }
     const plainUser = user.get();
-    console.log(plainUser);
     delete plainUser.hashpass;
     return plainUser;
   }
@@ -50,11 +48,16 @@ class AuthService {
       .resize(256, 256, { fit: 'cover' }) // Указываем размер изображения
       .toFile(filePath);
     const avatarPath = path.join('uploads', fileName);
-    console.log(avatarPath);
     if (!avatarPath) {
       throw new Error('Не удалось загрузить изображение');
     }
     await User.update({ avatar: avatarPath }, { where: { id: userId } });
+
+    // Возвращаем обновленного пользователя
+    const updatedUser = await User.findByPk(userId);
+    const plainUser = updatedUser.get();
+    delete plainUser.hashpass;
+    return plainUser;
   }
 
   static async signup({ name, email, password, city, phone }) {

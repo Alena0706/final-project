@@ -11,12 +11,13 @@ class AuthController {
     const userId = res.locals.user.id;
     console.log(req.body);
     console.log(userId);
-    const { name, email, password, phone, city, balance, transactions, oldpassword } = req.body;
+    const { name, email, password, phone, city, balance, transactions, oldpassword } =
+      req.body;
 
     if (email && !validateEmail(email)) {
       return res.status(400).json({ error: 'Некорректный email' });
     }
-    
+
     const updateData = {};
     if (name) updateData.name = name;
     if (email) updateData.email = email;
@@ -31,7 +32,7 @@ class AuthController {
     }
     if (oldpassword) {
       const user = await AuthService.validatePassword(oldpassword, userId);
-      if (user){
+      if (user) {
         if (password) updateData.hashpass = await bcrypt.hash(password, 10);
       }
     }
@@ -52,11 +53,17 @@ class AuthController {
 
   static async uploadAvatar(req, res) {
     try {
-      await AuthService.uploadAvatar(req.file, res.locals.user.id);
+      if (!req.file) {
+        return res.status(400).json({ message: 'Файл не найден' });
+      }
 
-      res.status(200).json({ message: `Изображение успешно сохранено` });
+      const updatedUser = await AuthService.uploadAvatar(req.file, res.locals.user.id);
+
+      res.status(200).json({
+        message: `Изображение успешно сохранено`,
+        user: updatedUser,
+      });
     } catch (err) {
-      console.log(err);
       res.status(500).json({ message: err.message });
     }
   }
@@ -79,17 +86,20 @@ class AuthController {
   static async refresh(req, res) {
     try {
       const { refreshToken: oldRefreshToke } = req.cookies;
-      console.log(oldRefreshToke);
-      const { user } = jwt.verify(oldRefreshToke, process.env.REFRESH_TOKEN_SECRET);
-      console.log(user);
+      const { user: tokenUser } = jwt.verify(
+        oldRefreshToke,
+        process.env.REFRESH_TOKEN_SECRET,
+      );
 
-      const { refreshToken, accessToken } = generateTokens({ user });
+      // Загружаем свежие данные пользователя из базы данных
+      const freshUser = await AuthService.getUser(tokenUser.id);
+
+      const { refreshToken, accessToken } = generateTokens({ user: freshUser });
 
       res
         .cookie('refreshToken', refreshToken, cookieConfig.refresh)
-        .json({ user, accessToken });
+        .json({ user: freshUser, accessToken });
     } catch (err) {
-      console.log(err);
       res.status(401).json({ message: err.message });
     }
   }
