@@ -38,7 +38,7 @@ class AuthService {
   }
 
   static async uploadAvatar(avatarFile, userId) {
-    const uploadDir = path.join(__dirname, '../public/Uploads');
+    const uploadDir = path.join(__dirname, '../../public/uploads');
     // Уникальное имя файла
     const fileName = `${Date.now()}.webp`;
     const filePath = path.join(uploadDir, fileName);
@@ -48,7 +48,7 @@ class AuthService {
       .webp({ quality: 80 }) // Указываем формат WebP и качество 80%
       .resize(256, 256, { fit: 'cover' }) // Указываем размер изображения
       .toFile(filePath);
-    const avatarPath = path.join('Uploads', fileName);
+    const avatarPath = path.join('uploads', fileName);
     console.log(avatarPath);
     if (!avatarPath) {
       throw new Error('Не удалось загрузить изображение');

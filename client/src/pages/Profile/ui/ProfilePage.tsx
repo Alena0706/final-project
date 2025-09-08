@@ -11,36 +11,54 @@ const ProfilePage = (): React.JSX.Element => {
   const location = useLocation();
 
   return (
-    <div className="container mx-auto mt-10 px-4">
-      <div className="flex min-h-[500px]">
-        {/* Левая колонка - меню */}
-        <nav className="w-2/12 border-r border-gray-300 pr-4">
-          <ul className="space-y-4">
-            {tabs.map(({ id, label }) => {
-              // Определяем, является ли этот таб активным
-              const isActive = location.pathname.endsWith(id);
-              return (
-                <li key={id}>
-                  <Link
-                    to={`/profile/${id}`}
-                    className={`block w-full px-3 py-2 rounded-md font-medium transition-colors focus:outline-none ${
-                      isActive ? 'bg-indigo-600 text-white' : 'text-gray-700 hover:bg-gray-100'
-                    }`}
-                    aria-current={isActive ? 'page' : undefined}
-                  >
-                    {label}
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
-        </nav>
+    <div className="min-h-screen py-8">
+      <div className="container mx-auto px-4">
+        {/* Заголовок профиля */}
+        <div className="text-center mb-12 animate-fade-in">
+          <div className="inline-flex items-center space-x-3 mb-4">
+            <div className="w-12 h-12 bg-gradient-iris rounded-xl flex items-center justify-center shadow-iris">
+              <span className="text-white font-bold text-lg">I</span>
+            </div>
+            <h1 className="heading-2 text-gradient-primary">Профиль партнера</h1>
+          </div>
+          <p className="text-muted-foreground">Управляйте своим аккаунтом и настройками</p>
+        </div>
 
-        {/* Правая колонка - контент */}
-        <main className="w-10/12 pl-6 bg-white rounded p-6 shadow">
-          {/* В этом месте React Router отрендерит компонент текущего дочернего маршрута */}
-          <Outlet />
-        </main>
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+          {/* Левая колонка - меню */}
+          <nav className="lg:col-span-1">
+            <div className="card animate-slide-up">
+              <h2 className="text-lg font-semibold text-foreground mb-4">Навигация</h2>
+              <ul className="space-y-2">
+                {tabs.map(({ id, label }) => {
+                  const isActive = location.pathname.endsWith(id);
+                  return (
+                    <li key={id}>
+                      <Link
+                        to={`/profile/${id}`}
+                        className={`block w-full px-4 py-3 rounded-lg font-medium transition-all duration-300 ${
+                          isActive
+                            ? 'bg-gradient-primary text-white shadow-iris'
+                            : 'text-foreground hover:bg-muted hover:text-primary'
+                        }`}
+                        aria-current={isActive ? 'page' : undefined}
+                      >
+                        {label}
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          </nav>
+
+          {/* Правая колонка - контент */}
+          <main className="lg:col-span-3">
+            <div className="card animate-slide-up" style={{ animationDelay: '0.2s' }}>
+              <Outlet />
+            </div>
+          </main>
+        </div>
       </div>
     </div>
   );

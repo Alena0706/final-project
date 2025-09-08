@@ -65,8 +65,9 @@ export default function ProfileSection(): React.JSX.Element {
       <form onSubmit={handleSubmit} className="space-y-8">
         <div className="flex flex-col items-center">
           {(avatar || previewUrl) ? (
+            
             <img
-              src={previewUrl ?? avatar}
+              src={`http://localhost:5173/${avatar}` ?? previewUrl}
               alt="Аватар"
               className="w-32 h-32 rounded-full object-cover mb-5 border-4 border-indigo-300 shadow-md"
             />
@@ -81,6 +82,7 @@ export default function ProfileSection(): React.JSX.Element {
           >
             Изменить аватар
           </label>
+         
           <input
             id="avatarInput"
             type="file"

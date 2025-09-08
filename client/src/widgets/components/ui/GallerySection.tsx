@@ -128,21 +128,25 @@ const GallerySection = () => {
   ];
 
   return (
-    <section id="gallery" className="py-24 bg-gradient-to-b from-muted/30 to-background">
+    <section id="gallery" className="section section-alt">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-            Галерея и примеры
-          </h2>
+        <div className="text-center mb-16 animate-fade-in">
+          <div className="inline-flex items-center space-x-2 glass-effect rounded-full px-6 py-2 mb-4">
+            <span className="text-foreground font-medium uppercase tracking-wide text-sm">
+              Галерея
+            </span>
+          </div>
+          <h2 className="heading-2 text-gradient-primary mb-6">Наши точки по России</h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
             Посмотрите, как выглядит наш бизнес в разных городах России
           </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {galleryItems.map((item) => (
-            <Card
+          {galleryItems.map((item, index) => (
+            <div
               key={item.id}
-              className="group relative overflow-hidden bg-gradient-card border-0 shadow-elegant hover:shadow-iris transition-all duration-500 hover:-translate-y-2"
+              className="card group animate-slide-up"
+              style={{ animationDelay: `${index * 0.1}s` }}
             >
               <div className="relative">
                 <img
@@ -152,25 +156,25 @@ const GallerySection = () => {
                 />
                 {item.type === 'video' && (
                   <div className="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <div className="p-3 bg-white/20 backdrop-blur-sm rounded-full">
+                    <div className="p-3 glass-effect rounded-full animate-pulse-glow">
                       <Play className="h-8 w-8 text-white" fill="currentColor" />
                     </div>
                   </div>
                 )}
                 <div className="absolute top-3 right-3">
-                  <Badge variant="filled" className="bg-black/50 text-white border-0">
+                  <div className="glass-effect rounded-full px-3 py-1 text-xs font-medium text-white">
                     {item.type === 'video' ? (
                       <>
-                        <Play className="h-3 w-3 mr-1" />
+                        <Play className="h-3 w-3 mr-1 inline" />
                         Видео
                       </>
                     ) : (
                       <>
-                        <ImageIcon className="h-3 w-3 mr-1" />
+                        <ImageIcon className="h-3 w-3 mr-1 inline" />
                         Фото
                       </>
                     )}
-                  </Badge>
+                  </div>
                 </div>
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                 <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
@@ -181,20 +185,19 @@ const GallerySection = () => {
                   <p className="text-sm opacity-90">{item.location}</p>
                 </div>
               </div>
-              <CardContent className="p-4">
+              <div className="p-4">
                 <p className="text-sm text-muted-foreground">{item.description}</p>
-              </CardContent>
-              <div className="absolute inset-0 bg-gradient-to-br from-accent/5 to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
-            </Card>
+              </div>
+            </div>
           ))}
         </div>
-        <div className="text-center mt-16">
-          <div className="inline-block p-8 bg-gradient-card rounded-3xl shadow-elegant">
+        <div className="text-center mt-16 animate-slide-up" style={{ animationDelay: '0.6s' }}>
+          <div className="card inline-block">
             <h3 className="text-2xl font-bold mb-4 text-foreground">Хотите увидеть больше?</h3>
             <p className="text-muted-foreground mb-6 max-w-md">
               Получите полную презентацию с фото и видео всех наших точек
             </p>
-            <Button>Запросить полную галерею</Button>
+            <button className="btn-primary">Запросить полную галерею</button>
           </div>
         </div>
       </div>

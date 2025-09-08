@@ -6,16 +6,12 @@ import { Outlet } from 'react-router';
 
 export default function Layout(): React.JSX.Element {
   return (
-    <>
-      <header >
-        <NavBar />
-      </header>
-      <main>
+    <div className="min-h-screen">
+      <NavBar />
+      <main className="pt-16">
         <Outlet />
-        {/* <img src='https://static.tildacdn.com/tild3534-6332-4361-b538-623337356131/444.jpg'/> */}
-        <SupportChat /> 
+        <SupportChat />
       </main>
-   
-    </>
+    </div>
   );
 }

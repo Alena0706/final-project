@@ -11,7 +11,6 @@ export default function SignUpForm(): React.JSX.Element {
   function formatPhone(value: string): string {
     const digits = value.replace(/\D/g, '');
 
-
     let formatted = '+7';
     if (digits.length > 1) {
       formatted += '-';
@@ -34,7 +33,7 @@ export default function SignUpForm(): React.JSX.Element {
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = (e): void => {
     e.preventDefault();
-    const data=Object.fromEntries(new FormData(e.currentTarget));
+    const data = Object.fromEntries(new FormData(e.currentTarget));
     const dataValidate = userRegisterSchema.parse(data);
     void dispatch(registerUser(dataValidate));
   };
@@ -42,51 +41,101 @@ export default function SignUpForm(): React.JSX.Element {
   const handlePhoneChange: ChangeEventHandler<HTMLInputElement> = (e) => {
     const input = e.target.value;
     if (input.length > 16) return;
-    
+
     const formatted = formatPhone(input);
     setPhone(formatted);
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8 p-8 bg-white rounded shadow">
-        <h2 className="text-center text-3xl font-extrabold text-gray-900">Регистрация</h2>
-        <form className="mt-8 space-y-6" noValidate onSubmit={handleSubmit}>
-          <div className="rounded-md shadow-sm -space-y-px">
-            <div>
-              <label htmlFor="email" className="sr-only">
-                Электронная почта
-              </label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 
-                           placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 
-                           focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Введите email"
-              />
+    <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-lg w-full space-y-8">
+        {/* Логотип */}
+        <div className="text-center">
+          <div className="inline-flex items-center space-x-2 mb-8">
+            <div className="w-10 h-10 bg-gradient-iris rounded-xl flex items-center justify-center">
+              <span className="text-white font-bold">I</span>
             </div>
-            <div>
-              <label htmlFor="name" className="sr-only">
-                Имя
-              </label>
-              <input
-                id="name"
-                name="name"
-                type="text"
-                autoComplete="address-level2"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300
-                           placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500
-                           focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Имя"
-              />
+            <span className="text-2xl font-bold text-gradient-primary">IrisPhoto</span>
+          </div>
+        </div>
+
+        {/* Форма */}
+        <div className="card">
+          <div className="text-center mb-8">
+            <h2 className="heading-3 text-foreground mb-2">Станьте партнером</h2>
+            <p className="text-muted-foreground">
+              Создайте аккаунт и присоединитесь к нашей команде
+            </p>
+          </div>
+
+          <form className="space-y-6" noValidate onSubmit={handleSubmit}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label htmlFor="email" className="block text-sm font-medium text-foreground mb-2">
+                  Электронная почта
+                </label>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  required
+                  className="form-input"
+                  placeholder="your@email.com"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="name" className="block text-sm font-medium text-foreground mb-2">
+                  Полное имя
+                </label>
+                <input
+                  id="name"
+                  name="name"
+                  type="text"
+                  autoComplete="name"
+                  required
+                  className="form-input"
+                  placeholder="Иван Иванов"
+                />
+              </div>
             </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label htmlFor="phone" className="block text-sm font-medium text-foreground mb-2">
+                  Телефон
+                </label>
+                <input
+                  onChange={handlePhoneChange}
+                  value={phone}
+                  type="tel"
+                  id="phone"
+                  name="phone"
+                  required
+                  className="form-input"
+                  placeholder="+7-___-___-__-__"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="city" className="block text-sm font-medium text-foreground mb-2">
+                  Город
+                </label>
+                <input
+                  id="city"
+                  name="city"
+                  type="text"
+                  autoComplete="address-level2"
+                  required
+                  className="form-input"
+                  placeholder="Москва"
+                />
+              </div>
+            </div>
+
             <div>
-              <label htmlFor="password" className="sr-only">
+              <label htmlFor="password" className="block text-sm font-medium text-foreground mb-2">
                 Пароль
               </label>
               <input
@@ -95,14 +144,16 @@ export default function SignUpForm(): React.JSX.Element {
                 type="password"
                 autoComplete="new-password"
                 required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 
-                           placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 
-                           focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Введите пароль"
+                className="form-input"
+                placeholder="Минимум 8 символов"
               />
             </div>
+
             <div>
-              <label htmlFor="passwordConfirm" className="sr-only">
+              <label
+                htmlFor="passwordConfirm"
+                className="block text-sm font-medium text-foreground mb-2"
+              >
                 Подтверждение пароля
               </label>
               <input
@@ -111,58 +162,65 @@ export default function SignUpForm(): React.JSX.Element {
                 type="password"
                 autoComplete="new-password"
                 required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 
-                           placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 
-                           focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Подтвердите пароль"
+                className="form-input"
+                placeholder="Повторите пароль"
               />
             </div>
-            <div>
-              <label htmlFor="phone" className="sr-only">
-                Телефон
-              </label>
-              {/* <InputMask mask="+7-999-999-99-99" value={phone} onChange={handlePhoneChange}> */}
-              <input
-                onChange={handlePhoneChange}
-                value={phone}
-                type="tel"
-                id="phone"
-                name="phone"
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="+7-___-___-__-__"
-                required
-              />
-              {/* </InputMask> */}
-            </div>
-            <div>
-              <label htmlFor="city" className="sr-only">
-                Город
-              </label>
-              <input
-                id="city"
-                name="city"
-                type="text"
-                autoComplete="address-level2"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300
-                           placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500
-                           focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Город"
-              />
-            </div>
-          </div>
 
-          <div>
-            <button
-              type="submit"
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium
-                         rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2
-                         focus:ring-offset-2 focus:ring-indigo-500"
-            >
+            <div className="flex items-start">
+              <div className="flex items-center h-5">
+                <input
+                  id="terms"
+                  name="terms"
+                  type="checkbox"
+                  required
+                  className="w-4 h-4 text-primary bg-input border-border rounded focus:ring-primary focus:ring-2"
+                />
+              </div>
+              <div className="ml-3 text-sm">
+                <label htmlFor="terms" className="text-muted-foreground">
+                  Я соглашаюсь с{' '}
+                  <a href="#" className="text-primary hover:text-accent">
+                    условиями использования
+                  </a>{' '}
+                  и{' '}
+                  <a href="#" className="text-primary hover:text-accent">
+                    политикой конфиденциальности
+                  </a>
+                </label>
+              </div>
+            </div>
+
+            <button type="submit" className="btn-primary w-full">
               Зарегистрироваться
             </button>
+
+            <div className="text-center">
+              <p className="text-sm text-muted-foreground">
+                Уже есть аккаунт?{' '}
+                <a href="/signin" className="font-medium text-primary hover:text-accent">
+                  Войти
+                </a>
+              </p>
+            </div>
+          </form>
+        </div>
+
+        {/* Преимущества регистрации */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+          <div className="card">
+            <div className="text-2xl mb-2">🚀</div>
+            <p className="text-sm text-muted-foreground">Быстрый старт бизнеса</p>
           </div>
-        </form>
+          <div className="card">
+            <div className="text-2xl mb-2">📚</div>
+            <p className="text-sm text-muted-foreground">Полное обучение</p>
+          </div>
+          <div className="card">
+            <div className="text-2xl mb-2">💼</div>
+            <p className="text-sm text-muted-foreground">Поддержка 24/7</p>
+          </div>
+        </div>
       </div>
     </div>
   );
