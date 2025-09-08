@@ -3,29 +3,24 @@ import { loginUser } from '@/entities/auth/model/thunks';
 import { useAppDispatch } from '@/shared/hooks/hooks';
 import type { FormEventHandler } from 'react';
 import React from 'react';
+import { useNavigate } from 'react-router';
 
 export default function SignInForm(): React.JSX.Element {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = (e): void => {
     e.preventDefault();
     const data = Object.fromEntries(new FormData(e.currentTarget));
     const dataValidate = userLoginSchema.parse(data);
     void dispatch(loginUser(dataValidate));
+    void navigate('/');
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
-        {/* Логотип */}
-        <div className="text-center">
-          <div className="inline-flex items-center space-x-2 mb-8">
-            <div className="w-10 h-10 bg-gradient-iris rounded-xl flex items-center justify-center">
-              <span className="text-white font-bold">I</span>
-            </div>
-            <span className="text-2xl font-bold text-gradient-primary">IrisPhoto</span>
-          </div>
-        </div>
+
 
         {/* Форма */}
         <div className="card">
