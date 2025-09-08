@@ -142,4 +142,4 @@ vite.config.ts.timestamp-*
 
 # Uploads directory
 uploads/
-server/public/uploads
+public/uploads
