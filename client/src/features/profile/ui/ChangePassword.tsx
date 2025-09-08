@@ -23,7 +23,7 @@ const ChangePassword = (): React.JSX.Element => {
       return;
     }
     setError(null);
-    void dispatch(updateUser({oldpassword: currentPassword, password: newPassword }));
+    void dispatch(updateUser({ oldpassword: currentPassword, password: newPassword }));
     console.log('Изменение пароля');
     setSuccess(true);
     setCurrentPassword('');
@@ -32,51 +32,64 @@ const ChangePassword = (): React.JSX.Element => {
   };
 
   return (
-    <div>
-      <h2 className="text-xl font-semibold mb-4">Изменение пароля</h2>
-      <form onSubmit={handleSubmit} className="max-w-sm">
-        <label htmlFor="currentPassword" className="block mb-2 font-medium">
-          Текущий пароль
-        </label>
-        <input
-          type="password"
-          id="currentPassword"
-          value={currentPassword}
-          onChange={(e) => setCurrentPassword(e.target.value)}
-          className="w-full border rounded px-3 py-2 mb-3 focus:outline-indigo-500"
-          required
-        />
+    <div className="max-w-2xl mx-auto">
+      <h2 className="text-3xl font-extrabold mb-8 text-gradient-primary text-center">
+        Изменение пароля
+      </h2>
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-1 gap-6">
+          <div>
+            <label htmlFor="currentPassword" className="block mb-2 font-semibold text-foreground">
+              Текущий пароль
+            </label>
+            <input
+              type="password"
+              id="currentPassword"
+              value={currentPassword}
+              onChange={(e) => setCurrentPassword(e.target.value)}
+              className="w-full rounded-md border px-3 py-2 placeholder-muted-foreground focus:outline-none focus:ring-2 transition-all duration-300 border-border focus:ring-primary/20 bg-input"
+              placeholder="Введите текущий пароль"
+              required
+            />
+          </div>
 
-        <label htmlFor="newPassword" className="block mb-2 font-medium">
-          Новый пароль
-        </label>
-        <input
-          type="password"
-          id="newPassword"
-          value={newPassword}
-          onChange={(e) => setNewPassword(e.target.value)}
-          className="w-full border rounded px-3 py-2 mb-3 focus:outline-indigo-500"
-          required
-        />
+          <div>
+            <label htmlFor="newPassword" className="block mb-2 font-semibold text-foreground">
+              Новый пароль
+            </label>
+            <input
+              type="password"
+              id="newPassword"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              className="w-full rounded-md border px-3 py-2 placeholder-muted-foreground focus:outline-none focus:ring-2 transition-all duration-300 border-border focus:ring-primary/20 bg-input"
+              placeholder="Введите новый пароль"
+              required
+            />
+          </div>
 
-        <label htmlFor="confirmPassword" className="block mb-2 font-medium">
-          Подтверждение нового пароля
-        </label>
-        <input
-          type="password"
-          id="confirmPassword"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-          className="w-full border rounded px-3 py-2 mb-3 focus:outline-indigo-500"
-          required
-        />
+          <div>
+            <label htmlFor="confirmPassword" className="block mb-2 font-semibold text-foreground">
+              Подтверждение нового пароля
+            </label>
+            <input
+              type="password"
+              id="confirmPassword"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              className="w-full rounded-md border px-3 py-2 placeholder-muted-foreground focus:outline-none focus:ring-2 transition-all duration-300 border-border focus:ring-primary/20 bg-input"
+              placeholder="Подтвердите новый пароль"
+              required
+            />
+          </div>
+        </div>
 
-        {error && <p className="text-red-600 mb-2">{error}</p>}
-        {success && <p className="text-green-600 mb-2">Пароль успешно изменен</p>}
+        {error && <p className="text-destructive text-center">{error}</p>}
+        {success && <p className="text-green-500 text-center">Пароль успешно изменен</p>}
 
         <button
           type="submit"
-          className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition"
+          className="w-full py-3 font-bold rounded-lg transition-all duration-300 shadow-lg bg-gradient-primary text-white hover:shadow-iris hover:transform hover:-translate-y-1"
         >
           Сменить пароль
         </button>
