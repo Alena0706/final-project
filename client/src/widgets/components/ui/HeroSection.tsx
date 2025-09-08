@@ -1,8 +1,10 @@
-import { Link } from 'react-router';
-import heroImage from '@/assets/hero-iris-new.png';
+// import { Link } from 'react-router';
+import heroImage from '@/assets/глаз.jpg';
 import PartnerFormModal from '@/widgets/modalMain/ui/PartnerFormModal';
 import { useState } from 'react';
 import { useAppSelector } from '@/shared/hooks/hooks';
+import { ArrowRight } from 'lucide-react';
+import { Link } from 'react-router';
 
 const ArrowRightIcon = ({ className }: { className?: string }) => (
   <svg
@@ -26,26 +28,26 @@ const HeroSection = (): React.JSX.Element => {
 
   return (
     <>
-      <section className="hero-section">
+      <section className="hero-section relative min-h-screen flex items-center justify-center overflow-hidden">
         {/* Фоновое изображение */}
         <div className="absolute inset-0 z-0">
           <img
             src={heroImage}
             alt="Фотография радужки глаза - уникальные узоры и детали"
-            className="w-full h-full object-cover opacity-30"
+            className="w-full h-full object-cover opacity-20"
           />
-          <div className="absolute inset-0 bg-gradient-hero opacity-95" />
+          <div className="absolute inset-0 gradient-hero opacity-90" />
         </div>
 
         {/* Декоративные элементы */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-primary/10 rounded-full blur-3xl animate-float" />
+          <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-[hsl(200_80%_70%)]/10 rounded-full blur-3xl animate-float" />
           <div
-            className="absolute top-3/4 right-1/4 w-96 h-96 bg-accent/10 rounded-full blur-3xl animate-float"
+            className="absolute top-3/4 right-1/4 w-96 h-96 bg-[hsl(200_60%_50%)]/10 rounded-full blur-3xl animate-float"
             style={{ animationDelay: '2s' }}
           />
           <div
-            className="absolute top-1/2 left-1/2 w-48 h-48 bg-gold/10 rounded-full blur-3xl animate-float"
+            className="absolute top-1/2 left-1/2 w-48 h-48 bg-[hsl(200_60%_60%)]/10 rounded-full blur-3xl animate-float"
             style={{ animationDelay: '4s' }}
           />
         </div>
@@ -53,87 +55,61 @@ const HeroSection = (): React.JSX.Element => {
         {/* Основной контент */}
         <div className="container mx-auto px-4 z-10 text-center relative">
           <div className="max-w-5xl mx-auto animate-fade-in">
-            {/* Бейдж */}
-            <div className="inline-flex items-center space-x-2 glass-effect rounded-full px-6 py-2 mb-8">
-              <span className="w-2 h-2 bg-gradient-iris rounded-full animate-pulse-glow"></span>
-              <span className="text-foreground font-medium">Уникальная бизнес-возможность</span>
-            </div>
-
             {/* Главный заголовок */}
-            <h1 className="heading-1 text-foreground mb-6">
-              <span className="text-gradient-primary">Франшиза будущего</span>
-              <br />
-              <span>в сфере фотографии</span>
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-foreground mb-6">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[hsl(200_80%_70%)] to-[hsl(210_90%_30%)]">
+                Магия взгляда в ваших руках
+              </span>
             </h1>
+            <h3 className="text-xl md:text-2xl text-muted-foreground mb-8">
+              Франшиза профессиональной фотографии радужки глаза
+            </h3>
 
             {/* Подзаголовок */}
-            <p className="text-xl md:text-2xl text-muted-foreground mb-12 max-w-4xl mx-auto leading-relaxed">
-              Откройте прибыльный бизнес в уникальной нише профессиональной фотографии радужки
-              глаза. Полная поддержка, проверенные технологии, высокая маржинальность.
-            </p>
-
-            {/* Статистика */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12 max-w-3xl mx-auto">
-              <div className="text-center animate-slide-up">
-                <div className="text-3xl md:text-4xl font-bold text-foreground mb-2">50+</div>
-                <div className="text-muted-foreground">Довольных партнеров</div>
-              </div>
-              <div className="text-center animate-slide-up" style={{ animationDelay: '0.2s' }}>
-                <div className="text-3xl md:text-4xl font-bold text-foreground mb-2">6</div>
-                <div className="text-muted-foreground">Городов присутствия</div>
-              </div>
-              <div className="text-center animate-slide-up" style={{ animationDelay: '0.4s' }}>
-                <div className="text-3xl md:text-4xl font-bold text-foreground mb-2">2023</div>
-                <div className="text-muted-foreground">Год основания</div>
-              </div>
-            </div>
-
-            {/* Кнопки действий */}
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
-              <button onClick={openModal} className="btn-primary text-lg px-8 py-4 group">
-                Стать партнером
-                <ArrowRightIcon className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-              </button>
-
-              <button className="glass-effect px-8 py-4 text-foreground rounded-xl font-semibold text-lg hover:bg-white/10 transition-all duration-300">
-                Смотреть презентацию
-              </button>
-            </div>
+<div className="flex justify-center mb-16">
+  <Link 
+    to="/signup" 
+    className="bg-gradient-to-r from-[hsl(200_75%_55%)] to-[hsl(210_75%_35%)] text-primary-foreground text-lg px-8 py-4 rounded-xl shadow-iris hover:shadow-gold transition-all duration-300 hover:scale-105 flex items-center group hover:bg-gradient-to-r hover:from-[hsl(200_80%_60%)] hover:to-[hsl(210_80%_40%)]"
+  >
+    Стать партнером
+    <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+  </Link>
+</div>
 
             {/* Преимущества */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-              <div className="glass-effect rounded-xl p-6 hover:bg-white/10 transition-all duration-300 animate-slide-up">
-                <div className="text-2xl mb-2">🚀</div>
-                <h3 className="text-foreground font-semibold mb-2">Быстрый старт</h3>
-                <p className="text-muted-foreground text-sm">
-                  От подписания договора до открытия 2-4 недели
-                </p>
-              </div>
+ <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+  <div className="glass-effect rounded-xl p-6 border border-border/30 hover:border-[hsl(200_80%_70%)]/50 transition-all duration-300 animate-slide-up backdrop-blur-md">
+    <div className="text-2xl mb-2">🚀</div>
+    <h3 className="text-foreground font-semibold mb-2">Быстрый старт</h3>
+    <p className="text-muted-foreground text-sm">
+      От подписания договора до открытия 2-4 недели
+    </p>
+  </div>
 
-              <div
-                className="glass-effect rounded-xl p-6 hover:bg-white/10 transition-all duration-300 animate-slide-up"
-                style={{ animationDelay: '0.2s' }}
-              >
-                <div className="text-2xl mb-2">💎</div>
-                <h3 className="text-foreground font-semibold mb-2">Уникальная ниша</h3>
-                <p className="text-muted-foreground text-sm">Минимум конкурентов, высокий спрос</p>
-              </div>
+  <div
+    className="glass-effect rounded-xl p-6 border border-border/30 hover:border-[hsl(200_80%_70%)]/50 transition-all duration-300 animate-slide-up backdrop-blur-md"
+    style={{ animationDelay: '0.2s' }}
+  >
+    <div className="text-2xl mb-2">💎</div>
+    <h3 className="text-foreground font-semibold mb-2">Уникальная ниша</h3>
+    <p className="text-muted-foreground text-sm">Минимум конкурентов, высокий спрос</p>
+  </div>
 
-              <div
-                className="glass-effect rounded-xl p-6 hover:bg-white/10 transition-all duration-300 animate-slide-up"
-                style={{ animationDelay: '0.4s' }}
-              >
-                <div className="text-2xl mb-2">📈</div>
-                <h3 className="text-foreground font-semibold mb-2">Высокая прибыль</h3>
-                <p className="text-muted-foreground text-sm">Окупаемость от 6 месяцев</p>
-              </div>
-            </div>
+  <div
+    className="glass-effect rounded-xl p-6 border border-border/30 hover:border-[hsl(200_80%_70%)]/50 transition-all duration-300 animate-slide-up backdrop-blur-md"
+    style={{ animationDelay: '0.4s' }}
+  >
+    <div className="text-2xl mb-2">📈</div>
+    <h3 className="text-foreground font-semibold mb-2">Высокая прибыль</h3>
+    <p className="text-muted-foreground text-sm">Окупаемость от 6 месяцев</p>
+  </div>
+</div>
           </div>
         </div>
 
         {/* Стрелка прокрутки */}
         <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-          <div className="glass-effect p-3 rounded-full">
+          <div className="gradient-card p-3 rounded-full border border-border">
             <svg
               className="h-6 w-6 text-foreground"
               fill="none"

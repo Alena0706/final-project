@@ -66,7 +66,7 @@ const BrandSection = () => {
                 Описание бренда
               </span>
             </div>
-            <h2 className="heading-2 text-gradient-primary mb-6">IrisPhoto</h2>
+        
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
               Пионеры в области профессиональной фотографии радужки глаза в России
             </p>
