@@ -1,14 +1,13 @@
 @import 'tailwindcss';
 
-/* Темная дизайн-система для сайта франшизы IrisPhoto */
 :root {
-  /* Основная цветовая палитра - темные тона */
-  --primary: #4c82f7; /* Синий */
+  /* Основная цветовая палитра - темные тона с голубыми акцентами */
+  --primary: #3b82f6; /* Голубой вместо зеленого */
   --primary-foreground: #f8fafc;
   --secondary: #2d2d36; /* Темно-серый */
   --secondary-foreground: #f8fafc;
-  --accent: #22c55e; /* Зеленый */
-  --accent-foreground: #fef2f2;
+  --accent: linear-gradient(135deg, hsl(210 90% 60%), hsl(210 80% 55%)); /* Голубой градиент */
+  --accent-foreground: #f8fafc;
 
   /* Фоновые цвета - темная тема */
   --background: #0f0f14; /* Очень темный серый */
@@ -21,7 +20,7 @@
   --card-foreground: #f1f5f9;
   --border: #2d2d36;
   --input: #1a1a21;
-  --ring: #4c82f7;
+  --ring: #3b82f6; /* Голубой вместо зеленого */
 
   /* Состояния */
   --destructive: #ef4444;
@@ -31,20 +30,22 @@
   --gold: #fbbf24; /* Золотой - премиум */
   --gold-foreground: #451a03;
 
-  /* Градиенты для темной темы */
-  --gradient-primary: linear-gradient(135deg, #4c82f7 0%, #22c55e 100%);
+  /* Градиенты для темной темы с голубыми тонами */
+  --gradient-primary: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%); /* Голубой градиент */
   --gradient-card: linear-gradient(135deg, #16161d 0%, #1e1e26 100%);
-  --gradient-hero: linear-gradient(135deg, #0c0c12 0%, #1a2332 50%, #1a3d2e 100%);
-  --gradient-iris: linear-gradient(135deg, #4c82f7 0%, #7c3aed 50%, #c026d3 100%);
+    --gradient-hero: transparent;  /* Добавлен синий */
+  --gradient-iris: linear-gradient(135deg, #3b82f6 0%, #2563eb 50%, #1d4ed8 100%); /* Голубой градиент */
 
   /* Тени для темной темы */
   --shadow-elegant: 0 10px 25px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -4px rgba(0, 0, 0, 0.2);
-  --shadow-iris: 0 20px 25px -5px rgba(76, 130, 247, 0.3), 0 10px 10px -5px rgba(76, 130, 247, 0.1);
+  --shadow-iris: 0 20px 25px -5px rgba(59, 130, 246, 0.3), 0 10px 10px -5px rgba(59, 130, 246, 0.1); /* Голубые тени */
   --shadow-gold: 0 20px 25px -5px rgba(251, 191, 36, 0.3), 0 10px 10px -5px rgba(251, 191, 36, 0.1);
 
   /* Радиусы */
   --radius: 0.75rem;
 }
+
+/* Остальной CSS остается без изменений, так как он использует переменные */
 
 /* Базовые стили для body */
 body {
@@ -105,6 +106,8 @@ body {
     box-shadow: var(--shadow-elegant);
   }
 }
+
+
 
 /* Анимации для современного интерфейса */
 @keyframes float {
@@ -280,7 +283,7 @@ body {
   justify-content: center;
   position: relative;
   overflow: hidden;
-  background: var(--gradient-hero);
+  background:transparent;
 }
 
 /* Стили для секций */

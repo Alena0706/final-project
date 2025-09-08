@@ -11,12 +11,12 @@ export default function Navbar(): React.JSX.Element {
     <header className="navbar h-16">
       <div className="container mx-auto px-4 h-full flex items-center justify-between">
         {/* Логотип */}
-        <Link to="/" className="flex items-center space-x-2 group">
+        {/* <Link to="/" className="flex items-center space-x-2 group">
           <div className="w-8 h-8 bg-gradient-iris rounded-lg flex items-center justify-center">
             <span className="text-white font-bold text-sm">I</span>
           </div>
           <span className="text-xl font-bold text-gradient-primary">IrisPhoto</span>
-        </Link>
+        </Link> */}
 
         {/* Навигация */}
         <nav className="hidden md:flex items-center space-x-8">
