@@ -11,8 +11,8 @@ const Badge = ({ children, variant = 'filled', className = '', ...props }: Badge
     'inline-block rounded-full px-4 py-1 font-semibold text-sm uppercase tracking-wide';
   const variantStyles =
     variant === 'outline'
-      ? 'border border-current bg-transparent text-current'
-      : 'bg-current text-white';
+      ? 'border border-[hsl(200_80%_70%)] bg-transparent text-[hsl(200_80%_70%)]'
+      : 'bg-[hsl(200_75%_55%)] text-white';
 
   return (
     <span className={`${baseStyles} ${variantStyles} ${className}`} {...props}>
@@ -27,7 +27,7 @@ type CardProps = React.HTMLAttributes<HTMLDivElement> & {
 
 const Card = ({ children, className = '', ...props }: CardProps) => (
   <div
-    className={`group relative overflow-hidden bg-gradient-card border-0 shadow-elegant rounded-xl transition-all duration-500 hover:shadow-iris hover:-translate-y-2 ${className}`}
+    className={`group relative overflow-hidden glass-effect rounded-xl border border-border/30 hover:border-[hsl(200_80%_70%)]/50 transition-all duration-500 hover:-translate-y-2 backdrop-blur-md ${className}`}
     {...props}
   >
     {children}
@@ -48,7 +48,7 @@ type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement>;
 
 const Button = ({ children, className = '', ...props }: ButtonProps) => (
   <button
-    className={`inline-flex items-center justify-center rounded-xl px-6 py-3 font-medium shadow-iris text-white bg-gradient-iris hover:shadow-gold hover:scale-105 transition-all duration-300 ${className}`}
+    className={`inline-flex items-center justify-center rounded-xl px-6 py-3 font-medium shadow-iris text-white bg-gradient-to-r from-[hsl(200_75%_55%)] to-[hsl(210_75%_35%)] hover:shadow-gold hover:scale-105 transition-all duration-300 ${className}`}
     {...props}
   >
     {children}
@@ -136,7 +136,9 @@ const GallerySection = () => {
               Галерея
             </span>
           </div>
-          <h2 className="heading-2 text-gradient-primary mb-6">Наши точки по России</h2>
+          <h2 className="heading-2 bg-gradient-to-r from-[hsl(200_80%_70%)] to-[hsl(210_90%_30%)] bg-clip-text text-transparent mb-6">
+            Наши точки по России
+          </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
             Посмотрите, как выглядит наш бизнес в разных городах России
           </p>

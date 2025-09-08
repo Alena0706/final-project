@@ -23,7 +23,7 @@ const ChangePassword = (): React.JSX.Element => {
       return;
     }
     setError(null);
-    void dispatch(updateUser({oldpassword: currentPassword, password: newPassword }));
+    void dispatch(updateUser({ oldpassword: currentPassword, password: newPassword }));
     console.log('Изменение пароля');
     setSuccess(true);
     setCurrentPassword('');
@@ -43,7 +43,7 @@ const ChangePassword = (): React.JSX.Element => {
           id="currentPassword"
           value={currentPassword}
           onChange={(e) => setCurrentPassword(e.target.value)}
-          className="w-full border rounded px-3 py-2 mb-3 focus:outline-indigo-500"
+          className="w-full border rounded px-3 py-2 mb-3 focus:outline-[hsl(200_75%_55%)]"
           required
         />
 
@@ -55,7 +55,7 @@ const ChangePassword = (): React.JSX.Element => {
           id="newPassword"
           value={newPassword}
           onChange={(e) => setNewPassword(e.target.value)}
-          className="w-full border rounded px-3 py-2 mb-3 focus:outline-indigo-500"
+          className="w-full border rounded px-3 py-2 mb-3 focus:outline-[hsl(200_75%_55%)]"
           required
         />
 
@@ -67,16 +67,16 @@ const ChangePassword = (): React.JSX.Element => {
           id="confirmPassword"
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
-          className="w-full border rounded px-3 py-2 mb-3 focus:outline-indigo-500"
+          className="w-full border rounded px-3 py-2 mb-3 focus:outline-[hsl(200_75%_55%)]"
           required
         />
 
-        {error && <p className="text-red-600 mb-2">{error}</p>}
-        {success && <p className="text-green-600 mb-2">Пароль успешно изменен</p>}
+        {error && <p className="text-destructive text-center">{error}</p>}
+        {success && <p className="text-green-500 text-center">Пароль успешно изменен</p>}
 
         <button
           type="submit"
-          className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition"
+          className="bg-gradient-to-r from-[hsl(200_75%_55%)] to-[hsl(210_75%_35%)] text-white px-4 py-2 rounded hover:from-[hsl(200_80%_60%)] hover:to-[hsl(210_80%_40%)] transition-all duration-300"
         >
           Сменить пароль
         </button>

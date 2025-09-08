@@ -1,6 +1,6 @@
 import { useAppSelector } from '@/shared/hooks/hooks';
 import PartnerFormModal from '@/widgets/modalMain/ui/PartnerFormModal';
-import { ArrowRight, ArrowRightIcon } from 'lucide-react';
+import { ArrowRight} from 'lucide-react';
 import React, { useState } from 'react';
 import { Link } from 'react-router';
 import {
@@ -164,15 +164,15 @@ const FranchisePage = (): React.JSX.Element => {
             </div>
           </div>
         </div>
-         <div className="flex  mb-16">
-              <Link
-                to="/signup"
-                className="bg-gradient-to-r from-[hsl(200_75%_55%)] to-[hsl(210_75%_35%)] text-primary-foreground text-lg px-8 py-4 rounded-xl shadow-iris hover:shadow-gold transition-all duration-300 hover:scale-105 flex items-center group hover:bg-gradient-to-r hover:from-[hsl(200_80%_60%)] hover:to-[hsl(210_80%_40%)]"
-              >
-                Стать партнером
-                <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-              </Link>
-            </div>
+        <div className="flex  mb-16">
+          <Link
+            to="/signup"
+            className="bg-gradient-to-r from-[hsl(200_75%_55%)] to-[hsl(210_75%_35%)] text-primary-foreground text-lg px-8 py-4 rounded-xl shadow-iris hover:shadow-gold transition-all duration-300 hover:scale-105 flex items-center group hover:bg-gradient-to-r hover:from-[hsl(200_80%_60%)] hover:to-[hsl(210_80%_40%)]"
+          >
+            Стать партнером
+            <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+          </Link>
+        </div>
         {/* Документы и загрузка */}
         <div>
           <h2 className="text-4xl font-bold mb-6 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
@@ -244,7 +244,13 @@ const FranchisePage = (): React.JSX.Element => {
                       value.toLocaleString('ru-RU', { style: 'currency', currency: 'RUB' })
                     }
                   />
-                  <Line type="monotone" dataKey="profit" stroke="#8884d8" strokeWidth={3} dot />
+                  <Line
+                    type="monotone"
+                    dataKey="profit"
+                    stroke="hsl(200, 75%, 55%)"
+                    strokeWidth={3}
+                    dot
+                  />
                 </LineChart>
               </ResponsiveContainer>
             </Card>

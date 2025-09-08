@@ -10,8 +10,8 @@ const Badge = ({ children, variant = 'filled', className = '', ...props }: Badge
     'inline-block rounded-full px-4 py-1 font-semibold text-sm uppercase tracking-wide';
   const variantStyle =
     variant === 'outline'
-      ? 'border border-current bg-transparent text-current'
-      : 'bg-current text-white';
+      ? 'border border-[hsl(200_80%_70%)] bg-transparent text-[hsl(200_80%_70%)]'
+      : 'bg-[hsl(200_75%_55%)] text-white';
 
   return (
     <span className={`${baseStyle} ${variantStyle} ${className}`} {...props}>
@@ -25,7 +25,10 @@ type CardProps = React.HTMLAttributes<HTMLDivElement> & {
 };
 
 const Card = ({ children, className = '', ...props }: CardProps) => (
-  <div className={`bg-gradient-card border-0 shadow-elegant rounded-2xl ${className}`} {...props}>
+  <div
+    className={`glass-effect rounded-xl p-6 border border-border/30 hover:border-[hsl(200_80%_70%)]/50 transition-all duration-300 animate-slide-up backdrop-blur-md ${className}`}
+    {...props}
+  >
     {children}
   </div>
 );
@@ -66,7 +69,7 @@ const BrandSection = () => {
                 Описание бренда
               </span>
             </div>
-        
+
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
               Пионеры в области профессиональной фотографии радужки глаза в России
             </p>
@@ -75,7 +78,9 @@ const BrandSection = () => {
         {/* Наша история */}
         <div className="mb-20">
           <div className="text-center mb-12 animate-fade-in">
-            <h3 className="heading-3 text-foreground mb-6">Наша история</h3>
+            <h3 className="heading-3 bg-gradient-to-r from-[hsl(200_80%_70%)] to-[hsl(210_90%_30%)] bg-clip-text text-transparent mb-6">
+              Наша история
+            </h3>
           </div>
           <div className="max-w-4xl mx-auto animate-slide-up">
             <div className="card">
@@ -133,7 +138,9 @@ const BrandSection = () => {
         {/* Временная линия - горизонтальная */}
         <div className="mb-20">
           <div className="text-center mb-12 animate-fade-in">
-            <h3 className="heading-3 text-foreground mb-6">Ключевые вехи</h3>
+            <h3 className="heading-3 bg-gradient-to-r from-[hsl(200_80%_70%)] to-[hsl(210_90%_30%)] bg-clip-text text-transparent mb-6">
+              Ключевые вехи
+            </h3>
           </div>
           <div className="max-w-4xl mx-auto overflow-x-auto">
             <div className="flex space-x-6 pb-4">
@@ -146,7 +153,7 @@ const BrandSection = () => {
                     style={{ minWidth: '280px' }}
                   >
                     <div className="flex-shrink-0">
-                      <div className="w-12 h-12 bg-gradient-iris rounded-xl flex items-center justify-center shadow-iris group-hover:scale-110 transition-transform duration-300">
+                      <div className="w-12 h-12 bg-gradient-to-r from-[hsl(200_75%_55%)] to-[hsl(210_75%_35%)] rounded-xl flex items-center justify-center shadow-iris group-hover:scale-110 transition-transform duration-300">
                         <IconComponent className="h-6 w-6 text-white" />
                       </div>
                     </div>

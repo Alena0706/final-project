@@ -35,11 +35,11 @@ export default function ProfileSection(): React.JSX.Element {
 
   // Проверяем, есть ли изменения для сохранения
   const hasChanges =
-    selectedFile ||
-    (formData.name.trim() && formData.name !== (user?.name ?? '')) ||
-    (formData.email.trim() && formData.email !== (user?.email ?? '')) ||
-    (formData.phone.trim() && formData.phone !== (user?.phone ?? '')) ||
-    (formData.city.trim() && formData.city !== (user?.city ?? ''));
+    selectedFile !== null ||
+    (formData.name.trim() !== '' && formData.name !== (user?.name ?? '')) ||
+    (formData.email.trim() !== '' && formData.email !== (user?.email ?? '')) ||
+    (formData.phone.trim() !== '' && formData.phone !== (user?.phone ?? '')) ||
+    (formData.city.trim() !== '' && formData.city !== (user?.city ?? ''));
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const file = e.target.files?.[0];
@@ -125,7 +125,7 @@ export default function ProfileSection(): React.JSX.Element {
         avatarData.append('avatar', selectedFile);
         try {
           await dispatch(uploadAvatar(avatarData)).unwrap();
-        } catch (error) {
+        } catch {
           setError('Ошибка загрузки аватара');
           return;
         }
@@ -148,8 +148,8 @@ export default function ProfileSection(): React.JSX.Element {
   };
 
   return (
-    <div className="max-w-lg mx-auto mt-12 p-8 bg-gray-50 rounded-xl shadow-lg">
-      <h2 className="text-3xl font-extrabold mb-8 text-indigo-700 text-center">
+    <div className="max-w-4xl mx-auto">
+      <h2 className="text-3xl font-extrabold mb-8 text-gradient-primary text-center">
         Профиль пользователя
       </h2>
       <form onSubmit={handleSubmit} className="space-y-8">
@@ -158,16 +158,16 @@ export default function ProfileSection(): React.JSX.Element {
             <img
               src={previewUrl ?? `http://localhost:5173/${avatar ?? ''}`}
               alt="Аватар"
-              className="w-32 h-32 rounded-full object-cover mb-5 border-4 border-indigo-300 shadow-md"
+              className="w-32 h-32 rounded-full object-cover mb-5 border-4 border-primary shadow-iris"
             />
           ) : (
-            <div className="w-32 h-32 rounded-full bg-gray-300 mb-5 flex items-center justify-center text-gray-600 text-xl border-4 border-gray-300">
+            <div className="w-32 h-32 rounded-full bg-muted mb-5 flex items-center justify-center text-muted-foreground text-xl border-4 border-border">
               Нет аватара
             </div>
           )}
           <label
             htmlFor="avatarInput"
-            className="cursor-pointer px-5 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-shadow shadow-md"
+            className="cursor-pointer px-5 py-2 bg-gradient-primary text-white rounded-lg hover:shadow-iris transition-all duration-300 shadow-md"
           >
             Изменить аватар
           </label>
@@ -181,58 +181,60 @@ export default function ProfileSection(): React.JSX.Element {
           />
         </div>
 
-        {[
-          { id: 'name', label: 'Имя пользователя', required: true },
-          { id: 'email', label: 'Электронная почта', required: true },
-          { id: 'phone', label: 'Телефон', required: false },
-          { id: 'city', label: 'Город', required: false },
-        ].map(({ id, label, required }) => (
-          <div key={id}>
-            <div className="flex justify-between items-center mb-2 text-sm">
-              <label htmlFor={id} className="block mb-2 font-semibold text-gray-700">
-                {label}
-              </label>
-              {editField !== id && (
-                <button
-                  type="button"
-                  onClick={() => setEditField(id)}
-                  className="mt-1 text-indigo-600 hover:text-indigo-800 transition-colors p-1 rounded focus:outline-none focus:ring-2 focus:ring-indigo-400"
-                  aria-label={`Редактировать ${label.toLowerCase()}`}
-                >
-                  <FaPencilAlt />
-                </button>
-              )}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {[
+            { id: 'name', label: 'Имя пользователя', required: true },
+            { id: 'email', label: 'Электронная почта', required: true },
+            { id: 'phone', label: 'Телефон', required: false },
+            { id: 'city', label: 'Город', required: false },
+          ].map(({ id, label, required }) => (
+            <div key={id}>
+              <div className="flex justify-between items-center mb-2 text-sm">
+                <label htmlFor={id} className="block mb-2 font-semibold text-foreground">
+                  {label}
+                </label>
+                {editField !== id && (
+                  <button
+                    type="button"
+                    onClick={() => setEditField(id)}
+                    className="mt-1 text-primary hover:text-primary/80 transition-colors p-1 rounded focus:outline-none focus:ring-2 focus:ring-primary/20"
+                    aria-label={`Редактировать ${label.toLowerCase()}`}
+                  >
+                    <FaPencilAlt />
+                  </button>
+                )}
+              </div>
+              <input
+                id={id}
+                name={id}
+                type={id === 'email' ? 'email' : 'text'}
+                value={getFieldValue(id as keyof typeof formData)}
+                onChange={handleInputChange}
+                onClick={handleInputClick}
+                onKeyDown={handleInputKeyDown}
+                disabled={editField !== id}
+                placeholder={(user?.[id as keyof typeof user] as string) || ''}
+                className={`w-full rounded-md border px-3 py-2 placeholder-muted-foreground focus:outline-none focus:ring-2 transition-all duration-300 ${
+                  editField === id
+                    ? 'border-primary focus:ring-primary/20 bg-input'
+                    : 'border-border focus:ring-primary/20 bg-input'
+                }`}
+                required={required}
+              />
             </div>
-            <input
-              id={id}
-              name={id}
-              type={id === 'email' ? 'email' : 'text'}
-              value={getFieldValue(id as keyof typeof formData)}
-              onChange={handleInputChange}
-              onClick={handleInputClick}
-              onKeyDown={handleInputKeyDown}
-              disabled={editField !== id}
-              placeholder={(user?.[id as keyof typeof user] as string) || ''}
-              className={`w-full rounded-md border px-3 py-2 placeholder-gray-400 focus:outline-none focus:ring-2 ${
-                editField === id
-                  ? 'border-indigo-500 focus:ring-indigo-500'
-                  : 'border-gray-300 focus:ring-indigo-200'
-              }`}
-              required={required}
-            />
-          </div>
-        ))}
+          ))}
+        </div>
 
-        {error && <p className="text-red-600">{error}</p>}
-        {success && <p className="text-green-600">Профиль успешно обновлен</p>}
+        {error && <p className="text-destructive text-center">{error}</p>}
+        {success && <p className="text-green-500 text-center">Профиль успешно обновлен</p>}
 
         <button
           type="submit"
           disabled={!hasChanges}
-          className={`w-full py-3 font-bold rounded-lg transition-shadow shadow-lg ${
+          className={`w-full py-3 font-bold rounded-lg transition-all duration-300 shadow-lg ${
             !hasChanges
-              ? 'bg-gray-400 text-gray-200 cursor-not-allowed'
-              : 'bg-indigo-700 text-white hover:bg-indigo-800'
+              ? 'bg-muted text-muted-foreground cursor-not-allowed'
+              : 'bg-gradient-primary text-white hover:shadow-iris hover:transform hover:-translate-y-1'
           }`}
         >
           {hasChanges ? 'Сохранить изменения' : 'Нет изменений'}
