@@ -6,29 +6,20 @@ import { useAppSelector } from '@/shared/hooks/hooks';
 import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router';
 
-const ArrowRightIcon = ({ className }: { className?: string }) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    viewBox="0 0 24 24"
-    strokeWidth={2}
-    stroke="currentColor"
-    className={className}
-  >
-    <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-  </svg>
-);
+// Удален неиспользуемый компонент ArrowRightIcon
 
 const HeroSection = (): React.JSX.Element => {
   const user = useAppSelector((store) => store.user.user?.user);
   const [isModalOpen, setModalOpen] = useState(false);
 
-  const openModal = () => setModalOpen(true);
-  const closeModal = () => setModalOpen(false);
+  const closeModal = (): void => setModalOpen(false);
 
   return (
     <>
-      <section className="hero-section relative min-h-screen flex items-center justify-center overflow-hidden">
+      <section
+        id="hero"
+        className="hero-section relative min-h-screen flex items-center justify-center overflow-hidden"
+      >
         {/* Фоновое изображение */}
         <div className="absolute inset-0 z-0">
           <img

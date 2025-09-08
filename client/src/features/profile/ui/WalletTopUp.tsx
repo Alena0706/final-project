@@ -65,32 +65,27 @@ const WalletTopUp = (): React.JSX.Element => {
           </span>
         </div>
       </div>
-
-      <form onSubmit={handleSubmit} className="space-y-6" noValidate>
-        <div className="max-w-md mx-auto">
-          <label htmlFor="amount" className="block mb-2 font-semibold text-foreground">
-            Сумма к пополнению (₽)
-          </label>
-          <input
-            type="number"
-            min="0"
-            max="1000000"
-            id="amount"
-            name="balance"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-            className="w-full rounded-md border px-3 py-2 placeholder-muted-foreground focus:outline-none focus:ring-2 transition-all duration-300 border-border focus:ring-primary/20 bg-input"
-            placeholder="Введите сумму"
-            required
-          />
-        </div>
-
-        {error && <p className="text-destructive text-center">{error}</p>}
-        {success && <p className="text-green-500 text-center">Кошелек успешно пополнен</p>}
-
+      <form onSubmit={handleSubmit} className="max-w-sm" noValidate>
+        <label htmlFor="amount" className="block mb-2 font-medium">
+          Сумма к пополнению (₽)
+        </label>
+        <input
+          type="number"
+          min="0"
+          max="1000000"
+          id="amount"
+          name="balance"
+          value={amount}
+          onChange={(e) => setAmount(e.target.value)}
+          className="w-full border rounded px-3 py-2 mb-3 focus:outline-[hsl(200_75%_55%)]"
+          placeholder="Введите сумму"
+          required
+        />
+        {error && <p className="text-red-600 mb-2">{error}</p>}
+        {success && <p className="text-green-600 mb-2">Кошелек успешно пополнен</p>}
         <button
           type="submit"
-          className="w-full max-w-md mx-auto block py-3 font-bold rounded-lg transition-all duration-300 shadow-lg bg-gradient-primary text-white hover:shadow-iris hover:transform hover:-translate-y-1"
+          className="bg-gradient-to-r from-[hsl(200_75%_55%)] to-[hsl(210_75%_35%)] text-white px-4 py-2 rounded hover:from-[hsl(200_80%_60%)] hover:to-[hsl(210_80%_40%)] transition-all duration-300"
         >
           Пополнить кошелек
         </button>

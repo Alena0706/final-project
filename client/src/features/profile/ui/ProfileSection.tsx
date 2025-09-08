@@ -35,11 +35,11 @@ export default function ProfileSection(): React.JSX.Element {
 
   // Проверяем, есть ли изменения для сохранения
   const hasChanges =
-    !!selectedFile ||
-    (formData.name.trim() && formData.name !== (user?.name ?? '')) ||
-    (formData.email.trim() && formData.email !== (user?.email ?? '')) ||
-    (formData.phone.trim() && formData.phone !== (user?.phone ?? '')) ||
-    (formData.city.trim() && formData.city !== (user?.city ?? ''));
+    selectedFile !== null ||
+    (formData.name.trim() !== '' && formData.name !== (user?.name ?? '')) ||
+    (formData.email.trim() !== '' && formData.email !== (user?.email ?? '')) ||
+    (formData.phone.trim() !== '' && formData.phone !== (user?.phone ?? '')) ||
+    (formData.city.trim() !== '' && formData.city !== (user?.city ?? ''));
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const file = e.target.files?.[0];
@@ -125,7 +125,7 @@ export default function ProfileSection(): React.JSX.Element {
         avatarData.append('avatar', selectedFile);
         try {
           await dispatch(uploadAvatar(avatarData)).unwrap();
-        } catch (avatarError) {
+        } catch {
           setError('Ошибка загрузки аватара');
           return;
         }
