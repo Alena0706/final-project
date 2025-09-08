@@ -7,7 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 import z from 'zod';
 
 const WalletTopUp = (): React.JSX.Element => {
-  const dispatsch = useAppDispatch();
+  const dispatch = useAppDispatch();
   const balance = useAppSelector((store) => store.user.user?.user.balance);
   const transactions = useAppSelector((store) => store.wallet.transactions);
   const trans = useAppSelector((store) => store.user.user?.user.transactions);
@@ -29,15 +29,15 @@ const WalletTopUp = (): React.JSX.Element => {
       if (numAmount > 0) {
         const dataValidate = walletSchema.parse(numAmount);
         const transaction = { id: uuidv4(), amount: dataValidate, date: new Date().toISOString() };
-        // dispatsch(addTransaction(transaction));
-        void dispatsch(
+        // dispatch(addTransaction(transaction));
+        void dispatch(
           updateUser({
             balance: (balance ?? 0) + dataValidate,
             transactions: [...transactions, transaction],
           }),
         );
         if (balance && balance < dataValidate) {
-          dispatsch(setBalance(balance));
+          dispatch(setBalance(balance));
         }
         console.log(`Пополнение кошелька на сумму: ${numAmount.toString()}`);
         setSuccess(true);
@@ -55,49 +55,74 @@ const WalletTopUp = (): React.JSX.Element => {
   };
 
   return (
-    <div>
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-semibold mb-4">Пополнение кошелька</h2>
-        <h2>{balance?.toLocaleString('ru-RU', { style: 'currency', currency: 'RUB' })}</h2>
+    <div className="max-w-4xl mx-auto">
+      <div className="text-center mb-8">
+        <h2 className="text-3xl font-extrabold mb-4 text-gradient-primary">Пополнение кошелька</h2>
+        <div className="inline-flex items-center space-x-2 px-6 py-3 bg-gradient-card rounded-xl shadow-elegant">
+          <span className="text-muted-foreground">Текущий баланс:</span>
+          <span className="text-2xl font-bold text-foreground">
+            {balance?.toLocaleString('ru-RU', { style: 'currency', currency: 'RUB' })}
+          </span>
+        </div>
       </div>
-      <form onSubmit={handleSubmit} className="max-w-sm" noValidate>
-        <label htmlFor="amount" className="block mb-2 font-medium">
-          Сумма к пополнению (₽)
-        </label>
-        <input
-          type="number"
-          min="0"
-          max="1000000"
-          id="amount"
-          name="balance"
-          value={amount}
-          onChange={(e) => setAmount(e.target.value)}
-          className="w-full border rounded px-3 py-2 mb-3 focus:outline-indigo-500"
-          placeholder="Введите сумму"
-          required
-        />
-        {error && <p className="text-red-600 mb-2">{error}</p>}
-        {success && <p className="text-green-600 mb-2">Кошелек успешно пополнен</p>}
+
+      <form onSubmit={handleSubmit} className="space-y-6" noValidate>
+        <div className="max-w-md mx-auto">
+          <label htmlFor="amount" className="block mb-2 font-semibold text-foreground">
+            Сумма к пополнению (₽)
+          </label>
+          <input
+            type="number"
+            min="0"
+            max="1000000"
+            id="amount"
+            name="balance"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+            className="w-full rounded-md border px-3 py-2 placeholder-muted-foreground focus:outline-none focus:ring-2 transition-all duration-300 border-border focus:ring-primary/20 bg-input"
+            placeholder="Введите сумму"
+            required
+          />
+        </div>
+
+        {error && <p className="text-destructive text-center">{error}</p>}
+        {success && <p className="text-green-500 text-center">Кошелек успешно пополнен</p>}
+
         <button
           type="submit"
-          className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition"
+          className="w-full max-w-md mx-auto block py-3 font-bold rounded-lg transition-all duration-300 shadow-lg bg-gradient-primary text-white hover:shadow-iris hover:transform hover:-translate-y-1"
         >
-          Пополнить
+          Пополнить кошелек
         </button>
       </form>
+
       {(trans?.length ?? 0) > 0 && (
-        <div className="mt-4">
-          <h2 className="text-xl font-semibold mb-4">История пополнений</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="mt-12">
+          <h3 className="text-2xl font-bold mb-6 text-gradient-primary text-center">
+            История пополнений
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {trans?.map((transaction, index) => (
-              <div key={`${transaction.id}-${index}`} className="space-y-4">
-                <p className="text-gray-500">
-                  {new Date(transaction.date).toLocaleString('ru-RU', {
-                    month: 'long',
-                    day: 'numeric',
-                  })}
-                </p>
-                <p className="text-gray-900">
+              <div
+                key={`${transaction.id}-${index}`}
+                className="bg-gradient-card rounded-lg p-4 border border-border shadow-elegant hover:shadow-iris transition-all duration-300"
+              >
+                <div className="flex justify-between items-start mb-2">
+                  <p className="text-muted-foreground text-sm">
+                    {new Date(transaction.date).toLocaleString('ru-RU', {
+                      month: 'long',
+                      day: 'numeric',
+                      year: 'numeric',
+                    })}
+                  </p>
+                  <span className="text-xs text-muted-foreground">
+                    {new Date(transaction.date).toLocaleTimeString('ru-RU', {
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    })}
+                  </span>
+                </div>
+                <p className="text-foreground font-semibold text-lg">
                   {transaction.amount.toLocaleString('ru-RU', {
                     style: 'currency',
                     currency: 'RUB',
