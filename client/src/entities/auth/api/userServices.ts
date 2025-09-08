@@ -1,11 +1,6 @@
 import axios from 'axios';
 import { AuthResponseSchema } from '../model/schemas';
-import type {
-  AuthResponseT,
-  UserLoginT,
-  UserRegisterT,
-  UserUpdateT,
-} from '../model/types';
+import type { AuthResponseT, UserLoginT, UserRegisterT, UserUpdateT } from '../model/types';
 import axiosInstance from '@/shared/api/axiosInstance';
 
 // eslint-disable-next-line @typescript-eslint/no-extraneous-class
@@ -22,24 +17,22 @@ class UserServices {
     return AuthResponseSchema.parse(updateUser.data);
   }
 
-  static async uploadAvatar(formData: FormData): Promise<void> {
-    await axiosInstance.post('/auth/upload', formData, {
-      responseType: 'blob',
+  static async uploadAvatar(formData: FormData): Promise<any> {
+    const response = await axiosInstance.post('/auth/upload', formData, {
       headers: {
         'Content-Type': 'multipart/form-data', // Указываем, что отправляем файл
       },
     });
+    return response.data;
   }
 
   static async login(user: UserLoginT): Promise<AuthResponseT> {
-
     const response = await axios.post('/api/auth/signin', user);
     return AuthResponseSchema.parse(response.data);
   }
 
   static async refresh(): Promise<AuthResponseT> {
     const response = await axios.get('/api/auth/refresh');
-    console.log(response.data);
     return AuthResponseSchema.parse(response.data);
   }
 

@@ -27,6 +27,18 @@ module.exports = {
         },
         onDelete: 'SET NULL',
       },
+      image: {
+        type: Sequelize.STRING,
+      },
+      video: {
+        type: Sequelize.STRING,
+      },
+      description: {
+        type: Sequelize.STRING,
+      },
+      city: {
+        type: Sequelize.STRING,
+      },
       contractId: {
         type: Sequelize.INTEGER,
         references: {
