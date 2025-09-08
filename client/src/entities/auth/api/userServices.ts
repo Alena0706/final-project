@@ -1,10 +1,9 @@
 import axios from 'axios';
-import { AuthResponseSchema, userUpdateResponseSchema } from '../model/schemas';
+import { AuthResponseSchema } from '../model/schemas';
 import type {
   AuthResponseT,
   UserLoginT,
   UserRegisterT,
-  UserUpdateResponseT,
   UserUpdateT,
 } from '../model/types';
 import axiosInstance from '@/shared/api/axiosInstance';
@@ -17,6 +16,7 @@ class UserServices {
   }
 
   static async updateUser(user: UserUpdateT): Promise<AuthResponseT> {
+    console.log(user);
     const updateUser = await axiosInstance.patch('/auth/update', user);
     console.log(updateUser);
     return AuthResponseSchema.parse(updateUser.data);
@@ -32,6 +32,7 @@ class UserServices {
   }
 
   static async login(user: UserLoginT): Promise<AuthResponseT> {
+
     const response = await axios.post('/api/auth/signin', user);
     return AuthResponseSchema.parse(response.data);
   }

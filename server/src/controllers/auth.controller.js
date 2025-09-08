@@ -7,30 +7,43 @@ const bcrypt = require('bcrypt');
 require('dotenv').config();
 
 class AuthController {
-
   static async updateUser(req, res) {
-    const userId = res.locals.user.id; // предположим, auth middleware добавил user в req
-    const { name, email, password, phone, city } = req.body;    
+    const userId = res.locals.user.id;
+    console.log(req.body);
+    console.log(userId);
+    const { name, email, password, phone, city, balance, transactions, oldpassword } = req.body;
 
     if (email && !validateEmail(email)) {
       return res.status(400).json({ error: 'Некорректный email' });
     }
-
+    
     const updateData = {};
     if (name) updateData.name = name;
     if (email) updateData.email = email;
     if (password) updateData.hashpass = await await bcrypt.hash(password, 10);
     if (phone) updateData.phone = phone;
     if (city) updateData.city = city;
+    if (balance) updateData.balance = balance;
+    if (transactions) {
+      const user = await AuthService.getUser(userId);
+      const currentTransactions = user?.transactions || [];
+      updateData.transactions = [...currentTransactions, ...transactions];
+    }
+    if (oldpassword) {
+      const user = await AuthService.validatePassword(oldpassword, userId);
+      if (user){
+        if (password) updateData.hashpass = await bcrypt.hash(password, 10);
+      }
+    }
 
     try {
       const updatedUser = await AuthService.updateUser(userId, updateData);
       console.log(updatedUser);
-      const { refreshToken, accessToken } = generateTokens(updatedUser);
-    res
-      .cookie('refreshToken', refreshToken, cookieConfig.refresh)
-      .status(200)
-      .json({ user: updatedUser, accessToken });
+      const { refreshToken, accessToken } = generateTokens({ user: updatedUser });
+      res
+        .cookie('refreshToken', refreshToken, cookieConfig.refresh)
+        .status(200)
+        .json({ user: updatedUser, accessToken });
     } catch (err) {
       console.log(err);
       res.status(500).json({ message: err.message });
@@ -39,7 +52,8 @@ class AuthController {
 
   static async uploadAvatar(req, res) {
     try {
-      await AuthService.uploadAvatar(req.file);
+      await AuthService.uploadAvatar(req.file, res.locals.user.id);
+
       res.status(200).json({ message: `Изображение успешно сохранено` });
     } catch (err) {
       console.log(err);

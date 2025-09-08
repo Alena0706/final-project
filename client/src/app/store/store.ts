@@ -1,11 +1,15 @@
 import { configureStore } from '@reduxjs/toolkit';
 import userReducer from '@/entities/auth/model/slice';
 import twoFAReducer from '@/entities/2fa/model/slice';
+import chatReducer from '@/entities/chat/model/slice';
+import walletReducer from '@/entities/wallet/model/slice';
 
 export const store = configureStore({
   reducer: {
     user: userReducer,
     twoFactor: twoFAReducer,
+    chat: chatReducer,
+    wallet: walletReducer,
   },
 });
 

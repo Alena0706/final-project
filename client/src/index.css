@@ -1,8 +1,333 @@
-/* @tailwind base;
-@tailwind components;
-@tailwind utilities; */
 @import 'tailwindcss';
 
-/* Нейтральная дизайн система в бело-голубых тонах
-Все цвета в формате HSL - спокойная и профессиональная палитра
-*/
+/* Темная дизайн-система для сайта франшизы IrisPhoto */
+:root {
+  /* Основная цветовая палитра - темные тона */
+  --primary: #4c82f7; /* Синий */
+  --primary-foreground: #f8fafc;
+  --secondary: #2d2d36; /* Темно-серый */
+  --secondary-foreground: #f8fafc;
+  --accent: #22c55e; /* Зеленый */
+  --accent-foreground: #fef2f2;
+
+  /* Фоновые цвета - темная тема */
+  --background: #0f0f14; /* Очень темный серый */
+  --foreground: #f1f5f9; /* Светло-серый текст */
+  --muted: #1e1e26; /* Темно-серый для карточек */
+  --muted-foreground: #94a3b8; /* Серый текст */
+
+  /* Элементы интерфейса */
+  --card: #16161d;
+  --card-foreground: #f1f5f9;
+  --border: #2d2d36;
+  --input: #1a1a21;
+  --ring: #4c82f7;
+
+  /* Состояния */
+  --destructive: #ef4444;
+  --destructive-foreground: #f8fafc;
+
+  /* Дополнительные цвета для франшизы */
+  --gold: #fbbf24; /* Золотой - премиум */
+  --gold-foreground: #451a03;
+
+  /* Градиенты для темной темы */
+  --gradient-primary: linear-gradient(135deg, #4c82f7 0%, #22c55e 100%);
+  --gradient-card: linear-gradient(135deg, #16161d 0%, #1e1e26 100%);
+  --gradient-hero: linear-gradient(135deg, #0c0c12 0%, #1a2332 50%, #1a3d2e 100%);
+  --gradient-iris: linear-gradient(135deg, #4c82f7 0%, #7c3aed 50%, #c026d3 100%);
+
+  /* Тени для темной темы */
+  --shadow-elegant: 0 10px 25px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -4px rgba(0, 0, 0, 0.2);
+  --shadow-iris: 0 20px 25px -5px rgba(76, 130, 247, 0.3), 0 10px 10px -5px rgba(76, 130, 247, 0.1);
+  --shadow-gold: 0 20px 25px -5px rgba(251, 191, 36, 0.3), 0 10px 10px -5px rgba(251, 191, 36, 0.1);
+
+  /* Радиусы */
+  --radius: 0.75rem;
+}
+
+/* Базовые стили для body */
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  line-height: 1.6;
+}
+
+/* Утилитарные классы */
+@layer utilities {
+  .bg-gradient-primary {
+    background: var(--gradient-primary);
+  }
+
+  .bg-gradient-card {
+    background: var(--gradient-card);
+  }
+
+  .bg-gradient-hero {
+    background: var(--gradient-hero);
+  }
+
+  .bg-gradient-iris {
+    background: var(--gradient-iris);
+  }
+
+  .shadow-elegant {
+    box-shadow: var(--shadow-elegant);
+  }
+
+  .shadow-iris {
+    box-shadow: var(--shadow-iris);
+  }
+
+  .shadow-gold {
+    box-shadow: var(--shadow-gold);
+  }
+
+  .text-gradient-primary {
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* Дополнительные утилиты */
+  .glass-effect {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .card-dark {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-elegant);
+  }
+}
+
+/* Анимации для современного интерфейса */
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+@keyframes pulse-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 20px rgba(76, 130, 247, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(76, 130, 247, 0.6);
+  }
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.animate-slide-up {
+  animation: slide-up 0.6s ease-out forwards;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.8s ease-out forwards;
+}
+
+/* Базовые стили для плавных переходов */
+* {
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke,
+    opacity, box-shadow, transform, filter, backdrop-filter;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 300ms;
+}
+
+/* Стили для скролла */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--muted);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+}
+
+/* Стили для форм */
+.form-input {
+  background: var(--input);
+  border: 1px solid var(--border);
+  color: var(--foreground);
+  border-radius: calc(var(--radius) - 2px);
+  padding: 0.75rem 1rem;
+  width: 100%;
+  transition: all 0.3s ease;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(76, 130, 247, 0.2);
+}
+
+.form-input::placeholder {
+  color: var(--muted-foreground);
+}
+
+/* Стили для кнопок */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius);
+  font-weight: 500;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border: none;
+}
+
+.btn-primary {
+  background: var(--gradient-primary);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  box-shadow: var(--shadow-iris);
+}
+
+.btn-primary:hover {
+  box-shadow: var(--shadow-gold);
+  transform: translateY(-2px);
+}
+
+.btn-secondary {
+  background: var(--secondary);
+  color: var(--secondary-foreground);
+  border: 1px solid var(--border);
+  padding: 0.75rem 1.5rem;
+}
+
+.btn-secondary:hover {
+  background: var(--muted);
+}
+
+/* Стили для карточек */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-elegant);
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-iris);
+}
+
+/* Стили для навигации */
+.navbar {
+  background: rgba(15, 15, 23, 0.95);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+}
+
+/* Стили для hero секции */
+.hero-section {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  background: var(--gradient-hero);
+}
+
+/* Стили для секций */
+.section {
+  padding: 6rem 0;
+  position: relative;
+}
+
+.section-alt {
+  background: rgba(30, 30, 38, 0.3);
+}
+
+/* Стили для заголовков */
+.heading-1 {
+  font-size: clamp(2rem, 5vw, 4rem);
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 1rem;
+}
+
+.heading-2 {
+  font-size: clamp(1.5rem, 4vw, 3rem);
+  font-weight: 600;
+  line-height: 1.3;
+  margin-bottom: 1rem;
+}
+
+.heading-3 {
+  font-size: clamp(1.25rem, 3vw, 2rem);
+  font-weight: 600;
+  line-height: 1.4;
+  margin-bottom: 0.75rem;
+}
+
+/* Адаптивные стили */
+@media (max-width: 768px) {
+  .section {
+    padding: 4rem 0;
+  }
+
+  .card {
+    padding: 1rem;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    padding: 0.625rem 1.25rem;
+    font-size: 0.875rem;
+  }
+}

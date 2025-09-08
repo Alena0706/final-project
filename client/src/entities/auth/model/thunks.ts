@@ -4,16 +4,13 @@ import UserServices from '../api/userServices';
 
 type verify2FAT = {
   token: string;
-  email: string
+  email: string;
 };
 
 export const updateUser = createAsyncThunk('user/updateUser', async (user: UserUpdateT) => {
-
   const update = await UserServices.updateUser(user);
-  console.log(update);
   return update;
-}
-);
+});
 
 export const registerUser = createAsyncThunk('user/register', (user: UserRegisterT) =>
   UserServices.register(user),
@@ -34,4 +31,3 @@ export const logoutUser = createAsyncThunk('user/logout', async () => UserServic
 export const verify2FA = createAsyncThunk('user/verify2FA', async ({ token, email }: verify2FAT) =>
   UserServices.verify2FA(token, email),
 );
-
