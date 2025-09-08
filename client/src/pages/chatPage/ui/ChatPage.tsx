@@ -3,7 +3,7 @@ import { io } from 'socket.io-client';
 import { addMessage, joinRoom, setHistory } from '@/entities/chat/model/slice';
 import { useAppDispatch, useAppSelector } from '@/shared/hooks/hooks';
 
-const socket = io('http://localhost:3000');
+const socket = io();
 
 export default function ChatPage(): React.JSX.Element {
   const dispatch = useAppDispatch();

@@ -6,7 +6,10 @@ import axiosInstance from '@/shared/api/axiosInstance';
 // eslint-disable-next-line @typescript-eslint/no-extraneous-class
 class UserServices {
   static async register(user: UserRegisterT): Promise<AuthResponseT> {
-    const response = await axios.post('/api/auth/signup', user);
+    const response = await axios.post('/auth/signup', user, {
+      withCredentials: true,
+      baseURL: '/api',
+    });
     return AuthResponseSchema.parse(response.data);
   }
 
@@ -27,21 +30,33 @@ class UserServices {
   }
 
   static async login(user: UserLoginT): Promise<AuthResponseT> {
-    const response = await axios.post('/api/auth/signin', user);
+    const response = await axios.post('/auth/signin', user, {
+      withCredentials: true,
+      baseURL: '/api',
+    });
     return AuthResponseSchema.parse(response.data);
   }
 
   static async refresh(): Promise<AuthResponseT> {
-    const response = await axios.get('/api/auth/refresh');
+    const response = await axios.get('/auth/refresh', {
+      withCredentials: true,
+      baseURL: '/api', // Добавляем baseURL для корректной работы
+    });
     return AuthResponseSchema.parse(response.data);
   }
 
   static async logout(): Promise<void> {
-    await axios.delete('/api/auth/logout');
+    await axios.delete('/auth/logout', {
+      withCredentials: true,
+      baseURL: '/api',
+    });
   }
 
   static async verify2FA(token: string, email: string): Promise<AuthResponseT> {
-    const response = await axios.post('/api/auth/verify2FA', { token, email });
+    const response = await axios.post('/auth/verify2FA', { token, email }, {
+      withCredentials: true,
+      baseURL: '/api',
+    });
     return AuthResponseSchema.parse(response.data);
   }
 }

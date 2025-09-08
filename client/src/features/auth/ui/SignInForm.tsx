@@ -9,12 +9,16 @@ export default function SignInForm(): React.JSX.Element {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  const handleSubmit: FormEventHandler<HTMLFormElement> = (e): void => {
+  const handleSubmit: FormEventHandler<HTMLFormElement> = async (e): Promise<void> => {
     e.preventDefault();
     const data = Object.fromEntries(new FormData(e.currentTarget));
     const dataValidate = userLoginSchema.parse(data);
-    void dispatch(loginUser(dataValidate));
-    void navigate('/');
+    try {
+      await dispatch(loginUser(dataValidate)).unwrap();
+      navigate('/');
+    } catch (error) {
+      console.error('Login failed:', error);
+    }
   };
 
   return (

@@ -51,6 +51,6 @@ export const userLoginSchema = z.object({
 });
 
 export const AuthResponseSchema = z.object({
-  accessToken: z.string(),
   user: userSchema,
+  accessToken: z.string(),
 });

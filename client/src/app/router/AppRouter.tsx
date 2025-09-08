@@ -9,6 +9,9 @@ import FranchisePage from '@/pages/franchisePage/ui/FranchisePage';
 import WalletTopUp from '@/features/profile/ui/WalletTopUp';
 import ProfileSection from '@/features/profile/ui/ProfileSection';
 import ChangePassword from '@/features/profile/ui/ChangePassword';
+import UserInvoices from '@/features/invoices/ui/UserInvoices';
+import UserNotifications from '@/features/notifications/ui/UserNotifications';
+import AdminDashboard from '@/features/admin/ui/AdminDashboard';
 
 export default function AppRouter(): React.JSX.Element {
   return (
@@ -18,9 +21,12 @@ export default function AppRouter(): React.JSX.Element {
         <Route path="/profile" element={<ProfilePage />}>
           <Route index element={<Navigate to="wallet" replace />} />
           <Route path="wallet" element={<WalletTopUp />} />
+          <Route path="invoices" element={<UserInvoices />} />
+          <Route path="notifications" element={<UserNotifications />} />
           <Route path="personal" element={<ProfileSection />} />
           <Route path="password" element={<ChangePassword />} />
         </Route>
+        <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/franchise" element={<FranchisePage />} />
         <Route path="/signin" element={<SignInPage />} />
         <Route path="/signup" element={<SignUpPage />} />

@@ -4,8 +4,9 @@ import React from 'react';
 import { Link } from 'react-router';
 
 export default function Navbar(): React.JSX.Element {
-  const user = useAppSelector((store) => store.user.user);
+  const { user, status } = useAppSelector((store) => store.user);
   const dispatch = useAppDispatch();
+
 
   return (
     <header className="navbar h-16">
@@ -49,7 +50,7 @@ export default function Navbar(): React.JSX.Element {
 
         {/* Кнопки */}
         <div className="flex items-center space-x-3">
-          {user ? (
+          {user && status === 'logged' ? (
             <>
               <Link
                 to="/profile"
@@ -57,6 +58,14 @@ export default function Navbar(): React.JSX.Element {
               >
                 Профиль
               </Link>
+              {user.user?.admin && (
+                <Link
+                  to="/admin"
+                  className="text-foreground hover:text-primary px-4 py-2 font-medium"
+                >
+                  Админка
+                </Link>
+              )}
               <button onClick={() => void dispatch(logoutUser())} className="btn-secondary">
                 Выход
               </button>
