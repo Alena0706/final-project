@@ -36,41 +36,44 @@ const PartnerFormModal: React.FC<PartnerFormModalProps> = ({ isOpen, onClose, us
       className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
       onClick={onClose}
     >
-      <div
-        className="bg-white rounded-lg p-6 max-w-md mx-4"
-        onClick={e => e.stopPropagation()}
-      >
+      <div className="bg-white rounded-lg p-6 max-w-md mx-4" onClick={(e) => e.stopPropagation()}>
         <h2 className="text-xl font-bold mb-4">Стать партнером</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="phone" className="block mb-1 font-medium">Телефон</label>
+            <label htmlFor="phone" className="block mb-1 font-medium">
+              Телефон
+            </label>
             <input
               id="phone"
               type="tel"
               value={phone}
-              onChange={e => setPhone(e.target.value)}
+              onChange={(e) => setPhone(e.target.value)}
               className="w-full border rounded px-3 py-2"
               required
             />
           </div>
           <div>
-            <label htmlFor="nameOrEmail" className="block mb-1 font-medium">Имя или почта</label>
+            <label htmlFor="nameOrEmail" className="block mb-1 font-medium">
+              Имя или почта
+            </label>
             <input
               id="nameOrEmail"
               type="text"
               value={name}
-              onChange={e => setName(e.target.value)}
+              onChange={(e) => setName(e.target.value)}
               className="w-full border rounded px-3 py-2"
               required
             />
           </div>
           <div>
-            <label htmlFor="city" className="block mb-1 font-medium">Город</label>
+            <label htmlFor="city" className="block mb-1 font-medium">
+              Город
+            </label>
             <input
               id="city"
               type="text"
               value={city}
-              onChange={e => setCity(e.target.value)}
+              onChange={(e) => setCity(e.target.value)}
               className="w-full border rounded px-3 py-2"
               required
             />
@@ -85,7 +88,7 @@ const PartnerFormModal: React.FC<PartnerFormModalProps> = ({ isOpen, onClose, us
             </button>
             <button
               type="submit"
-              className="px-4 py-2 rounded bg-indigo-600 text-white hover:bg-indigo-700"
+              className="px-4 py-2 rounded bg-gradient-to-r from-[hsl(200_75%_55%)] to-[hsl(210_75%_35%)] text-white hover:from-[hsl(200_80%_60%)] hover:to-[hsl(210_80%_40%)] transition-all duration-300"
             >
               Отправить
             </button>

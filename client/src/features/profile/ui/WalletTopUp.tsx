@@ -72,7 +72,7 @@ const WalletTopUp = (): React.JSX.Element => {
           name="balance"
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
-          className="w-full border rounded px-3 py-2 mb-3 focus:outline-indigo-500"
+          className="w-full border rounded px-3 py-2 mb-3 focus:outline-[hsl(200_75%_55%)]"
           placeholder="Введите сумму"
           required
         />
@@ -80,7 +80,7 @@ const WalletTopUp = (): React.JSX.Element => {
         {success && <p className="text-green-600 mb-2">Кошелек успешно пополнен</p>}
         <button
           type="submit"
-          className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition"
+          className="bg-gradient-to-r from-[hsl(200_75%_55%)] to-[hsl(210_75%_35%)] text-white px-4 py-2 rounded hover:from-[hsl(200_80%_60%)] hover:to-[hsl(210_80%_40%)] transition-all duration-300"
         >
           Пополнить
         </button>
