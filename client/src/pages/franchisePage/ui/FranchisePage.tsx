@@ -1,6 +1,6 @@
 import { useAppSelector } from '@/shared/hooks/hooks';
 import PartnerFormModal from '@/widgets/modalMain/ui/PartnerFormModal';
-import { ArrowRight} from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import React, { useState } from 'react';
 import { Link } from 'react-router';
 import {
@@ -16,7 +16,7 @@ import {
 type CardProps = React.HTMLAttributes<HTMLDivElement> & {
   children: React.ReactNode;
 };
-const Card = ({ children, className = '', ...props }: CardProps) => (
+const Card = ({ children, className = '', ...props }: CardProps): React.JSX.Element => (
   <div
     className={`bg-gradient-card border-0 shadow-elegant rounded-3xl p-6 ${className}`}
     {...props}
@@ -25,34 +25,18 @@ const Card = ({ children, className = '', ...props }: CardProps) => (
   </div>
 );
 
-type BadgeProps = React.HTMLAttributes<HTMLSpanElement> & {
-  variant?: 'outline' | 'filled';
-  children: React.ReactNode;
-};
-const Badge = ({ children, variant = 'filled', className = '', ...props }: BadgeProps) => {
-  const base = 'inline-block rounded-full px-4 py-1 font-semibold text-sm uppercase tracking-wide';
-  const variantClass =
-    variant === 'outline'
-      ? 'border border-current bg-transparent text-current'
-      : 'bg-current text-white';
-  return (
-    <span className={`${base} ${variantClass} ${className}`} {...props}>
-      {children}
-    </span>
-  );
-};
 
 const FranchisePage = (): React.JSX.Element => {
   const user = useAppSelector((store) => store.user.user?.user);
   // Состояния для калькулятора
   const [avgMonthlyRevenue, setAvgMonthlyRevenue] = useState(100000);
   const [monthlyCosts, setMonthlyCosts] = useState(50000);
-  const [paushalnyVznos, setPaushalnyVznos] = useState(300000);
-  const [investment, setInvestment] = useState(500000);
+  const [paushalnyVznos, ] = useState(300000);
+  const [investment, ] = useState(500000);
   const [isModalOpen, setModalOpen] = useState(false);
 
-  const openModal = () => setModalOpen(true);
-  const closeModal = () => setModalOpen(false);
+  // const openModal = (): void => setModalOpen(true);
+  const closeModal = (): void => setModalOpen(false);
 
   const netMonthlyProfit = avgMonthlyRevenue - monthlyCosts;
   const paybackPeriodMonths =
@@ -68,16 +52,16 @@ const FranchisePage = (): React.JSX.Element => {
   // Для загрузки файлов
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
 
-  const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const onFileChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     if (!e.target.files) return;
     setUploadedFiles([...uploadedFiles, ...Array.from(e.target.files)]);
   };
 
   // Пример данных отзывов
   const reviews = [
-    { id: 1, user: 'Иван', text: 'Отличная франшиза, быстрый старт и поддержка на высоте.' },
-    { id: 2, user: 'Мария', text: 'Очень выручает маркетинговая помощь, рекомендую!' },
-    { id: 3, user: 'Олег', text: 'Учебные материалы помогли быстро освоиться.' },
+    { id: 1,usr: 'Иван', text: 'Отличная франшиза, быстрый старт и поддержка на высоте.' },
+    { id: 2,usr: 'Мария', text: 'Очень выручает маркетинговая помощь, рекомендую!' },
+    { id: 3,usr: 'Олег', text: 'Учебные материалы помогли быстро освоиться.' },
   ];
 
   // Данные для графика окупаемости — месяцы и накопленная прибыль
@@ -157,7 +141,7 @@ const FranchisePage = (): React.JSX.Element => {
                 Окупаемость:{' '}
                 <b>
                   {paybackPeriodMonths > 0
-                    ? `${paybackPeriodMonths} мес.`
+                    ? `${paybackPeriodMonths.toString()} мес.`
                     : 'Невозможно рассчитать'}
                 </b>
               </p>
@@ -201,8 +185,8 @@ const FranchisePage = (): React.JSX.Element => {
               />
               {uploadedFiles.length > 0 && (
                 <ul className="mt-2 text-sm text-muted-foreground">
-                  {uploadedFiles.map((file, idx) => (
-                    <li key={idx}>{file.name}</li>
+                  {uploadedFiles.map((file) => (
+                    <li key={file.name}>{file.name}</li>
                   ))}
                 </ul>
               )}
@@ -216,9 +200,9 @@ const FranchisePage = (): React.JSX.Element => {
               Отзывы партнеров
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {reviews.map(({ id, user, text }) => (
+              {reviews.map(({ id, usr, text }) => (
                 <Card key={id} className="p-6 shadow-lg">
-                  <h3 className="font-semibold mb-2">{user}</h3>
+                  <h3 className="font-semibold mb-2">{usr}</h3>
                   <p>{text}</p>
                 </Card>
               ))}
@@ -238,7 +222,7 @@ const FranchisePage = (): React.JSX.Element => {
                 >
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="month" />
-                  <YAxis tickFormatter={(val) => `${val / 1000}k ₽`} />
+                  <YAxis tickFormatter={(val) => `${(val / 1000).toString()}k ₽`} />
                   <Tooltip
                     formatter={(value: number) =>
                       value.toLocaleString('ru-RU', { style: 'currency', currency: 'RUB' })

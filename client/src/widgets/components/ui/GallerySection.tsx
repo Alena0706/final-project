@@ -1,81 +1,7 @@
-import type { InputHTMLAttributes, TextareaHTMLAttributes } from 'react';
-import React from 'react';
-
-type BadgeProps = React.HTMLAttributes<HTMLSpanElement> & {
-  variant?: 'outline' | 'filled';
-  children: React.ReactNode;
-};
-
-const Badge = ({ children, variant = 'filled', className = '', ...props }: BadgeProps) => {
-  const baseStyles =
-    'inline-block rounded-full px-4 py-1 font-semibold text-sm uppercase tracking-wide';
-  const variantStyles =
-    variant === 'outline'
-      ? 'border border-[hsl(200_80%_70%)] bg-transparent text-[hsl(200_80%_70%)]'
-      : 'bg-[hsl(200_75%_55%)] text-white';
-
-  return (
-    <span className={`${baseStyles} ${variantStyles} ${className}`} {...props}>
-      {children}
-    </span>
-  );
-};
-
-type CardProps = React.HTMLAttributes<HTMLDivElement> & {
-  children: React.ReactNode;
-};
-
-const Card = ({ children, className = '', ...props }: CardProps) => (
-  <div
-    className={`group relative overflow-hidden glass-effect rounded-xl border border-border/30 hover:border-[hsl(200_80%_70%)]/50 transition-all duration-500 hover:-translate-y-2 backdrop-blur-md ${className}`}
-    {...props}
-  >
-    {children}
-  </div>
-);
-
-const CardContent = ({
-  children,
-  className = '',
-  ...props
-}: React.HTMLAttributes<HTMLDivElement> & { children: React.ReactNode }) => (
-  <div className={`p-6 h-full ${className}`} {...props}>
-    {children}
-  </div>
-);
-
-type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement>;
-
-const Button = ({ children, className = '', ...props }: ButtonProps) => (
-  <button
-    className={`inline-flex items-center justify-center rounded-xl px-6 py-3 font-medium shadow-iris text-white bg-gradient-to-r from-[hsl(200_75%_55%)] to-[hsl(210_75%_35%)] hover:shadow-gold hover:scale-105 transition-all duration-300 ${className}`}
-    {...props}
-  >
-    {children}
-  </button>
-);
-
-type InputProps = InputHTMLAttributes<HTMLInputElement>;
-
-const Input = ({ className = '', ...props }: InputProps) => (
-  <input
-    className={`w-full rounded-md border border-border bg-background px-3 py-2 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary ${className}`}
-    {...props}
-  />
-);
-
-type TextareaProps = TextareaHTMLAttributes<HTMLTextAreaElement>;
-
-const Textarea = ({ className = '', ...props }: TextareaProps) => (
-  <textarea
-    className={`w-full rounded-md border border-border bg-background px-3 py-2 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary min-h-[100px] ${className}`}
-    {...props}
-  />
-);
-
 import { MapPin, Play, Image as ImageIcon } from 'lucide-react';
+import type { JSX } from 'react';
 
-const GallerySection = () => {
+const GallerySection = (): JSX.Element => {
   const galleryItems = [
     {
       id: 1,
@@ -148,7 +74,7 @@ const GallerySection = () => {
             <div
               key={item.id}
               className="card group animate-slide-up"
-              style={{ animationDelay: `${index * 0.1}s` }}
+              style={{ animationDelay: `${(index * 0.1).toString()}s` }}
             >
               <div className="relative">
                 <img

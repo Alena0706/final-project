@@ -1,6 +1,6 @@
 import { updateUser } from '@/entities/auth/model/thunks';
 import { walletSchema } from '@/entities/wallet/model/schemas';
-import { addTransaction, setBalance } from '@/entities/wallet/model/slice';
+import {  setBalance } from '@/entities/wallet/model/slice';
 import { useAppDispatch, useAppSelector } from '@/shared/hooks/hooks';
 import React, { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
@@ -43,8 +43,8 @@ const WalletTopUp = (): React.JSX.Element => {
         setSuccess(true);
         setAmount('');
       }
-    } catch (error) {
-      if (error instanceof z.ZodError) {
+    } catch (err) {
+      if (err instanceof z.ZodError) {
         setError('Пожалуйста, введите корректную сумму меньше или равно 1000000');
         setSuccess(false);
       } else {
@@ -99,7 +99,7 @@ const WalletTopUp = (): React.JSX.Element => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {trans?.map((transaction, index) => (
               <div
-                key={`${transaction.id}-${index}`}
+                key={`${transaction.id}-${index.toString()}`}
                 className="bg-gradient-card rounded-lg p-4 border border-border shadow-elegant hover:shadow-iris transition-all duration-300"
               >
                 <div className="flex justify-between items-start mb-2">
