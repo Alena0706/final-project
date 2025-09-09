@@ -60,7 +60,9 @@ const FAQ = () => {
             >
               <span>{question}</span>
               <svg
-                className={`w-5 h-5 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}
+                className={`w-5 h-5 transition-transform duration-300 ${
+                  isOpen ? 'rotate-180' : ''
+                }`}
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="2"
@@ -119,8 +121,10 @@ const ContactSection = () => (
   <section id="contact" className="section section-alt">
     <div className="container mx-auto px-4">
       <div className="text-center mb-16 animate-fade-in">
-        <div className="inline-flex items-center space-x-2 glass-effect rounded-full px-6 py-2 mb-4">
-          <span className="text-foreground font-medium uppercase tracking-wide text-sm">Контакты</span>
+        <div className="sr-only">
+          <span className="text-foreground font-medium uppercase tracking-wide text-sm">
+            Контакты
+          </span>
         </div>
         <h2 className="heading-2 text-gradient-primary mb-6">Свяжитесь с нами</h2>
         <p className="text-xl text-muted-foreground max-w-3xl mx-auto">

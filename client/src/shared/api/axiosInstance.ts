@@ -10,9 +10,7 @@ const axiosInstance = axios.create({
 });
 
 // Функция для получения токена из localStorage
-const getAccessToken = (): string | null => {
-  return localStorage.getItem('accessToken');
-};
+const getAccessToken = (): string | null => localStorage.getItem('accessToken');
 
 // Функция для сохранения токена в localStorage
 const setAccessToken = (token: string): void => {
@@ -28,7 +26,7 @@ axiosInstance.interceptors.request.use((config) => {
   const token = getAccessToken();
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
-    console.log('Sending request with token:', token.substring(0, 20) + '...');
+    console.log('Sending request with token:', `${token.substring(0, 20)}...`);
   } else {
     console.log('No token found in localStorage');
   }
@@ -43,18 +41,23 @@ axiosInstance.interceptors.response.use(
     if (prev && err.response?.status === 403 && !prev.sent) {
       prev.sent = true;
       try {
-        const response = await axios.get<{ user: any; accessToken: string }>('/api/auth/refresh', {
+        const response = await axios.get<{
+          user: { id: number; email: string; name: string };
+          accessToken: string;
+        }>('/api/auth/refresh', {
           withCredentials: true,
         });
         const newToken = response.data.accessToken;
         setAccessToken(newToken);
         prev.headers.Authorization = `Bearer ${newToken}`;
-        return axiosInstance(prev);
+        return await axiosInstance(prev);
       } catch (refreshError) {
         // Если refresh не удался, удаляем токен и перенаправляем на логин
         removeAccessToken();
         window.location.href = '/signin';
-        return Promise.reject(refreshError);
+        return Promise.reject(
+          refreshError instanceof Error ? refreshError : new Error(String(refreshError)),
+        );
       }
     }
 

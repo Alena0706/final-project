@@ -61,12 +61,12 @@ const BrandSection = () => {
         {/* Описание бренда */}
         <div className="mb-20">
           <div className="text-center mb-16 animate-fade-in">
-            <div className="inline-flex items-center space-x-2 glass-effect rounded-full px-6 py-2 mb-4">
+            <div className="sr-only">
               <span className="text-foreground font-medium uppercase tracking-wide text-sm">
                 Описание бренда
               </span>
             </div>
-        
+
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
               Пионеры в области профессиональной фотографии радужки глаза в России
             </p>

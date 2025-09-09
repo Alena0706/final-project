@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { AuthResponseSchema } from '../model/schemas';
 import type { AuthResponseT, UserLoginT, UserRegisterT, UserUpdateT } from '../model/types';
 import axiosInstance from '@/shared/api/axiosInstance';
@@ -6,10 +5,7 @@ import axiosInstance from '@/shared/api/axiosInstance';
 // eslint-disable-next-line @typescript-eslint/no-extraneous-class
 class UserServices {
   static async register(user: UserRegisterT): Promise<AuthResponseT> {
-    const response = await axios.post('/auth/signup', user, {
-      withCredentials: true,
-      baseURL: '/api',
-    });
+    const response = await axiosInstance.post('/auth/signup', user);
     return AuthResponseSchema.parse(response.data);
   }
 
@@ -20,7 +16,7 @@ class UserServices {
     return AuthResponseSchema.parse(updateUser.data);
   }
 
-  static async uploadAvatar(formData: FormData): Promise<any> {
+  static async uploadAvatar(formData: FormData): Promise<unknown> {
     const response = await axiosInstance.post('/auth/upload', formData, {
       headers: {
         'Content-Type': 'multipart/form-data', // Указываем, что отправляем файл
@@ -30,33 +26,21 @@ class UserServices {
   }
 
   static async login(user: UserLoginT): Promise<AuthResponseT> {
-    const response = await axios.post('/auth/signin', user, {
-      withCredentials: true,
-      baseURL: '/api',
-    });
+    const response = await axiosInstance.post('/auth/signin', user);
     return AuthResponseSchema.parse(response.data);
   }
 
   static async refresh(): Promise<AuthResponseT> {
-    const response = await axios.get('/auth/refresh', {
-      withCredentials: true,
-      baseURL: '/api', // Добавляем baseURL для корректной работы
-    });
+    const response = await axiosInstance.get('/auth/refresh');
     return AuthResponseSchema.parse(response.data);
   }
 
   static async logout(): Promise<void> {
-    await axios.delete('/auth/logout', {
-      withCredentials: true,
-      baseURL: '/api',
-    });
+    await axiosInstance.delete('/auth/logout');
   }
 
   static async verify2FA(token: string, email: string): Promise<AuthResponseT> {
-    const response = await axios.post('/auth/verify2FA', { token, email }, {
-      withCredentials: true,
-      baseURL: '/api',
-    });
+    const response = await axiosInstance.post('/auth/verify2FA', { token, email });
     return AuthResponseSchema.parse(response.data);
   }
 }

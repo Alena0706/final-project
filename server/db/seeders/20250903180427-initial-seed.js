@@ -2,7 +2,7 @@
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
-  async up(queryInterface, Sequelize) {
+  async up(queryInterface) {
     await queryInterface.bulkInsert(
       'Users',
       [
@@ -94,19 +94,19 @@ module.exports = {
       [
         {
           userId: 1,
-          balance: 5000.00,
+          balance: 5000.0,
           createdAt: new Date(),
           updatedAt: new Date(),
         },
         {
           userId: 2,
-          balance: 2500.00,
+          balance: 2500.0,
           createdAt: new Date(),
           updatedAt: new Date(),
         },
         {
           userId: 3,
-          balance: 1000.00,
+          balance: 1000.0,
           createdAt: new Date(),
           updatedAt: new Date(),
         },
@@ -120,7 +120,7 @@ module.exports = {
       [
         {
           walletId: 1,
-          amount: 5000.00,
+          amount: 5000.0,
           type: 'deposit',
           status: 'completed',
           description: 'Начальный баланс администратора',
@@ -130,7 +130,7 @@ module.exports = {
         },
         {
           walletId: 2,
-          amount: 2500.00,
+          amount: 2500.0,
           type: 'deposit',
           status: 'completed',
           description: 'Начальный баланс пользователя',
@@ -140,7 +140,7 @@ module.exports = {
         },
         {
           walletId: 3,
-          amount: 1000.00,
+          amount: 1000.0,
           type: 'deposit',
           status: 'completed',
           description: 'Начальный баланс пользователя',
@@ -158,7 +158,7 @@ module.exports = {
       [
         {
           userId: 2,
-          amount: 1500.00,
+          amount: 1500.0,
           description: 'Ежемесячная плата за франшизу',
           status: 'pending',
           dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // через неделю
@@ -170,7 +170,7 @@ module.exports = {
         },
         {
           userId: 3,
-          amount: 2000.00,
+          amount: 2000.0,
           description: 'Регистрационный взнос',
           status: 'paid',
           dueDate: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000), // 3 дня назад
@@ -182,7 +182,7 @@ module.exports = {
         },
         {
           userId: 2,
-          amount: 800.00,
+          amount: 800.0,
           description: 'Дополнительные услуги',
           status: 'overdue',
           dueDate: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000), // 5 дней назад
@@ -203,7 +203,7 @@ module.exports = {
         {
           invoiceId: 2,
           walletId: 3,
-          amount: 2000.00,
+          amount: 2000.0,
           status: 'completed',
           createdAt: new Date(),
           updatedAt: new Date(),
@@ -220,7 +220,9 @@ module.exports = {
           userId: 2,
           type: 'invoice_generated',
           title: 'Новый счет',
-          message: 'Вам выставлен новый счет на сумму 1500.00 ₽. Срок оплаты: ' + new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString('ru-RU'),
+          message: `Вам выставлен новый счет на сумму 1500.00 ₽. Срок оплаты: ${new Date(
+            Date.now() + 7 * 24 * 60 * 60 * 1000,
+          ).toLocaleDateString('ru-RU')}`,
           isRead: false,
           sentAt: new Date(),
           createdAt: new Date(),
@@ -240,7 +242,8 @@ module.exports = {
           userId: 2,
           type: 'invoice_reminder',
           title: 'Напоминание о счете',
-          message: 'У вас есть просроченный счет #3 на сумму 800.00 ₽. Пожалуйста, оплатите его как можно скорее.',
+          message:
+            'У вас есть просроченный счет #3 на сумму 800.00 ₽. Пожалуйста, оплатите его как можно скорее.',
           isRead: false,
           sentAt: new Date(),
           createdAt: new Date(),
@@ -250,7 +253,8 @@ module.exports = {
           userId: 1,
           type: 'manual',
           title: 'Добро пожаловать в админку',
-          message: 'Вы успешно вошли в систему как администратор. Теперь вы можете управлять счетами и уведомлениями.',
+          message:
+            'Вы успешно вошли в систему как администратор. Теперь вы можете управлять счетами и уведомлениями.',
           isRead: true,
           sentAt: new Date(),
           createdAt: new Date(),
@@ -261,7 +265,7 @@ module.exports = {
     );
   },
 
-  async down(queryInterface, Sequelize) {
+  async down(queryInterface) {
     await queryInterface.bulkDelete('Notifications', null, {});
     await queryInterface.bulkDelete('Payments', null, {});
     await queryInterface.bulkDelete('Invoices', null, {});

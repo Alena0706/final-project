@@ -90,7 +90,14 @@ export const userSlice = createSlice({
       .addCase(loginUser.rejected, (state, action) => {
         state.user = null;
         state.status = 'guest';
-        state.error = action.error.message ?? 'Unknown error';
+        // Более детальная обработка ошибок
+        if (action.payload) {
+          state.error = action.payload as string;
+        } else if (action.error.message) {
+          state.error = action.error.message;
+        } else {
+          state.error = 'Ошибка входа в систему';
+        }
       })
       .addCase(loginUser.pending, (state) => {
         state.status = 'loading';

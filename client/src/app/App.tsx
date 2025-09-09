@@ -10,7 +10,11 @@ function App(): React.JSX.Element {
   const userStatus = useAppSelector((state) => state.user.status);
 
   useEffect(() => {
-    void dispatch(refreshUser());
+    // Проверяем, есть ли токен в localStorage перед вызовом refresh
+    const token = localStorage.getItem('accessToken');
+    if (token) {
+      void dispatch(refreshUser());
+    }
   }, []);
 
   // Загружаем кошелек после успешной авторизации

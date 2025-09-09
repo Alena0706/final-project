@@ -19,9 +19,10 @@ export const registerUser = createAsyncThunk('user/register', async (user: UserR
   return response;
 });
 
-export const uploadAvatar = createAsyncThunk('user/uploadAvatar', async (formData: FormData) =>
-  UserServices.uploadAvatar(formData),
-);
+export const uploadAvatar = createAsyncThunk('user/uploadAvatar', async (formData: FormData) => {
+  const result: unknown = await UserServices.uploadAvatar(formData);
+  return result;
+});
 
 export const loginUser = createAsyncThunk('user/login', async (user: UserLoginT) => {
   const response = await UserServices.login(user);
@@ -40,8 +41,11 @@ export const logoutUser = createAsyncThunk('user/logout', async () => {
   removeAccessToken();
 });
 
-export const verify2FA = createAsyncThunk('user/verify2FA', async ({ token, email }: verify2FAT) => {
-  const response = await UserServices.verify2FA(token, email);
-  setAccessToken(response.accessToken);
-  return response;
-});
+export const verify2FA = createAsyncThunk(
+  'user/verify2FA',
+  async ({ token, email }: verify2FAT) => {
+    const response = await UserServices.verify2FA(token, email);
+    setAccessToken(response.accessToken);
+    return response;
+  },
+);

@@ -1,31 +1,52 @@
 import { userLoginSchema } from '@/entities/auth/model/schemas';
 import { loginUser } from '@/entities/auth/model/thunks';
-import { useAppDispatch } from '@/shared/hooks/hooks';
+import { useAppDispatch, useAppSelector } from '@/shared/hooks/hooks';
 import type { FormEventHandler } from 'react';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 
 export default function SignInForm(): React.JSX.Element {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const { error, status } = useAppSelector((state) => state.user);
+  const [validationError, setValidationError] = useState<string>('');
 
-  const handleSubmit: FormEventHandler<HTMLFormElement> = async (e): Promise<void> => {
-    e.preventDefault();
-    const data = Object.fromEntries(new FormData(e.currentTarget));
-    const dataValidate = userLoginSchema.parse(data);
-    try {
-      await dispatch(loginUser(dataValidate)).unwrap();
-      navigate('/');
-    } catch (error) {
-      console.error('Login failed:', error);
+  // Редирект после успешного входа
+  useEffect(() => {
+    if (status === 'logged') {
+      void navigate('/');
     }
+  }, [status, navigate]);
+
+  const handleSubmit: FormEventHandler<HTMLFormElement> = (e) => {
+    e.preventDefault();
+    setValidationError('');
+
+    void (async () => {
+      try {
+        const data = Object.fromEntries(new FormData(e.currentTarget));
+        const dataValidate = userLoginSchema.parse(data);
+        await dispatch(loginUser(dataValidate)).unwrap();
+        // Редирект теперь происходит в useEffect
+      } catch (loginError: unknown) {
+        if (loginError instanceof Error && loginError.name === 'ZodError') {
+          setValidationError('Пожалуйста, заполните все поля корректно');
+        } else {
+          console.error('Login failed:', loginError);
+          // Показываем пользователю более подробную информацию об ошибке
+          if (loginError && typeof loginError === 'object' && 'message' in loginError) {
+            setValidationError(`Ошибка входа: ${String(loginError.message)}`);
+          } else {
+            setValidationError('Произошла ошибка при входе. Попробуйте еще раз.');
+          }
+        }
+      }
+    })();
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
-
-
         {/* Форма */}
         <div className="card">
           <div className="text-center mb-8">
@@ -34,6 +55,13 @@ export default function SignInForm(): React.JSX.Element {
           </div>
 
           <form className="space-y-6" noValidate onSubmit={handleSubmit}>
+            {/* Отображение ошибок */}
+            {(error ?? validationError) && (
+              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+                {error ?? validationError}
+              </div>
+            )}
+
             <div className="space-y-4">
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-foreground mb-2">
@@ -82,8 +110,8 @@ export default function SignInForm(): React.JSX.Element {
               </a>
             </div>
 
-            <button type="submit" className="btn-primary w-full">
-              Войти
+            <button type="submit" className="btn-primary w-full" disabled={status === 'loading'}>
+              {status === 'loading' ? 'Вход...' : 'Войти'}
             </button>
 
             <div className="text-center">
