@@ -397,6 +397,7 @@ textarea:disabled::placeholder {
   color: white;
   padding: 0.75rem 1.5rem;
   box-shadow: var(--shadow-iris);
+  border-radius: calc(var(--radius) - 2px);
 }
 
 .btn-primary:hover {
@@ -409,6 +410,7 @@ textarea:disabled::placeholder {
   color: var(--secondary-foreground);
   border: 1px solid var(--border);
   padding: 0.75rem 1.5rem;
+  border-radius: calc(var(--radius) - 2px);
 }
 
 .btn-secondary:hover {
@@ -545,6 +547,24 @@ input[data-editable-placeholder]:not([value]):not(:focus)::before {
   font-style: italic;
   pointer-events: none;
   z-index: 1;
+}
+
+/* Плавные переходы для страниц */
+.page-transition {
+  will-change: opacity;
+}
+
+/* Оптимизация анимаций */
+@media (prefers-reduced-motion: no-preference) {
+  .page-transition {
+    transition: opacity 0.3s ease-in-out;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-transition {
+    transition: none;
+  }
 }
 
 @media (max-width: 768px) {

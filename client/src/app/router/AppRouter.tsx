@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { Navigate, Route, Routes } from 'react-router';
 import Layout from '../Layout';
 import SignUpPage from '@/pages/SignUp/ui/SignUpPage';
@@ -14,33 +14,90 @@ import UserNotifications from '@/features/notifications/ui/UserNotifications';
 import AdminDashboard from '@/features/admin/ui/AdminDashboard';
 import NotFoundPage from '@/pages/NotFound/ui/NotFoundPage';
 import ProtectedRoute from '@/shared/lib/ProtectedRoute';
+import PageLoader from '@/widgets/components/ui/PageLoader';
+import PageTransition from '@/widgets/components/ui/PageTransition';
+import AuthTransition from '@/widgets/components/ui/AuthTransition';
 import { useAppSelector } from '@/shared/hooks/hooks';
 
 export default function AppRouter(): React.JSX.Element {
   const userStatus = useAppSelector((store) => store.user.status);
+  const isLoading = userStatus === 'loading';
 
   return (
-    <Routes>
-      <Route element={<Layout />}>
-        <Route path="/" element={<MainPage />} />
-        {/* Приватные маршруты */}
-        <Route element={<ProtectedRoute isAllowed={userStatus !== 'guest'} redirectTo="/signup" />}>
-          <Route path="/profile" element={<ProfilePage />}>
-            <Route index element={<Navigate to="wallet" replace />} />
-            <Route path="wallet" element={<WalletTopUp />} />
-            <Route path="invoices" element={<UserInvoices />} />
-            <Route path="notifications" element={<UserNotifications />} />
-            <Route path="personal" element={<ProfileSection />} />
-            <Route path="password" element={<ChangePassword />} />
+    <Suspense fallback={<PageLoader message="Загрузка страницы..." />}>
+      <Routes>
+        <Route element={<Layout />}>
+          <Route path="/" element={<MainPage />} />
+          
+          {/* Приватные маршруты */}
+          <Route 
+            element={
+              <ProtectedRoute 
+                isAllowed={userStatus !== 'guest'} 
+                redirectTo="/signup" 
+                isLoading={isLoading}
+              />
+            }
+          >
+            <Route 
+              path="/profile" 
+              element={
+                <PageTransition>
+                  <ProfilePage />
+                </PageTransition>
+              }
+            >
+              <Route index element={<Navigate to="wallet" replace />} />
+              <Route path="wallet" element={<WalletTopUp />} />
+              <Route path="invoices" element={<UserInvoices />} />
+              <Route path="notifications" element={<UserNotifications />} />
+              <Route path="personal" element={<ProfileSection />} />
+              <Route path="password" element={<ChangePassword />} />
+            </Route>
+            <Route 
+              path="/admin" 
+              element={
+                <PageTransition>
+                  <AdminDashboard />
+                </PageTransition>
+              } 
+            />
           </Route>
-          <Route path="/admin" element={<AdminDashboard />} />
-        </Route>
 
-        <Route path="/franchise" element={<FranchisePage />} />
-        <Route path="/signin" element={<SignInPage />} />
-        <Route path="/signup" element={<SignUpPage />} />
-        <Route path="*" element={<NotFoundPage />} />
-      </Route>
-    </Routes>
+          <Route 
+            path="/franchise" 
+            element={
+              <PageTransition>
+                <FranchisePage />
+              </PageTransition>
+            } 
+          />
+          <Route 
+            path="/signin" 
+            element={
+              <AuthTransition>
+                <SignInPage />
+              </AuthTransition>
+            } 
+          />
+          <Route 
+            path="/signup" 
+            element={
+              <AuthTransition>
+                <SignUpPage />
+              </AuthTransition>
+            } 
+          />
+          <Route 
+            path="*" 
+            element={
+              <PageTransition>
+                <NotFoundPage />
+              </PageTransition>
+            } 
+          />
+        </Route>
+      </Routes>
+    </Suspense>
   );
 }

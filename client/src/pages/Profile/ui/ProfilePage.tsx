@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link, Outlet, useLocation } from 'react-router';
+import ContentTransition from '@/widgets/components/ui/ContentTransition';
 
 const tabs = [
   { id: 'wallet', label: 'Пополнение кошелька' },
@@ -56,8 +57,10 @@ const ProfilePage = (): React.JSX.Element => {
 
           {/* Правая колонка - контент */}
           <main className="lg:col-span-3">
-            <div className="card animate-slide-up" style={{ animationDelay: '0.2s' }}>
-              <Outlet />
+            <div className="card">
+              <ContentTransition>
+                <Outlet />
+              </ContentTransition>
             </div>
           </main>
         </div>
