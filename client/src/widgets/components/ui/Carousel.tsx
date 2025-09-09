@@ -1,28 +1,17 @@
-import type {
-  ReactNode,
-  KeyboardEvent} from "react";
-import React, {
-  useState,
-  useRef,
-  useEffect,
-  forwardRef
-} from "react";
+import type { ReactNode, KeyboardEvent } from 'react';
+import React, { useState, useRef, useEffect, forwardRef } from 'react';
 
 type CarouselProps = {
   children: ReactNode;
   opts?: {
-    align?: "start" | "center";
+    align?: 'start' | 'center';
     loop?: boolean;
   };
   className?: string;
-}
+};
 
-const Carousel: React.FC<CarouselProps> = ({
-  children,
-  opts = {},
-  className = "",
-}) => {
-  const { align = "start", loop = false } = opts;
+const Carousel: React.FC<CarouselProps> = ({ children, opts = {}, className = '' }) => {
+  const { align = 'start', loop = false } = opts;
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -37,15 +26,14 @@ const Carousel: React.FC<CarouselProps> = ({
     if (!childrenElements[index]) return;
 
     const target = childrenElements[index];
-    if (align === "start") {
+    if (align === 'start') {
       container.scrollTo({
         left: target.offsetLeft,
-        behavior: "smooth",
+        behavior: 'smooth',
       });
-    } else if (align === "center") {
-      const offset =
-        target.offsetLeft - container.offsetWidth / 2 + target.offsetWidth / 2;
-      container.scrollTo({ left: offset, behavior: "smooth" });
+    } else if (align === 'center') {
+      const offset = target.offsetLeft - container.offsetWidth / 2 + target.offsetWidth / 2;
+      container.scrollTo({ left: offset, behavior: 'smooth' });
     }
   };
 
@@ -69,9 +57,9 @@ const Carousel: React.FC<CarouselProps> = ({
 
   // Навигация с клавиатуры (стрелки влево/вправо)
   const onKeyDown = (e: KeyboardEvent) => {
-    if (e.key === "ArrowLeft") {
+    if (e.key === 'ArrowLeft') {
       prev();
-    } else if (e.key === "ArrowRight") {
+    } else if (e.key === 'ArrowRight') {
       next();
     }
   };
@@ -89,10 +77,7 @@ const Carousel: React.FC<CarouselProps> = ({
       aria-roledescription="carousel"
       aria-label="Carousel"
     >
-      <div
-        ref={containerRef}
-        className="flex overflow-x-auto scroll-smooth snap-x snap-mandatory"
-      >
+      <div ref={containerRef} className="flex overflow-x-auto scroll-smooth snap-x snap-mandatory">
         {childrenArray}
       </div>
       <button
@@ -116,41 +101,35 @@ const Carousel: React.FC<CarouselProps> = ({
 type CarouselContentProps = {
   children: ReactNode;
   className?: string;
-}
+};
 
 const CarouselContent = forwardRef<HTMLDivElement, CarouselContentProps>(
-  ({ children, className = "" }, ref) => (
+  ({ children, className = '' }, ref) => (
     <div
       ref={ref}
       className={`flex snap-x snap-mandatory overflow-x-auto scroll-smooth ${className}`}
     >
       {children}
     </div>
-  )
+  ),
 );
-CarouselContent.displayName = "CarouselContent";
+CarouselContent.displayName = 'CarouselContent';
 
 type CarouselItemProps = {
   children: ReactNode;
   className?: string;
-}
+};
 
-const CarouselItem: React.FC<CarouselItemProps> = ({
-  children,
-  className = "",
-}) => (
+const CarouselItem: React.FC<CarouselItemProps> = ({ children, className = '' }) => (
   <div className={`snap-start flex-shrink-0 ${className}`}>{children}</div>
 );
 
 type CarouselButtonProps = {
   className?: string;
   onClick?: () => void;
-}
+};
 
-const CarouselPrevious: React.FC<CarouselButtonProps> = ({
-  className = "",
-  onClick,
-}) => (
+const CarouselPrevious: React.FC<CarouselButtonProps> = ({ className = '', onClick }) => (
   <button
     onClick={onClick}
     aria-label="Previous slide"
@@ -160,10 +139,7 @@ const CarouselPrevious: React.FC<CarouselButtonProps> = ({
   </button>
 );
 
-const CarouselNext: React.FC<CarouselButtonProps> = ({
-  className = "",
-  onClick,
-}) => (
+const CarouselNext: React.FC<CarouselButtonProps> = ({ className = '', onClick }) => (
   <button
     onClick={onClick}
     aria-label="Next slide"
@@ -173,10 +149,4 @@ const CarouselNext: React.FC<CarouselButtonProps> = ({
   </button>
 );
 
-export {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-};
+export { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious };

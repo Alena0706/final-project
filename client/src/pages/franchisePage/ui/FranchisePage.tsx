@@ -1,7 +1,8 @@
 import { useAppSelector } from '@/shared/hooks/hooks';
 import PartnerFormModal from '@/widgets/modalMain/ui/PartnerFormModal';
-import { ArrowRightIcon } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import React, { useState } from 'react';
+import { Link } from 'react-router';
 import {
   LineChart,
   Line,
@@ -15,7 +16,7 @@ import {
 type CardProps = React.HTMLAttributes<HTMLDivElement> & {
   children: React.ReactNode;
 };
-const Card = ({ children, className = '', ...props }: CardProps) => (
+const Card = ({ children, className = '', ...props }: CardProps): React.JSX.Element => (
   <div
     className={`bg-gradient-card border-0 shadow-elegant rounded-3xl p-6 ${className}`}
     {...props}
@@ -29,12 +30,12 @@ const FranchisePage = (): React.JSX.Element => {
   // Состояния для калькулятора
   const [avgMonthlyRevenue, setAvgMonthlyRevenue] = useState(100000);
   const [monthlyCosts, setMonthlyCosts] = useState(50000);
-  const [paushalnyVznos] = useState(300000);
-  const [investment] = useState(500000);
+  const [paushalnyVznos, ] = useState(300000);
+  const [investment, ] = useState(500000);
   const [isModalOpen, setModalOpen] = useState(false);
 
-  const openModal = () => setModalOpen(true);
-  const closeModal = () => setModalOpen(false);
+  // const openModal = (): void => setModalOpen(true);
+  const closeModal = (): void => setModalOpen(false);
 
   const netMonthlyProfit = avgMonthlyRevenue - monthlyCosts;
   const paybackPeriodMonths =
@@ -50,16 +51,16 @@ const FranchisePage = (): React.JSX.Element => {
   // Для загрузки файлов
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
 
-  const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const onFileChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     if (!e.target.files) return;
     setUploadedFiles([...uploadedFiles, ...Array.from(e.target.files)]);
   };
 
   // Пример данных отзывов
   const reviews = [
-    { id: 1, user: 'Иван', text: 'Отличная франшиза, быстрый старт и поддержка на высоте.' },
-    { id: 2, user: 'Мария', text: 'Очень выручает маркетинговая помощь, рекомендую!' },
-    { id: 3, user: 'Олег', text: 'Учебные материалы помогли быстро освоиться.' },
+    { id: 1,usr: 'Иван', text: 'Отличная франшиза, быстрый старт и поддержка на высоте.' },
+    { id: 2,usr: 'Мария', text: 'Очень выручает маркетинговая помощь, рекомендую!' },
+    { id: 3,usr: 'Олег', text: 'Учебные материалы помогли быстро освоиться.' },
   ];
 
   // Данные для графика окупаемости — месяцы и накопленная прибыль
@@ -139,22 +140,22 @@ const FranchisePage = (): React.JSX.Element => {
                 Окупаемость:{' '}
                 <b>
                   {paybackPeriodMonths > 0
-                    ? `${paybackPeriodMonths} мес.`
+                    ? `${paybackPeriodMonths.toString()} мес.`
                     : 'Невозможно рассчитать'}
                 </b>
               </p>
             </div>
           </div>
         </div>
-        <button
-          className="bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 shadow-lg shadow-purple-700/50 text-lg px-8 py-6 group"
-          onClick={openModal}
-        >
-          <>
+        <div className="flex  mb-16">
+          <Link
+            to="/signup"
+            className="bg-gradient-to-r from-[hsl(200_75%_55%)] to-[hsl(210_75%_35%)] text-primary-foreground text-lg px-8 py-4 rounded-xl shadow-iris hover:shadow-gold transition-all duration-300 hover:scale-105 flex items-center group hover:bg-gradient-to-r hover:from-[hsl(200_80%_60%)] hover:to-[hsl(210_80%_40%)]"
+          >
             Стать партнером
-            <ArrowRightIcon className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-          </>
-        </button>
+            <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+          </Link>
+        </div>
         {/* Документы и загрузка */}
         <div>
           <h2 className="text-4xl font-bold mb-6 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
@@ -183,8 +184,8 @@ const FranchisePage = (): React.JSX.Element => {
               />
               {uploadedFiles.length > 0 && (
                 <ul className="mt-2 text-sm text-muted-foreground">
-                  {uploadedFiles.map((file, idx) => (
-                    <li key={idx}>{file.name}</li>
+                  {uploadedFiles.map((file) => (
+                    <li key={file.name}>{file.name}</li>
                   ))}
                 </ul>
               )}
@@ -198,9 +199,9 @@ const FranchisePage = (): React.JSX.Element => {
               Отзывы партнеров
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {reviews.map(({ id, user, text }) => (
+              {reviews.map(({ id, usr, text }) => (
                 <Card key={id} className="p-6 shadow-lg">
-                  <h3 className="font-semibold mb-2">{user}</h3>
+                  <h3 className="font-semibold mb-2">{usr}</h3>
                   <p>{text}</p>
                 </Card>
               ))}
@@ -220,13 +221,19 @@ const FranchisePage = (): React.JSX.Element => {
                 >
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="month" />
-                  <YAxis tickFormatter={(val) => `${val / 1000}k ₽`} />
+                  <YAxis tickFormatter={(val) => `${(val / 1000).toString()}k ₽`} />
                   <Tooltip
                     formatter={(value: number) =>
                       value.toLocaleString('ru-RU', { style: 'currency', currency: 'RUB' })
                     }
                   />
-                  <Line type="monotone" dataKey="profit" stroke="#8884d8" strokeWidth={3} dot />
+                  <Line
+                    type="monotone"
+                    dataKey="profit"
+                    stroke="hsl(200, 75%, 55%)"
+                    strokeWidth={3}
+                    dot
+                  />
                 </LineChart>
               </ResponsiveContainer>
             </Card>

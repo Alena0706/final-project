@@ -3,10 +3,12 @@ import { registerUser } from '@/entities/auth/model/thunks';
 import { useAppDispatch } from '@/shared/hooks/hooks';
 import type { ChangeEventHandler, FormEventHandler } from 'react';
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router';
 
 export default function SignUpForm(): React.JSX.Element {
   const dispatch = useAppDispatch();
   const [phone, setPhone] = useState('+7');
+  const navigate = useNavigate();
 
   function formatPhone(value: string): string {
     const digits = value.replace(/\D/g, '');
@@ -31,11 +33,16 @@ export default function SignUpForm(): React.JSX.Element {
     return formatted;
   }
 
-  const handleSubmit: FormEventHandler<HTMLFormElement> = (e): void => {
+  const handleSubmit: FormEventHandler<HTMLFormElement> = async (e): Promise<void> => {
     e.preventDefault();
     const data = Object.fromEntries(new FormData(e.currentTarget));
     const dataValidate = userRegisterSchema.parse(data);
-    void dispatch(registerUser(dataValidate));
+    try {
+      await dispatch(registerUser(dataValidate)).unwrap();
+      navigate('/');
+    } catch (error) {
+      console.error('Registration failed:', error);
+    }
   };
 
   const handlePhoneChange: ChangeEventHandler<HTMLInputElement> = (e) => {
@@ -49,15 +56,7 @@ export default function SignUpForm(): React.JSX.Element {
   return (
     <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-lg w-full space-y-8">
-        {/* Логотип */}
-        <div className="text-center">
-          <div className="inline-flex items-center space-x-2 mb-8">
-            <div className="w-10 h-10 bg-gradient-iris rounded-xl flex items-center justify-center">
-              <span className="text-white font-bold">I</span>
-            </div>
-            <span className="text-2xl font-bold text-gradient-primary">IrisPhoto</span>
-          </div>
-        </div>
+    
 
         {/* Форма */}
         <div className="card">
@@ -204,22 +203,6 @@ export default function SignUpForm(): React.JSX.Element {
               </p>
             </div>
           </form>
-        </div>
-
-        {/* Преимущества регистрации */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
-          <div className="card">
-            <div className="text-2xl mb-2">🚀</div>
-            <p className="text-sm text-muted-foreground">Быстрый старт бизнеса</p>
-          </div>
-          <div className="card">
-            <div className="text-2xl mb-2">📚</div>
-            <p className="text-sm text-muted-foreground">Полное обучение</p>
-          </div>
-          <div className="card">
-            <div className="text-2xl mb-2">💼</div>
-            <p className="text-sm text-muted-foreground">Поддержка 24/7</p>
-          </div>
         </div>
       </div>
     </div>

@@ -133,6 +133,210 @@ class EmailService {
     }
   }
 
+  // Отправка уведомления по email
+  async sendNotificationEmail(userEmail, userName, title, message) {
+    const mailOptions = {
+      from: {
+        name: 'Твой взгляд',
+        address: process.env.EMAIL_USER,
+      },
+      to: userEmail,
+      subject: `🔔 ${title}`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; text-align: center; color: white;">
+            <h1 style="margin: 0; font-size: 24px;">${title}</h1>
+            <p style="margin: 10px 0 0 0; font-size: 16px; opacity: 0.9;">Уведомление от "Твой взгляд"</p>
+          </div>
+          
+          <div style="padding: 30px; background: #f8f9fa;">
+            <h2 style="color: #333; margin-top: 0;">Привет, ${userName}!</h2>
+            <div style="background: white; padding: 20px; border-radius: 8px; border-left: 4px solid #667eea; margin: 20px 0;">
+              <p style="color: #666; line-height: 1.6; margin: 0; white-space: pre-line;">${message}</p>
+            </div>
+            
+            <div style="margin: 30px 0;">
+              <a href="${process.env.CLIENT_URL || 'http://localhost:5173'}/profile" 
+                 style="background: #667eea; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block; font-weight: bold;">
+                Перейти в профиль
+              </a>
+            </div>
+          </div>
+          
+          <div style="padding: 20px; background: #e9ecef; text-align: center; color: #666; font-size: 14px;">
+            <p style="margin: 0;">С уважением,<br><strong>Команда "Твой взгляд"</strong></p>
+            <p style="margin: 10px 0 0 0; font-size: 12px;">
+              Это автоматическое сообщение, пожалуйста, не отвечайте на него.
+            </p>
+          </div>
+        </div>
+      `,
+      text: `
+        ${title}
+        
+        Привет, ${userName}!
+        
+        ${message}
+        
+        Перейти в профиль: ${process.env.CLIENT_URL || 'http://localhost:5173'}/profile
+        
+        С уважением,
+        Команда "Твой взгляд"
+      `,
+    };
+
+    try {
+      const result = await this.transporter.sendMail(mailOptions);
+      console.log('✅ Notification email sent successfully:', result.messageId);
+      return result;
+    } catch (error) {
+      console.error('❌ Error sending notification email:', error);
+      throw error;
+    }
+  }
+
+  // Отправка уведомления о новом счете
+  async sendInvoiceNotificationEmail(userEmail, userName, invoiceAmount, dueDate, description) {
+    const mailOptions = {
+      from: {
+        name: 'Твой взгляд',
+        address: process.env.EMAIL_USER,
+      },
+      to: userEmail,
+      subject: '📄 Новый счет для оплаты',
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <div style="background: #28a745; padding: 30px; text-align: center; color: white;">
+            <h1 style="margin: 0; font-size: 24px;">📄 Новый счет</h1>
+            <p style="margin: 10px 0 0 0; font-size: 16px; opacity: 0.9;">Требуется оплата</p>
+          </div>
+          
+          <div style="padding: 30px; background: #f8f9fa;">
+            <h2 style="color: #333; margin-top: 0;">Привет, ${userName}!</h2>
+            <p style="color: #666; line-height: 1.6;">
+              Вам выставлен новый счет, который необходимо оплатить.
+            </p>
+            
+            <div style="background: white; padding: 20px; border-radius: 8px; border: 1px solid #dee2e6; margin: 20px 0;">
+              <h3 style="color: #333; margin-top: 0;">Детали счета:</h3>
+              <p style="margin: 10px 0;"><strong>Сумма:</strong> ${invoiceAmount} ₽</p>
+              <p style="margin: 10px 0;"><strong>Срок оплаты:</strong> ${new Date(dueDate).toLocaleDateString('ru-RU')}</p>
+              <p style="margin: 10px 0;"><strong>Описание:</strong> ${description || 'Счет за услуги'}</p>
+            </div>
+            
+            <div style="margin: 30px 0;">
+              <a href="${process.env.CLIENT_URL || 'http://localhost:5173'}/profile" 
+                 style="background: #28a745; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block; font-weight: bold;">
+                Оплатить счет
+              </a>
+            </div>
+          </div>
+          
+          <div style="padding: 20px; background: #e9ecef; text-align: center; color: #666; font-size: 14px;">
+            <p style="margin: 0;">С уважением,<br><strong>Команда "Твой взгляд"</strong></p>
+          </div>
+        </div>
+      `,
+      text: `
+        Новый счет
+        
+        Привет, ${userName}!
+        
+        Вам выставлен новый счет, который необходимо оплатить.
+        
+        Детали счета:
+        - Сумма: ${invoiceAmount} ₽
+        - Срок оплаты: ${new Date(dueDate).toLocaleDateString('ru-RU')}
+        - Описание: ${description || 'Счет за услуги'}
+        
+        Оплатить счет: ${process.env.CLIENT_URL || 'http://localhost:5173'}/profile
+        
+        С уважением,
+        Команда "Твой взгляд"
+      `,
+    };
+
+    try {
+      const result = await this.transporter.sendMail(mailOptions);
+      console.log('✅ Invoice notification email sent successfully:', result.messageId);
+      return result;
+    } catch (error) {
+      console.error('❌ Error sending invoice notification email:', error);
+      throw error;
+    }
+  }
+
+  // Отправка уведомления об оплате
+  async sendPaymentConfirmationEmail(userEmail, userName, amount, description) {
+    const mailOptions = {
+      from: {
+        name: 'Твой взгляд',
+        address: process.env.EMAIL_USER,
+      },
+      to: userEmail,
+      subject: '✅ Платеж успешно проведен',
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <div style="background: #28a745; padding: 30px; text-align: center; color: white;">
+            <h1 style="margin: 0; font-size: 24px;">✅ Платеж проведен</h1>
+            <p style="margin: 10px 0 0 0; font-size: 16px; opacity: 0.9;">Оплата успешно обработана</p>
+          </div>
+          
+          <div style="padding: 30px; background: #f8f9fa;">
+            <h2 style="color: #333; margin-top: 0;">Привет, ${userName}!</h2>
+            <p style="color: #666; line-height: 1.6;">
+              Ваш платеж был успешно обработан.
+            </p>
+            
+            <div style="background: white; padding: 20px; border-radius: 8px; border: 1px solid #dee2e6; margin: 20px 0;">
+              <h3 style="color: #333; margin-top: 0;">Детали платежа:</h3>
+              <p style="margin: 10px 0;"><strong>Сумма:</strong> ${amount} ₽</p>
+              <p style="margin: 10px 0;"><strong>Описание:</strong> ${description}</p>
+              <p style="margin: 10px 0;"><strong>Дата:</strong> ${new Date().toLocaleString('ru-RU')}</p>
+            </div>
+            
+            <div style="margin: 30px 0;">
+              <a href="${process.env.CLIENT_URL || 'http://localhost:5173'}/profile" 
+                 style="background: #28a745; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block; font-weight: bold;">
+                Перейти в профиль
+              </a>
+            </div>
+          </div>
+          
+          <div style="padding: 20px; background: #e9ecef; text-align: center; color: #666; font-size: 14px;">
+            <p style="margin: 0;">С уважением,<br><strong>Команда "Твой взгляд"</strong></p>
+          </div>
+        </div>
+      `,
+      text: `
+        Платеж проведен
+        
+        Привет, ${userName}!
+        
+        Ваш платеж был успешно обработан.
+        
+        Детали платежа:
+        - Сумма: ${amount} ₽
+        - Описание: ${description}
+        - Дата: ${new Date().toLocaleString('ru-RU')}
+        
+        Перейти в профиль: ${process.env.CLIENT_URL || 'http://localhost:5173'}/profile
+        
+        С уважением,
+        Команда "Твой взгляд"
+      `,
+    };
+
+    try {
+      const result = await this.transporter.sendMail(mailOptions);
+      console.log('✅ Payment confirmation email sent successfully:', result.messageId);
+      return result;
+    } catch (error) {
+      console.error('❌ Error sending payment confirmation email:', error);
+      throw error;
+    }
+  }
+
   // Проверка подключения к Gmail
   async verifyConnection() {
     try {

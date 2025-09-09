@@ -1,4 +1,6 @@
-const EyeIcon = ({ className }: { className?: string }) => (
+import React from 'react';
+
+const EyeIcon = ({ className }: { className?: string }) : React.JSX.Element => (
   <svg
     className={className}
     xmlns="http://www.w3.org/2000/svg"
@@ -16,7 +18,7 @@ const EyeIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const TargetIcon = ({ className }: { className?: string }) => (
+const TargetIcon = ({ className }: { className?: string }): React.JSX.Element => (
   <svg
     className={className}
     xmlns="http://www.w3.org/2000/svg"
@@ -31,7 +33,7 @@ const TargetIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const UsersIcon = ({ className }: { className?: string }) => (
+const UsersIcon = ({ className }: { className?: string }): React.JSX.Element => (
   <svg
     className={className}
     xmlns="http://www.w3.org/2000/svg"
@@ -49,7 +51,7 @@ const UsersIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const AwardIcon = ({ className }: { className?: string }) => (
+const AwardIcon = ({ className }: { className?: string }): React.JSX.Element => (
   <svg
     className={className}
     xmlns="http://www.w3.org/2000/svg"
@@ -63,30 +65,39 @@ const AwardIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const AboutSection = () => {
+
+const AboutSection = ():React.JSX.Element => {
   const features = [
     {
+      id: 'feature-unique-tech',
       icon: EyeIcon,
       title: 'Уникальная технология',
       description:
         'Профессиональная фотография радужки глаза с использованием специального оборудования и программного обеспечения',
+      animationDelay: '0s',
     },
     {
+      id: 'feature-personalized',
       icon: TargetIcon,
       title: 'Персонализированный подход',
       description:
         'Каждый снимок - это произведение искусства, созданное индивидуально для клиента',
+      animationDelay: '0.1s',
     },
     {
+      id: 'feature-wide-audience',
       icon: UsersIcon,
       title: 'Широкая аудитория',
       description: 'От личных портретов до корпоративных подарков - наши услуги востребованы везде',
+      animationDelay: '0.2s',
     },
     {
+      id: 'feature-high-quality',
       icon: AwardIcon,
       title: 'Высокое качество',
       description:
         'Только проверенные технологии и профессиональное оборудование для идеального результата',
+      animationDelay: '0.3s',
     },
   ];
 
@@ -94,12 +105,14 @@ const AboutSection = () => {
     <section id="about" className="section section-alt">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16 animate-fade-in">
-          <div className="inline-flex items-center space-x-2 glass-effect rounded-full px-6 py-2 mb-4">
+          <div className="sr-only">
             <span className="text-foreground font-medium uppercase tracking-wide text-sm">
               О нас
             </span>
           </div>
-          <h2 className="heading-2 text-gradient-primary mb-6">Магия взгляда в деталях</h2>
+          <h2 className="heading-2 bg-gradient-to-r from-[hsl(200_80%_70%)] to-[hsl(210_90%_30%)] bg-clip-text text-transparent mb-6">
+            Магия взгляда в деталях
+          </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
             Мы создаем уникальные художественные портреты радужки глаза, превращая каждый взгляд в
             произведение искусства
@@ -125,10 +138,10 @@ const AboutSection = () => {
             </div>
           </div>
           <div className="relative animate-slide-up" style={{ animationDelay: '0.2s' }}>
-            <div className="absolute inset-0 bg-primary/10 rounded-3xl blur-3xl opacity-50"></div>
+            <div className="absolute inset-0 bg-[hsl(200_80%_70%)]/10 rounded-3xl blur-3xl opacity-50"></div>
             <div className="card relative">
               <div className="text-center">
-                <div className="inline-flex p-4 bg-gradient-iris rounded-2xl mb-4 shadow-iris">
+                <div className="inline-flex p-4 bg-gradient-to-r from-[hsl(200_75%_55%)] to-[hsl(210_75%_35%)] rounded-2xl mb-4 shadow-iris">
                   <EyeIcon className="h-8 w-8 text-white" />
                 </div>
                 <h4 className="text-xl font-bold text-foreground mb-4">Почему радужка?</h4>
@@ -142,19 +155,19 @@ const AboutSection = () => {
           </div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {features.map((feature, index) => {
+          {features.map((feature) => {
             const IconComponent = feature.icon;
             return (
               <div
-                key={index}
+                key={feature.id}
                 className="card group animate-slide-up"
-                style={{ animationDelay: `${index * 0.1}s` }}
+                style={{ animationDelay: feature.animationDelay }}
               >
                 <div className="flex flex-col items-center text-center space-y-4">
-                  <div className="p-3 bg-gradient-iris rounded-xl group-hover:scale-110 transition-transform duration-300 shadow-iris">
+                  <div className="p-3 bg-gradient-to-r from-[hsl(200_75%_55%)] to-[hsl(210_75%_35%)] rounded-xl group-hover:scale-110 transition-transform duration-300 shadow-iris">
                     <IconComponent className="h-6 w-6 text-white" />
                   </div>
-                  <h3 className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors">
+                  <h3 className="text-lg font-semibold text-foreground group-hover:text-[hsl(200_80%_70%)] transition-colors">
                     {feature.title}
                   </h3>
                   <p className="text-sm text-muted-foreground leading-relaxed">

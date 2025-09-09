@@ -9,9 +9,13 @@ module.exports = (sequelize, DataTypes) => {
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
-    static associate({Contract, Franchise}) {
+    static associate({Contract, Franchise, Wallet, Invoice, Notification}) {
       this.hasMany(Contract, {foreignKey: 'userId', as: 'treaty'})
       this.hasMany(Franchise, {foreignKey: 'userId', as: 'franchise'})
+      this.hasOne(Wallet, {foreignKey: 'userId', as: 'wallet'})
+      this.hasMany(Invoice, {foreignKey: 'userId', as: 'invoices'})
+      this.hasMany(Invoice, {foreignKey: 'createdBy', as: 'createdInvoices'})
+      this.hasMany(Notification, {foreignKey: 'userId', as: 'notifications'})
     }
   }
   User.init({
@@ -23,8 +27,11 @@ module.exports = (sequelize, DataTypes) => {
     avatar: DataTypes.STRING,
     secret: DataTypes.STRING,
     admin: DataTypes.BOOLEAN,
-    balance: DataTypes.INTEGER,
+    balance: DataTypes.DECIMAL(10,2),
     transactions: DataTypes.JSONB,
+    role: DataTypes.STRING,
+    registrationDate: DataTypes.DATE,
+    monthlyAmount: DataTypes.DECIMAL(10,2),
   }, {
     sequelize,
     modelName: 'User',

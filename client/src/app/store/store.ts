@@ -5,6 +5,8 @@ import chatReducer from '@/entities/chat/model/slice';
 import walletReducer from '@/entities/wallet/model/slice';
 import franchiseReducer from '@/entities/openFrancise/model/slice';
 import adminReducer from '@/entities/admin/model/slice';
+import invoiceReducer from '@/entities/invoice/model/slice';
+import notificationReducer from '@/entities/notification/model/slice';
 
 export const store = configureStore({
   reducer: {
@@ -14,6 +16,8 @@ export const store = configureStore({
     wallet: walletReducer,
     franchise: franchiseReducer,
     admin: adminReducer,
+    invoice: invoiceReducer,
+    notification: notificationReducer,
   },
 });
 

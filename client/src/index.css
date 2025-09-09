@@ -2,18 +2,22 @@
 
 :root {
   /* Основная цветовая палитра - темные тона с голубыми акцентами */
-  --primary: #3b82f6; /* Голубой вместо зеленого */
+  --primary: hsl(200, 80%, 70%); /* Голубой в стиле HeroSection */
   --primary-foreground: #f8fafc;
   --secondary: #2d2d36; /* Темно-серый */
   --secondary-foreground: #f8fafc;
-  --accent: linear-gradient(135deg, hsl(210 90% 60%), hsl(210 80% 55%)); /* Голубой градиент */
+  --accent: linear-gradient(
+    135deg,
+    hsl(200, 80%, 70%),
+    hsl(210, 90%, 30%)
+  ); /* Голубой градиент в стиле HeroSection */
   --accent-foreground: #f8fafc;
 
   /* Фоновые цвета - темная тема */
   --background: #0f0f14; /* Очень темный серый */
   --foreground: #f1f5f9; /* Светло-серый текст */
   --muted: #1e1e26; /* Темно-серый для карточек */
-  --muted-foreground: #94a3b8; /* Серый текст */
+  --muted-foreground: #4b5563; /* Темнее серый для placeholder - лучше читается */
 
   /* Элементы интерфейса */
   --card: #16161d;
@@ -31,14 +35,23 @@
   --gold-foreground: #451a03;
 
   /* Градиенты для темной темы с голубыми тонами */
-  --gradient-primary: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%); /* Голубой градиент */
+  --gradient-primary: linear-gradient(
+    135deg,
+    hsl(200, 75%, 55%),
+    hsl(210, 75%, 35%)
+  ); /* Голубой градиент в стиле HeroSection */
   --gradient-card: linear-gradient(135deg, #16161d 0%, #1e1e26 100%);
-    --gradient-hero: transparent;  /* Добавлен синий */
-  --gradient-iris: linear-gradient(135deg, #3b82f6 0%, #2563eb 50%, #1d4ed8 100%); /* Голубой градиент */
+  --gradient-hero: transparent; /* Добавлен синий */
+  --gradient-iris: linear-gradient(
+    135deg,
+    hsl(200, 75%, 55%) 0%,
+    hsl(210, 75%, 35%) 100%
+  ); /* Голубой градиент в стиле HeroSection */
 
   /* Тени для темной темы */
   --shadow-elegant: 0 10px 25px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -4px rgba(0, 0, 0, 0.2);
-  --shadow-iris: 0 20px 25px -5px rgba(59, 130, 246, 0.3), 0 10px 10px -5px rgba(59, 130, 246, 0.1); /* Голубые тени */
+  --shadow-iris: 0 20px 25px -5px hsla(200, 75%, 55%, 0.3),
+    0 10px 10px -5px hsla(200, 75%, 55%, 0.1); /* Голубые тени в стиле HeroSection */
   --shadow-gold: 0 20px 25px -5px rgba(251, 191, 36, 0.3), 0 10px 10px -5px rgba(251, 191, 36, 0.1);
 
   /* Радиусы */
@@ -53,6 +66,17 @@ body {
   color: var(--foreground);
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
   line-height: 1.6;
+}
+
+/* Скрыть якорные ссылки */
+a[href^="#"] {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
 }
 
 /* Утилитарные классы */
@@ -106,8 +130,6 @@ body {
     box-shadow: var(--shadow-elegant);
   }
 }
-
-
 
 /* Анимации для современного интерфейса */
 @keyframes float {
@@ -205,12 +227,157 @@ body {
 
 .form-input:focus {
   outline: none;
-  border-color: var(--primary);
-  box-shadow: 0 0 0 2px rgba(76, 130, 247, 0.2);
+  border-color: hsl(200, 80%, 70%);
+  box-shadow: 0 0 0 2px hsla(200, 80%, 70%, 0.2);
 }
 
 .form-input::placeholder {
   color: var(--muted-foreground);
+  opacity: 1 !important; /* Полная непрозрачность для лучшей видимости */
+  transition: none !important; /* Убираем анимации для placeholder */
+}
+
+.form-input:focus::placeholder {
+  color: var(--muted-foreground) !important;
+  opacity: 1 !important; /* Placeholder остается видимым при фокусе */
+}
+
+/* Дополнительные стили для лучшей читаемости текста в инпутах */
+.form-input {
+  color: #1f2937 !important; /* Темно-серый текст */
+}
+
+.form-input:disabled {
+  color: #374151 !important; /* Темно-серый для disabled */
+  opacity: 0.8;
+}
+
+/* Специальные стили для Tailwind классов */
+input[type='text'],
+input[type='email'],
+input[type='password'],
+input[type='tel'],
+textarea {
+  color: #1f2937 !important; /* Темно-серый текст */
+  background-color: #f9fafb !important; /* Светлый фон для контраста */
+}
+
+input[type='text']:disabled,
+input[type='email']:disabled,
+input[type='password']:disabled,
+input[type='tel']:disabled,
+textarea:disabled {
+  color: #374151 !important; /* Темно-серый для disabled */
+  opacity: 0.8;
+}
+
+/* Улучшенные стили для placeholder */
+input::placeholder,
+textarea::placeholder {
+  color: var(--muted-foreground) !important;
+  opacity: 1 !important; /* Полная непрозрачность для лучшей видимости */
+  transition: none !important; /* Убираем анимации для placeholder */
+}
+
+input:focus::placeholder,
+textarea:focus::placeholder {
+  color: var(--muted-foreground) !important;
+  opacity: 1 !important; /* Placeholder остается видимым при фокусе */
+}
+
+input:disabled::placeholder,
+textarea:disabled::placeholder {
+  color: var(--muted-foreground) !important;
+  opacity: 0.8 !important; /* Немного прозрачности для disabled */
+}
+
+/* Специальные стили для Tailwind классов инпутов */
+.w-full.rounded-md.border.px-3.py-2 {
+  color: #1f2937 !important; /* Темно-серый текст */
+  background-color: #f9fafb !important; /* Светлый фон для контраста */
+}
+
+.w-full.rounded-md.border.px-3.py-2:disabled {
+  color: #374151 !important; /* Темно-серый для disabled */
+  opacity: 0.8;
+}
+
+.w-full.rounded-md.border.px-3.py-2::placeholder {
+  color: var(--muted-foreground) !important;
+  opacity: 1 !important; /* Полная непрозрачность для лучшей видимости */
+  transition: none !important; /* Убираем анимации для placeholder */
+}
+
+.w-full.rounded-md.border.px-3.py-2:focus::placeholder {
+  color: var(--muted-foreground) !important;
+  opacity: 1 !important; /* Placeholder остается видимым при фокусе */
+}
+
+.w-full.rounded-md.border.px-3.py-2:disabled::placeholder {
+  color: var(--muted-foreground) !important;
+  opacity: 0.8 !important; /* Немного прозрачности для disabled */
+}
+
+/* Универсальные стили для всех инпутов с Tailwind классами */
+input[class*='w-full'][class*='rounded-md'][class*='border'][class*='px-3'][class*='py-2'] {
+  color: #1f2937 !important; /* Темно-серый текст */
+  background-color: #f9fafb !important; /* Светлый фон для контраста */
+}
+
+input[class*='w-full'][class*='rounded-md'][class*='border'][class*='px-3'][class*='py-2']:disabled {
+  color: #374151 !important; /* Темно-серый для disabled */
+  opacity: 0.8;
+}
+
+input[class*='w-full'][class*='rounded-md'][class*='border'][class*='px-3'][class*='py-2']::placeholder {
+  color: var(--muted-foreground) !important;
+  opacity: 1 !important; /* Полная непрозрачность для лучшей видимости */
+  transition: none !important; /* Убираем анимации для placeholder */
+}
+
+input[class*='w-full'][class*='rounded-md'][class*='border'][class*='px-3'][class*='py-2']:focus::placeholder {
+  color: var(--muted-foreground) !important;
+  opacity: 1 !important; /* Placeholder остается видимым при фокусе */
+}
+
+input[class*='w-full'][class*='rounded-md'][class*='border'][class*='px-3'][class*='py-2']:disabled::placeholder {
+  color: var(--muted-foreground) !important;
+  opacity: 0.8 !important; /* Немного прозрачности для disabled */
+}
+
+/* Глобальные стили для всех инпутов - принудительное применение */
+input,
+textarea,
+select {
+  color: #1f2937 !important; /* Темно-серый текст */
+  background-color: #f9fafb !important; /* Светлый фон для контраста */
+}
+
+input:disabled,
+textarea:disabled,
+select:disabled {
+  color: #374151 !important; /* Темно-серый для disabled */
+  background-color: #f3f4f6 !important; /* Светло-серый фон для disabled */
+  opacity: 0.8;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--muted-foreground) !important;
+  opacity: 1 !important; /* Полная непрозрачность для лучшей видимости */
+  transition: none !important; /* Убираем анимации для placeholder */
+}
+
+input:focus::placeholder,
+textarea:focus::placeholder {
+  color: var(--muted-foreground) !important;
+  opacity: 1 !important; /* Placeholder остается видимым при фокусе */
+}
+
+input:disabled::placeholder,
+textarea:disabled::placeholder {
+  color: var(--muted-foreground) !important;
+  opacity: 0.8 !important; /* Немного прозрачности для disabled */
 }
 
 /* Стили для кнопок */
@@ -226,7 +393,7 @@ body {
 }
 
 .btn-primary {
-  background: var(--gradient-primary);
+  background: linear-gradient(135deg, hsl(200, 75%, 55%), hsl(210, 75%, 35%));
   color: white;
   padding: 0.75rem 1.5rem;
   box-shadow: var(--shadow-iris);
@@ -283,7 +450,7 @@ body {
   justify-content: center;
   position: relative;
   overflow: hidden;
-  background:transparent;
+  background: transparent;
 }
 
 /* Стили для секций */
@@ -319,6 +486,67 @@ body {
 }
 
 /* Адаптивные стили */
+/* Стили для инпутов с редактируемым placeholder */
+input[data-editable-placeholder]::placeholder,
+textarea[data-editable-placeholder]::placeholder {
+  opacity: 1 !important;
+  color: var(--muted-foreground) !important;
+  position: absolute;
+  pointer-events: none;
+  z-index: 1;
+}
+
+input[data-editable-placeholder]:focus::placeholder,
+textarea[data-editable-placeholder]:focus::placeholder {
+  opacity: 0 !important; /* Скрываем placeholder при фокусе, чтобы можно было редактировать */
+}
+
+/* Стили для инпутов где placeholder является значением по умолчанию */
+input[data-default-value]::placeholder,
+textarea[data-default-value]::placeholder {
+  opacity: 1 !important;
+  color: var(--muted-foreground) !important;
+  font-style: italic;
+}
+
+/* Стили для инпутов с редактируемым placeholder */
+input.placeholder-as-value {
+  color: var(--muted-foreground) !important;
+  font-style: italic;
+}
+
+input[data-editable-placeholder] {
+  position: relative;
+}
+
+input[data-editable-placeholder].placeholder-as-value {
+  color: var(--muted-foreground) !important;
+  font-style: italic;
+}
+
+input[data-editable-placeholder]:focus.placeholder-as-value {
+  color: #1f2937 !important; /* Темный цвет при редактировании */
+  font-style: normal;
+}
+
+/* Автоматическая инициализация для инпутов с data-editable-placeholder */
+input[data-editable-placeholder]:not([value]):not(:focus) {
+  color: var(--muted-foreground) !important;
+  font-style: italic;
+}
+
+input[data-editable-placeholder]:not([value]):not(:focus)::before {
+  content: attr(placeholder);
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--muted-foreground);
+  font-style: italic;
+  pointer-events: none;
+  z-index: 1;
+}
+
 @media (max-width: 768px) {
   .section {
     padding: 4rem 0;

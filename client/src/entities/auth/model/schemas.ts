@@ -4,13 +4,20 @@ export const userSchema = z.object({
   id: z.number(),
   email: z.string(),
   name: z.string(),
-  phone: z.string().optional(),
-  city: z.string().optional(),
+  phone: z.string().nullable().optional(),
+  city: z.string().nullable().optional(),
   secret: z.string().nullable(),
   admin: z.boolean(),
   avatar: z.string().nullable(),
-  balance: z.number(),
-  transactions: z.array(z.object({ id: z.string(), amount: z.number().min(1), date: z.string() })).nullable(),
+  balance: z.string(), // Сервер возвращает balance как строку
+  transactions: z
+    .array(z.object({ id: z.string(), amount: z.number().min(1), date: z.string() }))
+    .nullable(),
+  role: z.string().optional(),
+  registrationDate: z.string().nullable().optional(),
+  monthlyAmount: z.string().optional(),
+  createdAt: z.string().optional(),
+  updatedAt: z.string().optional(),
 });
 
 export const userUpdateSchema = z.object({
@@ -19,8 +26,11 @@ export const userUpdateSchema = z.object({
   password: z.string().min(6, { message: 'Пароль должен быть не короче 6 символов' }).optional(),
   phone: z.string().optional(),
   city: z.string().optional(),
-  balance: z.number().min(1).optional(),
-  transactions: z.array(z.object({ id: z.string(), amount: z.number().min(1), date: z.string() })).nullable().optional(),
+  balance: z.string().optional(), // Изменено на string для соответствия серверу
+  transactions: z
+    .array(z.object({ id: z.string(), amount: z.number().min(1), date: z.string() }))
+    .nullable()
+    .optional(),
   oldpassword: z.string().optional(),
 });
 
@@ -51,6 +61,6 @@ export const userLoginSchema = z.object({
 });
 
 export const AuthResponseSchema = z.object({
-  accessToken: z.string(),
   user: userSchema,
+  accessToken: z.string(),
 });

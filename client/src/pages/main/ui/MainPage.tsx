@@ -1,6 +1,5 @@
 import AboutSection from '@/widgets/components/ui/AboutSection';
 import AdvantagesCarousel from '@/widgets/components/ui/AdventagesCorusel';
-import AdvantagesSection from '@/widgets/components/ui/AdventageSection';
 import BrandSection from '@/widgets/components/ui/Brandsection';
 import ContactSection from '@/widgets/components/ui/ContactSection';
 import GallerySection from '@/widgets/components/ui/GallerySection';
@@ -15,7 +14,6 @@ export default function MainPage(): React.JSX.Element {
       <BrandSection />
       <GallerySection />
       <AdvantagesCarousel />
-      <AdvantagesSection />
       <ContactSection />
     </>
   );

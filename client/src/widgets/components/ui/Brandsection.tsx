@@ -5,14 +5,13 @@ type BadgeProps = React.HTMLAttributes<HTMLSpanElement> & {
   children: React.ReactNode;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const Badge = ({ children, variant = 'filled', className = '', ...props }: BadgeProps) => {
+const Badge = ({ children, variant = 'filled', className = '', ...props }: BadgeProps): React.JSX.Element => {
   const baseStyle =
     'inline-block rounded-full px-4 py-1 font-semibold text-sm uppercase tracking-wide';
   const variantStyle =
     variant === 'outline'
-      ? 'border border-current bg-transparent text-current'
-      : 'bg-current text-white';
+      ? 'border border-[hsl(200_80%_70%)] bg-transparent text-[hsl(200_80%_70%)]'
+      : 'bg-[hsl(200_75%_55%)] text-white';
 
   return (
     <span className={`${baseStyle} ${variantStyle} ${className}`} {...props}>
@@ -21,23 +20,14 @@ const Badge = ({ children, variant = 'filled', className = '', ...props }: Badge
   );
 };
 
-type CardProps = React.HTMLAttributes<HTMLDivElement> & {
-  children: React.ReactNode;
-};
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const Card = ({ children, className = '', ...props }: CardProps) => (
-  <div className={`bg-gradient-card border-0 shadow-elegant rounded-2xl ${className}`} {...props}>
-    {children}
-  </div>
-);
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const CardContent = ({
   children,
   className = '',
   ...props
-}: React.HTMLAttributes<HTMLDivElement> & { children: React.ReactNode }) => (
+}: React.HTMLAttributes<HTMLDivElement> & { children: React.ReactNode }): React.JSX.Element => (
   <div className={`p-6 ${className}`} {...props}>
     {children}
   </div>
@@ -45,8 +35,7 @@ const CardContent = ({
 
 import { MapPin, Calendar, Users, Award } from 'lucide-react';
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const BrandSection = () => {
+const BrandSection = (): React.JSX.Element => {
   const milestones = [
     { year: '2023', event: 'Основание компании в Пензе', icon: Calendar },
     {
@@ -65,12 +54,12 @@ const BrandSection = () => {
         {/* Описание бренда */}
         <div className="mb-20">
           <div className="text-center mb-16 animate-fade-in">
-            <div className="inline-flex items-center space-x-2 glass-effect rounded-full px-6 py-2 mb-4">
+            <div className="sr-only">
               <span className="text-foreground font-medium uppercase tracking-wide text-sm">
                 Описание бренда
               </span>
             </div>
-        
+
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
               Пионеры в области профессиональной фотографии радужки глаза в России
             </p>
@@ -79,7 +68,9 @@ const BrandSection = () => {
         {/* Наша история */}
         <div className="mb-20">
           <div className="text-center mb-12 animate-fade-in">
-            <h3 className="heading-3 text-foreground mb-6">Наша история</h3>
+            <h3 className="heading-3 bg-gradient-to-r from-[hsl(200_80%_70%)] to-[hsl(210_90%_30%)] bg-clip-text text-transparent mb-6">
+              Наша история
+            </h3>
           </div>
           <div className="max-w-4xl mx-auto animate-slide-up">
             <div className="card">
@@ -137,20 +128,22 @@ const BrandSection = () => {
         {/* Временная линия - горизонтальная */}
         <div className="mb-20">
           <div className="text-center mb-12 animate-fade-in">
-            <h3 className="heading-3 text-foreground mb-6">Ключевые вехи</h3>
+            <h3 className="heading-3 bg-gradient-to-r from-[hsl(200_80%_70%)] to-[hsl(210_90%_30%)] bg-clip-text text-transparent mb-6">
+              Ключевые вехи
+            </h3>
           </div>
           <div className="max-w-4xl mx-auto overflow-x-auto">
             <div className="flex space-x-6 pb-4">
-              {milestones.map((milestone, index) => {
+              {milestones.map((milestone) => {
                 const IconComponent = milestone.icon;
                 return (
                   <div
-                    key={index}
+                    key={`${milestone.year}-${milestone.event}`}
                     className="flex-shrink-0 flex items-center gap-6 p-6 card group animate-slide-up"
                     style={{ minWidth: '280px' }}
                   >
                     <div className="flex-shrink-0">
-                      <div className="w-12 h-12 bg-gradient-iris rounded-xl flex items-center justify-center shadow-iris group-hover:scale-110 transition-transform duration-300">
+                      <div className="w-12 h-12 bg-gradient-to-r from-[hsl(200_75%_55%)] to-[hsl(210_75%_35%)] rounded-xl flex items-center justify-center shadow-iris group-hover:scale-110 transition-transform duration-300">
                         <IconComponent className="h-6 w-6 text-white" />
                       </div>
                     </div>

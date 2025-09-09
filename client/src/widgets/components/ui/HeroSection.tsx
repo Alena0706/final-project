@@ -6,32 +6,21 @@ import { useAppSelector } from '@/shared/hooks/hooks';
 import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router';
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const ArrowRightIcon = ({ className }: { className?: string }) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    viewBox="0 0 24 24"
-    strokeWidth={2}
-    stroke="currentColor"
-    className={className}
-  >
-    <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-  </svg>
-);
+// Удален неиспользуемый компонент ArrowRightIcon
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const HeroSection = (): React.JSX.Element => {
   const user = useAppSelector((store) => store.user.user?.user);
   const [isModalOpen, setModalOpen] = useState(false);
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const openModal = () => setModalOpen(true);
-  const closeModal = () => setModalOpen(false);
+  const closeModal = (): void => setModalOpen(false);
 
   return (
     <>
-      <section className="hero-section relative min-h-screen flex items-center justify-center overflow-hidden">
+      <section
+        id="hero"
+        className="hero-section relative min-h-screen flex items-center justify-center overflow-hidden"
+      >
         {/* Фоновое изображение */}
         <div className="absolute inset-0 z-0">
           <img
@@ -111,7 +100,7 @@ const HeroSection = (): React.JSX.Element => {
         </div>
 
         {/* Стрелка прокрутки */}
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+        {/* <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
           <div className="gradient-card p-3 rounded-full border border-border">
             <svg
               className="h-6 w-6 text-foreground"
@@ -127,7 +116,7 @@ const HeroSection = (): React.JSX.Element => {
               />
             </svg>
           </div>
-        </div>
+        </div> */}
 
         <PartnerFormModal isOpen={isModalOpen} onClose={closeModal} user={user} />
       </section>

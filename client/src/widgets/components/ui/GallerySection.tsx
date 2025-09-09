@@ -145,12 +145,14 @@ const GallerySection = (): React.JSX.Element => {
     <section id="gallery" className="section section-alt">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16 animate-fade-in">
-          <div className="inline-flex items-center space-x-2 glass-effect rounded-full px-6 py-2 mb-4">
+          <div className="sr-only">
             <span className="text-foreground font-medium uppercase tracking-wide text-sm">
               Галерея
             </span>
           </div>
-          <h2 className="heading-2 text-gradient-primary mb-6">Наши точки по России</h2>
+          <h2 className="heading-2 bg-gradient-to-r from-[hsl(200_80%_70%)] to-[hsl(210_90%_30%)] bg-clip-text text-transparent mb-6">
+            Наши точки по России
+          </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
             Посмотрите, как выглядит наш бизнес в разных городах России
           </p>
@@ -160,7 +162,7 @@ const GallerySection = (): React.JSX.Element => {
             <div
               key={item.id}
               className="card group animate-slide-up"
-              style={{ animationDelay: `${index * 0.1}s` }}
+              style={{ animationDelay: `${(index * 0.1).toString()}s` }}
             >
               <div className="relative">
                 <img
