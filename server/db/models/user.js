@@ -32,6 +32,8 @@ module.exports = (sequelize, DataTypes) => {
     role: DataTypes.STRING,
     registrationDate: DataTypes.DATE,
     monthlyAmount: DataTypes.DECIMAL(10,2),
+    emailVerified: DataTypes.BOOLEAN,
+    emailVerificationToken: DataTypes.STRING,
   }, {
     sequelize,
     modelName: 'User',

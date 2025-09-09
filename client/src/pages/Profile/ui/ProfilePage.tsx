@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, Outlet, useLocation } from 'react-router';
 import ContentTransition from '@/widgets/components/ui/ContentTransition';
+import EmailVerificationBanner from '@/widgets/components/ui/EmailVerificationBanner';
 
 const tabs = [
   { id: 'wallet', label: 'Пополнение кошелька' },
@@ -23,6 +24,9 @@ const ProfilePage = (): React.JSX.Element => {
           </div>
           <p className="text-muted-foreground">Управляйте своим аккаунтом и настройками</p>
         </div>
+
+        {/* Баннер подтверждения email */}
+        <EmailVerificationBanner />
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Левая колонка - меню */}

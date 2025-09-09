@@ -1,5 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import type { UserLoginT, UserRegisterT, UserUpdateT } from './types';
+import type { EmailVerificationT, ResendVerificationT, UserLoginT, UserRegisterT, UserUpdateT } from './types';
 import UserServices from '../api/userServices';
 import { setAccessToken, removeAccessToken } from '@/shared/api/axiosInstance';
 
@@ -49,6 +49,22 @@ export const verify2FA = createAsyncThunk(
   async ({ token, email }: verify2FAT) => {
     const response = await UserServices.verify2FA(token, email);
     setAccessToken(response.accessToken);
+    return response;
+  },
+);
+
+export const verifyEmail = createAsyncThunk(
+  'user/verifyEmail',
+  async (data: EmailVerificationT) => {
+    const response = await UserServices.verifyEmail(data);
+    return response;
+  },
+);
+
+export const resendVerificationEmail = createAsyncThunk(
+  'user/resendVerificationEmail',
+  async (data: ResendVerificationT) => {
+    const response = await UserServices.resendVerificationEmail(data);
     return response;
   },
 );

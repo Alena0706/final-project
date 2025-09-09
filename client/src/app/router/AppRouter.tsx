@@ -14,6 +14,7 @@ import UserInvoices from '@/features/invoices/ui/UserInvoices';
 import UserNotifications from '@/features/notifications/ui/UserNotifications';
 import AdminDashboard from '@/features/admin/ui/AdminDashboard';
 import NotFoundPage from '@/pages/NotFound/ui/NotFoundPage';
+import EmailVerificationPage from '@/pages/EmailVerification/ui/EmailVerificationPage';
 import ProtectedRoute from '@/shared/lib/ProtectedRoute';
 import AuthRoute from '@/shared/lib/AuthRoute';
 import PageLoader from '@/widgets/components/ui/PageLoader';
@@ -80,6 +81,14 @@ export default function AppRouter(): React.JSX.Element {
             element={
               <PageTransition>
                 <FranchisePage />
+              </PageTransition>
+            } 
+          />
+          <Route 
+            path="/verify-email" 
+            element={
+              <PageTransition>
+                <EmailVerificationPage />
               </PageTransition>
             } 
           />
