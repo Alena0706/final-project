@@ -8,6 +8,13 @@ class FranchiseService {
     return getAll;
   }
 
+  static async getFranchise(name) {
+    const getFranchise = await Franchise.findOne({
+      where: { name },
+    });
+    return getFranchise;
+  }
+
   static async updateFranchise(franchise) {
     await Franchise.update(franchise, {
       where: { id: franchise.id },
@@ -21,9 +28,9 @@ class FranchiseService {
     return createFranchise;
   }
 
-  static async deleteFranchise(franchise) {
+  static async deleteFranchise(franchiseId) {
     await Franchise.destroy({
-      where: { id: franchise.id },
+      where: { id: franchiseId },
     });
   }
 
@@ -32,6 +39,8 @@ class FranchiseService {
         // Уникальное имя файла
         const fileName = `${Date.now()}.webp`;
         const filePath = path.join(uploadDir, fileName);
+        console.log(franchiseId, "ddddd");
+        console.log(image)
     
         // Конвертация и сохранение изображения в WebP с помощью Sharp
         await sharp(image.buffer)
@@ -43,7 +52,7 @@ class FranchiseService {
         if (!imageFranchisePath) {
           throw new Error('Не удалось загрузить изображение');
         }
-        await Franchise.update({ avatar: imageFranchisePath }, { where: { id: franchiseId } });
+        await Franchise.update({ image: imageFranchisePath }, { where: { id: franchiseId } });
   }
 
 

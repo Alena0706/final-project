@@ -1,3 +1,5 @@
+import { setAdmin } from '@/entities/admin/model/slice'
+import { useAppDispatch, useAppSelector } from '@/shared/hooks/hooks'
 import AboutSection from '@/widgets/components/ui/AboutSection'
 import AdvantagesCarousel from '@/widgets/components/ui/AdventagesCorusel'
 import AdvantagesSection from '@/widgets/components/ui/AdventageSection'

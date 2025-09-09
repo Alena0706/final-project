@@ -3,6 +3,8 @@ import userReducer from '@/entities/auth/model/slice';
 import twoFAReducer from '@/entities/2fa/model/slice';
 import chatReducer from '@/entities/chat/model/slice';
 import walletReducer from '@/entities/wallet/model/slice';
+import franchiseReducer from '@/entities/openFrancise/model/slice';
+import adminReducer from '@/entities/admin/model/slice';
 
 export const store = configureStore({
   reducer: {
@@ -10,6 +12,8 @@ export const store = configureStore({
     twoFactor: twoFAReducer,
     chat: chatReducer,
     wallet: walletReducer,
+    franchise: franchiseReducer,
+    admin: adminReducer,
   },
 });
 

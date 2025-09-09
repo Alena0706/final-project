@@ -51,14 +51,14 @@ module.exports = {
           address: 'Red Square, 1',
           workPhone: '88001234567',
           userId: 1,
-          contractId: 1,
+
         },
         {
           name: 'Franchise Two',
           address: 'Nevsky Prospekt, 98',
           workPhone: '88007654321',
           userId: 2,
-          contractId: 2,
+
         },
       ],
       {},

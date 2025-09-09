@@ -6,11 +6,11 @@ export const FranchiseSchema = z.object({
   address: z.string(),
   workPhone: z.string(),
   userId: z.number(),
-  image: z.string(),
-  video: z.string(),
-  description: z.string(),
-  city: z.string(),
-  contractId: z.number(),
+  image: z.string().nullable(),
+  video: z.string().nullable(),
+  description: z.string().nullable(),
+  city: z.string().nullable(),
+
 });
 
 export const createFranchiseSchema = z.object({

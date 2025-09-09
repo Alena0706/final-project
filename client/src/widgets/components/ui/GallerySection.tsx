@@ -1,10 +1,12 @@
 import type { InputHTMLAttributes, TextareaHTMLAttributes } from 'react';
-import React from 'react';
+import React, { useEffect } from 'react';
 
 type BadgeProps = React.HTMLAttributes<HTMLSpanElement> & {
   variant?: 'outline' | 'filled';
   children: React.ReactNode;
 };
+
+
 
 const Badge = ({ children, variant = 'filled', className = '', ...props }: BadgeProps) => {
   const baseStyles =
@@ -74,8 +76,11 @@ const Textarea = ({ className = '', ...props }: TextareaProps) => (
 );
 
 import { MapPin, Play, Image as ImageIcon } from 'lucide-react';
+import FranchiseList from '@/widgets/franchise/ui/FranchiseList';
+import { useAppDispatch } from '@/shared/hooks/hooks';
+import { getAllFranchises } from '@/entities/openFrancise/model/thunks';
 
-const GallerySection = () => {
+const GallerySection = (): React.JSX.Element => {
   const galleryItems = [
     {
       id: 1,
@@ -126,6 +131,10 @@ const GallerySection = () => {
       description: 'Яркий дизайн и профессиональный подход',
     },
   ];
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+  void dispatch(getAllFranchises());
+}, [dispatch]);
 
   return (
     <section id="gallery" className="section section-alt">
@@ -141,7 +150,7 @@ const GallerySection = () => {
             Посмотрите, как выглядит наш бизнес в разных городах России
           </p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {galleryItems.map((item, index) => (
             <div
               key={item.id}
@@ -190,7 +199,8 @@ const GallerySection = () => {
               </div>
             </div>
           ))}
-        </div>
+        </div> */}
+        <FranchiseList />
         <div className="text-center mt-16 animate-slide-up" style={{ animationDelay: '0.6s' }}>
           <div className="card inline-block">
             <h3 className="text-2xl font-bold mb-4 text-foreground">Хотите увидеть больше?</h3>
