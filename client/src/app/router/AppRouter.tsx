@@ -30,10 +30,10 @@ export default function AppRouter(): React.JSX.Element {
             <Route path="wallet" element={<WalletTopUp />} />
             <Route path="invoices" element={<UserInvoices />} />
             <Route path="notifications" element={<UserNotifications />} />
-            <Route path="/admin" element={<AdminDashboard />} />
             <Route path="personal" element={<ProfileSection />} />
             <Route path="password" element={<ChangePassword />} />
           </Route>
+          <Route path="/admin" element={<AdminDashboard />} />
         </Route>
 
         <Route path="/franchise" element={<FranchisePage />} />
