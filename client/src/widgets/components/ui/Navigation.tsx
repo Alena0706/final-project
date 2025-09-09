@@ -1,12 +1,16 @@
 import { useState, useEffect } from 'react';
 import { Menu, X } from 'lucide-react';
 import { Link, useNavigate, useLocation } from 'react-router';
+import { useAppDispatch, useAppSelector } from '@/shared/hooks/hooks';
+import { logoutUser } from '@/entities/auth/model/thunks';
 
 const Navigation = (): React.JSX.Element => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState<string>('');
   const navigate = useNavigate();
   const location = useLocation();
+  const user = useAppSelector((store) => store.user.user);
+  const dispatch = useAppDispatch();
 
   const navItems = [
     { href: '#', label: 'Главная', id: 'hero' },
@@ -122,7 +126,17 @@ const Navigation = (): React.JSX.Element => {
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           {/* Пустое место для логотипа */}
-          <div></div>
+          <div>
+            <Link to="/">
+              <img
+                src="/Logo3.png"
+                alt="Логотип"
+                width={60}
+              
+                
+              />
+            </Link>
+          </div>
 
           {/* Десктопное меню */}
           <div className="hidden md:flex items-center space-x-8">
@@ -143,18 +157,37 @@ const Navigation = (): React.JSX.Element => {
 
           {/* Кнопки авторизации */}
           <div className="hidden md:flex items-center space-x-4">
-            <Link
-              to="/signin"
-              className="px-4 py-2 text-foreground hover:text-[hsl(200_80%_70%)] font-medium transition-colors duration-300"
-            >
-              Вход
-            </Link>
-            <Link
-              to="/signup"
-              className="px-5 py-2 bg-gradient-to-r from-[hsl(200_75%_55%)] to-[hsl(210_75%_35%)] text-white hover:from-[hsl(200_80%_60%)] hover:to-[hsl(210_80%_40%)] transition-all duration-300 shadow-lg hover:shadow-[hsl(200_80%_70%)]/30 rounded-lg font-medium"
-            >
-              Регистрация
-            </Link>
+            {user ? (
+              <>
+                <Link
+                  to="/profile"
+                  className="px-4 py-2 text-foreground hover:text-[hsl(200_80%_70%)] font-medium transition-colors duration-300"
+                >
+                  Профиль
+                </Link>
+                <button
+                  onClick={() => void dispatch(logoutUser())}
+                  className="px-5 py-2 bg-gradient-to-r from-[hsl(200_75%_55%)] to-[hsl(210_75%_35%)] text-white hover:from-[hsl(200_80%_60%)] hover:to-[hsl(210_80%_40%)] transition-all duration-300 shadow-lg hover:shadow-[hsl(200_80%_70%)]/30 rounded-lg font-medium"
+                >
+                  Выход
+                </button>
+              </>
+            ) : (
+              <>
+                <Link
+                  to="/signin"
+                  className="px-4 py-2 text-foreground hover:text-[hsl(200_80%_70%)] font-medium transition-colors duration-300"
+                >
+                  Вход
+                </Link>
+                <Link
+                  to="/signup"
+                  className="px-5 py-2 bg-gradient-to-r from-[hsl(200_75%_55%)] to-[hsl(210_75%_35%)] text-white hover:from-[hsl(200_80%_60%)] hover:to-[hsl(210_80%_40%)] transition-all duration-300 shadow-lg hover:shadow-[hsl(200_80%_70%)]/30 rounded-lg font-medium"
+                >
+                  Регистрация
+                </Link>
+              </>
+            )}
           </div>
 
           {/* Мобильное меню кнопка */}
@@ -187,20 +220,43 @@ const Navigation = (): React.JSX.Element => {
                 </button>
               ))}
               <div className="flex flex-col space-y-2 pt-4 border-t border-border">
-                <Link
-                  to="/signin"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="px-4 py-2 text-foreground hover:text-[hsl(200_80%_70%)] font-medium transition-colors duration-300 text-left"
-                >
-                  Вход
-                </Link>
-                <Link
-                  to="/signup"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="px-4 py-2 bg-gradient-to-r from-[hsl(200_75%_55%)] to-[hsl(210_75%_35%)] text-white hover:from-[hsl(200_80%_60%)] hover:to-[hsl(210_80%_40%)] transition-all duration-300 rounded-lg font-medium text-center"
-                >
-                  Регистрация
-                </Link>
+                {user ? (
+                  <>
+                    <Link
+                      to="/profile"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="px-4 py-2 text-foreground hover:text-[hsl(200_80%_70%)] font-medium transition-colors duration-300 text-left"
+                    >
+                      Профиль
+                    </Link>
+                    <button
+                      onClick={() => {
+                        void dispatch(logoutUser());
+                        setIsMobileMenuOpen(false);
+                      }}
+                      className="px-4 py-2 bg-gradient-to-r from-[hsl(200_75%_55%)] to-[hsl(210_75%_35%)] text-white hover:from-[hsl(200_80%_60%)] hover:to-[hsl(210_80%_40%)] transition-all duration-300 rounded-lg font-medium text-center"
+                    >
+                      Выход
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <Link
+                      to="/signin"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="px-4 py-2 text-foreground hover:text-[hsl(200_80%_70%)] font-medium transition-colors duration-300 text-left"
+                    >
+                      Вход
+                    </Link>
+                    <Link
+                      to="/signup"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="px-4 py-2 bg-gradient-to-r from-[hsl(200_75%_55%)] to-[hsl(210_75%_35%)] text-white hover:from-[hsl(200_80%_60%)] hover:to-[hsl(210_80%_40%)] transition-all duration-300 rounded-lg font-medium text-center"
+                    >
+                      Регистрация
+                    </Link>
+                  </>
+                )}
               </div>
             </div>
           </div>
