@@ -6,6 +6,7 @@ import { useAppSelector } from '@/shared/hooks/hooks';
 import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router';
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const ArrowRightIcon = ({ className }: { className?: string }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -19,10 +20,12 @@ const ArrowRightIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const HeroSection = (): React.JSX.Element => {
   const user = useAppSelector((store) => store.user.user?.user);
   const [isModalOpen, setModalOpen] = useState(false);
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const openModal = () => setModalOpen(true);
   const closeModal = () => setModalOpen(false);
 
@@ -66,44 +69,44 @@ const HeroSection = (): React.JSX.Element => {
             </h3>
 
             {/* Подзаголовок */}
-<div className="flex justify-center mb-16">
-  <Link 
-    to="/signup" 
-    className="bg-gradient-to-r from-[hsl(200_75%_55%)] to-[hsl(210_75%_35%)] text-primary-foreground text-lg px-8 py-4 rounded-xl shadow-iris hover:shadow-gold transition-all duration-300 hover:scale-105 flex items-center group hover:bg-gradient-to-r hover:from-[hsl(200_80%_60%)] hover:to-[hsl(210_80%_40%)]"
-  >
-    Стать партнером
-    <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-  </Link>
-</div>
+            <div className="flex justify-center mb-16">
+              <Link
+                to="/signup"
+                className="bg-gradient-to-r from-[hsl(200_75%_55%)] to-[hsl(210_75%_35%)] text-primary-foreground text-lg px-8 py-4 rounded-xl shadow-iris hover:shadow-gold transition-all duration-300 hover:scale-105 flex items-center group hover:bg-gradient-to-r hover:from-[hsl(200_80%_60%)] hover:to-[hsl(210_80%_40%)]"
+              >
+                Стать партнером
+                <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+              </Link>
+            </div>
 
             {/* Преимущества */}
- <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-  <div className="glass-effect rounded-xl p-6 border border-border/30 hover:border-[hsl(200_80%_70%)]/50 transition-all duration-300 animate-slide-up backdrop-blur-md">
-    <div className="text-2xl mb-2">🚀</div>
-    <h3 className="text-foreground font-semibold mb-2">Быстрый старт</h3>
-    <p className="text-muted-foreground text-sm">
-      От подписания договора до открытия 2-4 недели
-    </p>
-  </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+              <div className="glass-effect rounded-xl p-6 border border-border/30 hover:border-[hsl(200_80%_70%)]/50 transition-all duration-300 animate-slide-up backdrop-blur-md">
+                <div className="text-2xl mb-2">🚀</div>
+                <h3 className="text-foreground font-semibold mb-2">Быстрый старт</h3>
+                <p className="text-muted-foreground text-sm">
+                  От подписания договора до открытия 2-4 недели
+                </p>
+              </div>
 
-  <div
-    className="glass-effect rounded-xl p-6 border border-border/30 hover:border-[hsl(200_80%_70%)]/50 transition-all duration-300 animate-slide-up backdrop-blur-md"
-    style={{ animationDelay: '0.2s' }}
-  >
-    <div className="text-2xl mb-2">💎</div>
-    <h3 className="text-foreground font-semibold mb-2">Уникальная ниша</h3>
-    <p className="text-muted-foreground text-sm">Минимум конкурентов, высокий спрос</p>
-  </div>
+              <div
+                className="glass-effect rounded-xl p-6 border border-border/30 hover:border-[hsl(200_80%_70%)]/50 transition-all duration-300 animate-slide-up backdrop-blur-md"
+                style={{ animationDelay: '0.2s' }}
+              >
+                <div className="text-2xl mb-2">💎</div>
+                <h3 className="text-foreground font-semibold mb-2">Уникальная ниша</h3>
+                <p className="text-muted-foreground text-sm">Минимум конкурентов, высокий спрос</p>
+              </div>
 
-  <div
-    className="glass-effect rounded-xl p-6 border border-border/30 hover:border-[hsl(200_80%_70%)]/50 transition-all duration-300 animate-slide-up backdrop-blur-md"
-    style={{ animationDelay: '0.4s' }}
-  >
-    <div className="text-2xl mb-2">📈</div>
-    <h3 className="text-foreground font-semibold mb-2">Высокая прибыль</h3>
-    <p className="text-muted-foreground text-sm">Окупаемость от 6 месяцев</p>
-  </div>
-</div>
+              <div
+                className="glass-effect rounded-xl p-6 border border-border/30 hover:border-[hsl(200_80%_70%)]/50 transition-all duration-300 animate-slide-up backdrop-blur-md"
+                style={{ animationDelay: '0.4s' }}
+              >
+                <div className="text-2xl mb-2">📈</div>
+                <h3 className="text-foreground font-semibold mb-2">Высокая прибыль</h3>
+                <p className="text-muted-foreground text-sm">Окупаемость от 6 месяцев</p>
+              </div>
+            </div>
           </div>
         </div>
 

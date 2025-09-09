@@ -1,6 +1,6 @@
 import { updateUser } from '@/entities/auth/model/thunks';
 import { walletSchema } from '@/entities/wallet/model/schemas';
-import { addTransaction, setBalance } from '@/entities/wallet/model/slice';
+import { setBalance } from '@/entities/wallet/model/slice';
 import { useAppDispatch, useAppSelector } from '@/shared/hooks/hooks';
 import React, { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';

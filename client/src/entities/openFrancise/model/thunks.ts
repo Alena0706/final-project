@@ -1,6 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import FranchiseService from '../api/ franchiseService';
-import type { FranchiseCreateT, FranchiseUpdateT } from './types';
+import type { FranchiseUpdateT } from './types';
 
 export const getAllFranchises = createAsyncThunk('franchise/getAllFranchises', async () =>
   FranchiseService.getAllFranchises(),
@@ -11,7 +11,7 @@ export const updateFranchise = createAsyncThunk(
 );
 export const createFranchise = createAsyncThunk(
   'franchise/createFranchise',
-  async (franchise: FranchiseCreateT) => FranchiseService.createFranchise(franchise),
+  async (franchise: FormData) => FranchiseService.createFranchise(franchise),
 );
 export const deleteFranchise = createAsyncThunk(
   'franchise/deleteFranchise',

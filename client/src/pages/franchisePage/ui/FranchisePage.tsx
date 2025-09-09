@@ -24,30 +24,13 @@ const Card = ({ children, className = '', ...props }: CardProps) => (
   </div>
 );
 
-type BadgeProps = React.HTMLAttributes<HTMLSpanElement> & {
-  variant?: 'outline' | 'filled';
-  children: React.ReactNode;
-};
-const Badge = ({ children, variant = 'filled', className = '', ...props }: BadgeProps) => {
-  const base = 'inline-block rounded-full px-4 py-1 font-semibold text-sm uppercase tracking-wide';
-  const variantClass =
-    variant === 'outline'
-      ? 'border border-current bg-transparent text-current'
-      : 'bg-current text-white';
-  return (
-    <span className={`${base} ${variantClass} ${className}`} {...props}>
-      {children}
-    </span>
-  );
-};
-
 const FranchisePage = (): React.JSX.Element => {
   const user = useAppSelector((store) => store.user.user?.user);
   // Состояния для калькулятора
   const [avgMonthlyRevenue, setAvgMonthlyRevenue] = useState(100000);
   const [monthlyCosts, setMonthlyCosts] = useState(50000);
-  const [paushalnyVznos, setPaushalnyVznos] = useState(300000);
-  const [investment, setInvestment] = useState(500000);
+  const [paushalnyVznos] = useState(300000);
+  const [investment] = useState(500000);
   const [isModalOpen, setModalOpen] = useState(false);
 
   const openModal = () => setModalOpen(true);

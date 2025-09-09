@@ -14,7 +14,7 @@ export const adminSlice = createSlice({
   initialState,
   reducers: {
     setAdmin: (state, action: PayloadAction<boolean | undefined>) => {
-        state.admin = action.payload;
+      state.admin = action.payload ?? false;
     },
   },
 });

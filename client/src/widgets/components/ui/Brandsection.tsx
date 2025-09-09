@@ -5,6 +5,7 @@ type BadgeProps = React.HTMLAttributes<HTMLSpanElement> & {
   children: React.ReactNode;
 };
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const Badge = ({ children, variant = 'filled', className = '', ...props }: BadgeProps) => {
   const baseStyle =
     'inline-block rounded-full px-4 py-1 font-semibold text-sm uppercase tracking-wide';
@@ -24,12 +25,14 @@ type CardProps = React.HTMLAttributes<HTMLDivElement> & {
   children: React.ReactNode;
 };
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const Card = ({ children, className = '', ...props }: CardProps) => (
   <div className={`bg-gradient-card border-0 shadow-elegant rounded-2xl ${className}`} {...props}>
     {children}
   </div>
 );
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const CardContent = ({
   children,
   className = '',
@@ -42,6 +45,7 @@ const CardContent = ({
 
 import { MapPin, Calendar, Users, Award } from 'lucide-react';
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const BrandSection = () => {
   const milestones = [
     { year: '2023', event: 'Основание компании в Пензе', icon: Calendar },

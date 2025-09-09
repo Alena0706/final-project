@@ -1,4 +1,5 @@
 const sharp = require('sharp');
+const fs = require('fs');
 const { Franchise } = require('../../db/models');
 const path = require('path');
 
@@ -63,7 +64,7 @@ class FranchiseService {
       const uploadDir = path.join(__dirname, '../../public/imageFranchise');
 
       // Создаем директорию если не существует
-      const fs = require('fs');
+
       if (!fs.existsSync(uploadDir)) {
         fs.mkdirSync(uploadDir, { recursive: true });
       }
@@ -99,3 +100,4 @@ class FranchiseService {
 }
 
 module.exports = FranchiseService;
+

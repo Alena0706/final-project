@@ -29,7 +29,7 @@ export default function ProfileSection(): React.JSX.Element {
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -61,13 +61,14 @@ export default function ProfileSection(): React.JSX.Element {
 
   return (
     <div className="max-w-lg mx-auto mt-12 p-8 bg-gray-50 rounded-xl shadow-lg">
-      <h2 className="text-3xl font-extrabold mb-8 text-indigo-700 text-center">Профиль пользователя</h2>
+      <h2 className="text-3xl font-extrabold mb-8 text-indigo-700 text-center">
+        Профиль пользователя
+      </h2>
       <form onSubmit={handleSubmit} className="space-y-8">
         <div className="flex flex-col items-center">
-          {(avatar || previewUrl) ? (
-            
+          {avatar || previewUrl ? (
             <img
-              src={`http://localhost:5173/${avatar}` ?? previewUrl}
+              src={avatar ? `http://localhost:5173/${avatar}` : previewUrl || ''}
               alt="Аватар"
               className="w-32 h-32 rounded-full object-cover mb-5 border-4 border-indigo-300 shadow-md"
             />
@@ -82,7 +83,7 @@ export default function ProfileSection(): React.JSX.Element {
           >
             Изменить аватар
           </label>
-         
+
           <input
             id="avatarInput"
             type="file"
@@ -100,28 +101,28 @@ export default function ProfileSection(): React.JSX.Element {
         ].map(({ id, label, required }) => (
           <div key={id}>
             <div className="flex justify-between items-center mb-2 text-sm">
-            <label htmlFor={id} className="block mb-2 font-semibold text-gray-700">
-              {label}
-            </label>
-             {editField !== id && (
-              <button
-                type="button"
-                onClick={() => setEditField(id)}
-                className="mt-1 text-indigo-600 hover:text-indigo-800 transition-colors p-1 rounded focus:outline-none focus:ring-2 focus:ring-indigo-400"
-                aria-label={`Редактировать ${label.toLowerCase()}`}
-              >
-                <FaPencilAlt />
-              </button>
-            )}
+              <label htmlFor={id} className="block mb-2 font-semibold text-gray-700">
+                {label}
+              </label>
+              {editField !== id && (
+                <button
+                  type="button"
+                  onClick={() => setEditField(id)}
+                  className="mt-1 text-indigo-600 hover:text-indigo-800 transition-colors p-1 rounded focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                  aria-label={`Редактировать ${label.toLowerCase()}`}
+                >
+                  <FaPencilAlt />
+                </button>
+              )}
             </div>
             <input
               id={id}
               name={id}
               type={id === 'email' ? 'email' : 'text'}
-              value={formData[id]}
+              value={formData[id as keyof typeof formData]}
               onChange={handleInputChange}
               disabled={editField !== id}
-              placeholder={user?.[id] || ''}
+              placeholder={(user as any)?.[id] || ''}
               className={`w-full rounded-md border px-3 py-2 placeholder-gray-400 focus:outline-none focus:ring-2 ${
                 editField === id
                   ? 'border-indigo-500 focus:ring-indigo-500'
@@ -129,7 +130,6 @@ export default function ProfileSection(): React.JSX.Element {
               }`}
               required={required}
             />
-           
           </div>
         ))}
 

@@ -4,6 +4,7 @@ type CardProps = React.HTMLAttributes<HTMLDivElement> & {
   children: React.ReactNode;
 };
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const Card = ({ children, className = '', ...props }: CardProps) => (
   <div
     className={`group relative overflow-hidden bg-gradient-card border-0 shadow-elegant hover:shadow-iris transition-all duration-500 hover:-translate-y-2 h-full rounded-xl ${className}`}
@@ -13,6 +14,7 @@ const Card = ({ children, className = '', ...props }: CardProps) => (
   </div>
 );
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const CardContent = ({
   children,
   className = '',

@@ -1,13 +1,14 @@
+import type {
+  ReactNode,
+  KeyboardEvent} from "react";
 import React, {
   useState,
   useRef,
   useEffect,
-  ReactNode,
-  forwardRef,
-  KeyboardEvent,
+  forwardRef
 } from "react";
 
-interface CarouselProps {
+type CarouselProps = {
   children: ReactNode;
   opts?: {
     align?: "start" | "center";
@@ -112,7 +113,7 @@ const Carousel: React.FC<CarouselProps> = ({
   );
 };
 
-interface CarouselContentProps {
+type CarouselContentProps = {
   children: ReactNode;
   className?: string;
 }
@@ -129,7 +130,7 @@ const CarouselContent = forwardRef<HTMLDivElement, CarouselContentProps>(
 );
 CarouselContent.displayName = "CarouselContent";
 
-interface CarouselItemProps {
+type CarouselItemProps = {
   children: ReactNode;
   className?: string;
 }
@@ -141,7 +142,7 @@ const CarouselItem: React.FC<CarouselItemProps> = ({
   <div className={`snap-start flex-shrink-0 ${className}`}>{children}</div>
 );
 
-interface CarouselButtonProps {
+type CarouselButtonProps = {
   className?: string;
   onClick?: () => void;
 }

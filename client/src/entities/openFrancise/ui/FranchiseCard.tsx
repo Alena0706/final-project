@@ -12,16 +12,16 @@ export default function FranchiseCard({
   setIsOpen: () => void;
 }): React.JSX.Element {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
+  const [, setIsPlaying] = useState(false);
   const [isVideoVisible, setIsVideoVisible] = useState(false);
   const dispatch = useAppDispatch();
   const admin = useAppSelector((store) => store.user.user?.user.admin);
 
-  const handlePlayVideo = (): void => {
+  const handlePlayVideo = async (): Promise<void> => {
     setIsVideoVisible(true);
     setIsPlaying(true);
     if (videoRef.current) {
-      videoRef.current.play();
+     await videoRef.current.play();
     }
   };
 

@@ -1,4 +1,3 @@
-import type { Message } from '@/entities/chat/model/slice';
 import { addMessage, joinRoom, setHistory, setRooms } from '@/entities/chat/model/slice';
 import { useAppDispatch, useAppSelector } from '@/shared/hooks/hooks';
 import React, { useEffect, useRef, useState } from 'react';
@@ -139,7 +138,9 @@ export default function SupportChat(): React.JSX.Element {
               <ul>
                 {rooms.map((room) => (
                   <li key={room}>
-                    <button onClick={() => handleRoomSelect(room)}>{room === "1" ? "комната администрации" : `Пользователь ${room}`}</button>
+                    <button onClick={() => handleRoomSelect(room)}>
+                      {room === '1' ? 'комната администрации' : `Пользователь ${room}`}
+                    </button>
                   </li>
                 ))}
               </ul>

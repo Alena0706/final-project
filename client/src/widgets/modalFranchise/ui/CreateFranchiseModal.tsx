@@ -12,7 +12,6 @@ const defaultForm: FranchiseCreateT = {
   address: '',
   workPhone: '',
   userId: 0,
-  contractId: 0,
   image: null,
   video: null,
   description: null,

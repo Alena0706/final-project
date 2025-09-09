@@ -1,5 +1,3 @@
-import React from 'react';
-
 const EyeIcon = ({ className }: { className?: string }) => (
   <svg
     className={className}
@@ -64,26 +62,6 @@ const AwardIcon = ({ className }: { className?: string }) => (
     <circle cx="12" cy="11" r="2" stroke="currentColor" strokeWidth="2" />
   </svg>
 );
-
-const Badge = ({ children, className }: { children: React.ReactNode; className?: string }) => (
-  <span
-    className={`inline-block rounded-full px-4 py-1 font-semibold text-sm uppercase tracking-wide ${className}`}
-  >
-    {children}
-  </span>
-);
-
-const Card = ({ children, className }: { children: React.ReactNode; className?: string }) => (
-  <div className={`rounded-3xl bg-white bg-opacity-10 shadow-lg ${className}`}>{children}</div>
-);
-
-const CardContent = ({
-  children,
-  className,
-}: {
-  children: React.ReactNode;
-  className?: string;
-}) => <div className={`p-6 ${className}`}>{children}</div>;
 
 const AboutSection = () => {
   const features = [
