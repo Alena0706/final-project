@@ -18,27 +18,53 @@ export default function SignInForm(): React.JSX.Element {
     }
   }, [status, navigate]);
 
+  // Отладочная информация о статусе
+  useEffect(() => {
+    console.log('SignInForm - status changed to:', status);
+  }, [status]);
+
   const handleSubmit: FormEventHandler<HTMLFormElement> = (e) => {
+    console.log('Form submit triggered');
     e.preventDefault();
     setValidationError('');
 
     void (async () => {
       try {
+        console.log('Starting login process...');
         const data = Object.fromEntries(new FormData(e.currentTarget));
+        console.log('Form data:', data);
+        console.log('Form data keys:', Object.keys(data));
+        console.log('Form data values:', Object.values(data));
+
+        // Проверяем, что поля заполнены
+        if (!data.email || !data.password) {
+          console.error('Missing required fields:', { email: data.email, password: data.password });
+          setValidationError('Пожалуйста, заполните все поля');
+          return;
+        }
+
         const dataValidate = userLoginSchema.parse(data);
+        console.log('Validated data:', dataValidate);
+        console.log('Dispatching loginUser...');
         await dispatch(loginUser(dataValidate)).unwrap();
+        console.log('Login successful!');
         // Редирект теперь происходит в useEffect
       } catch (loginError: unknown) {
+        console.error('Login failed:', loginError);
+
         if (loginError instanceof Error && loginError.name === 'ZodError') {
           setValidationError('Пожалуйста, заполните все поля корректно');
-        } else {
-          console.error('Login failed:', loginError);
-          // Показываем пользователю более подробную информацию об ошибке
-          if (loginError && typeof loginError === 'object' && 'message' in loginError) {
+        } else if (loginError && typeof loginError === 'object') {
+          // Более детальная обработка ошибок
+          if ('message' in loginError) {
             setValidationError(`Ошибка входа: ${String(loginError.message)}`);
+          } else if ('error' in loginError) {
+            setValidationError(`Ошибка входа: ${String(loginError.error)}`);
           } else {
             setValidationError('Произошла ошибка при входе. Попробуйте еще раз.');
           }
+        } else {
+          setValidationError('Произошла ошибка при входе. Попробуйте еще раз.');
         }
       }
     })();
@@ -110,7 +136,17 @@ export default function SignInForm(): React.JSX.Element {
               </a>
             </div>
 
-            <button type="submit" className="btn-primary w-full" disabled={status === 'loading'}>
+            <button
+              type="submit"
+              className="btn-primary w-full"
+              disabled={status === 'loading'}
+              onClick={() => {
+                console.log('Button clicked, status:', status);
+                if (status === 'loading') {
+                  console.log('Button is disabled due to loading status');
+                }
+              }}
+            >
               {status === 'loading' ? 'Вход...' : 'Войти'}
             </button>
 

@@ -26,8 +26,19 @@ class UserServices {
   }
 
   static async login(user: UserLoginT): Promise<AuthResponseT> {
-    const response = await axiosInstance.post('/auth/signin', user);
-    return AuthResponseSchema.parse(response.data);
+    console.log('Attempting login for:', user.email);
+    try {
+      const response = await axiosInstance.post('/auth/signin', user);
+      console.log('Login successful:', response.status);
+      console.log('Raw response data:', response.data);
+      const parsedData = AuthResponseSchema.parse(response.data);
+      console.log('Parsed data:', parsedData);
+      console.log('Parsed user admin:', parsedData.user.admin);
+      return parsedData;
+    } catch (error) {
+      console.error('Login failed:', error);
+      throw error;
+    }
   }
 
   static async refresh(): Promise<AuthResponseT> {

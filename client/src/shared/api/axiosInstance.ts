@@ -34,11 +34,17 @@ axiosInstance.interceptors.request.use((config) => {
 });
 
 axiosInstance.interceptors.response.use(
-  (res) => res,
+  (res) => {
+    console.log('Response received:', res.status, res.config.url);
+    return res;
+  },
   async (err: AxiosError & { config?: { sent: boolean } }) => {
+    console.error('Response error:', err.response?.status, err.config?.url, err.message);
+
     const prev = err.config;
 
     if (prev && err.response?.status === 403 && !prev.sent) {
+      console.log('Attempting token refresh...');
       prev.sent = true;
       try {
         const response = await axios.get<{
@@ -50,8 +56,10 @@ axiosInstance.interceptors.response.use(
         const newToken = response.data.accessToken;
         setAccessToken(newToken);
         prev.headers.Authorization = `Bearer ${newToken}`;
+        console.log('Token refreshed successfully');
         return await axiosInstance(prev);
       } catch (refreshError) {
+        console.error('Token refresh failed:', refreshError);
         // Если refresh не удался, удаляем токен и перенаправляем на логин
         removeAccessToken();
         window.location.href = '/signin';

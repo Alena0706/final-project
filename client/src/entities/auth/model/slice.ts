@@ -12,7 +12,7 @@ import {
 
 const initialState: UserStateT = {
   user: null,
-  status: 'loading',
+  status: 'guest',
   error: null,
   secret: null,
 };
@@ -30,6 +30,7 @@ export const userSlice = createSlice({
       .addCase(refreshUser.rejected, (state, action) => {
         state.user = null;
         state.status = 'guest';
+        // Не показываем ошибки для обычных случаев (нет токена, истек токен)
         if (action.error.name !== `AxiosError`) {
           state.error = action.error.message ?? 'Unknown error';
         } else {
@@ -83,6 +84,9 @@ export const userSlice = createSlice({
 
     builder
       .addCase(loginUser.fulfilled, (state, action) => {
+        console.log('Login fulfilled - setting user data:', action.payload);
+        console.log('User admin flag:', action.payload?.user?.admin);
+        console.log('User admin type:', typeof action.payload?.user?.admin);
         state.user = action.payload;
         state.status = 'logged';
         state.error = null;
@@ -95,6 +99,18 @@ export const userSlice = createSlice({
           state.error = action.payload as string;
         } else if (action.error.message) {
           state.error = action.error.message;
+        } else if (action.error.name === 'AxiosError') {
+          // Обработка Axios ошибок
+          const axiosError = action.error as any;
+          if (axiosError.response?.data?.message) {
+            state.error = axiosError.response.data.message;
+          } else if (axiosError.response?.status === 500) {
+            state.error = 'Ошибка сервера. Попробуйте позже.';
+          } else if (axiosError.response?.status === 401) {
+            state.error = 'Неверные данные для входа';
+          } else {
+            state.error = 'Ошибка сети. Проверьте подключение.';
+          }
         } else {
           state.error = 'Ошибка входа в систему';
         }
