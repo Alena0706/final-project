@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-interface PartnerFormModalProps {
+type PartnerFormModalProps = {
   isOpen: boolean;
   onClose: () => void;
   user?: {

@@ -22,6 +22,7 @@ const Badge = ({ children, variant = 'filled', className = '', ...props }: Badge
 
 
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const CardContent = ({
   children,
   className = '',

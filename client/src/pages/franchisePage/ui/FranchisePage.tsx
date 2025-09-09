@@ -25,7 +25,6 @@ const Card = ({ children, className = '', ...props }: CardProps): React.JSX.Elem
   </div>
 );
 
-
 const FranchisePage = (): React.JSX.Element => {
   const user = useAppSelector((store) => store.user.user?.user);
   // Состояния для калькулятора
