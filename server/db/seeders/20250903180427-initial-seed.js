@@ -79,7 +79,6 @@ module.exports = {
           address: 'Невский проспект, 98',
           workPhone: '88007654321',
           userId: 2,
-          contractId: 2,
           createdAt: new Date(),
           updatedAt: new Date(),
         },
