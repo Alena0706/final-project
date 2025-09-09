@@ -22,4 +22,9 @@ app.use('/api/invoices', invoiceRouter);
 app.use('/api/notifications', notificationRouter);
 app.use('/api/uploads', express.static(path.join(__dirname, '../public')));
 
+app.use(express.static(path.join(__dirname, '..', 'dist')));
+app.get('/{*splat}', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'dist', 'index.html'));
+});
+
 module.exports = app;
