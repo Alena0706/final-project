@@ -1,16 +1,28 @@
 import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '@/shared/hooks/hooks';
-import { fetchUserNotifications, markNotificationAsRead, markAllNotificationsAsRead, deleteNotification, fetchUnreadCount } from '@/entities/notification/model/thunks';
-import type { Notification } from '@/entities/notification/api/notificationService';
+import {
+  fetchUserNotifications,
+  markNotificationAsRead,
+  markAllNotificationsAsRead,
+  deleteNotification,
+  fetchUnreadCount,
+} from '@/entities/notification/model/thunks';
 
 const UserNotifications: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { notifications, unreadCount, loading, error, pagination } = useAppSelector((state) => state.notification);
+  const { notifications, unreadCount, loading, error, pagination } = useAppSelector(
+    (state) => state.notification,
+  );
   const [currentPage, setCurrentPage] = useState(1);
   const [isReadFilter, setIsReadFilter] = useState<string>('');
 
   useEffect(() => {
-    dispatch(fetchUserNotifications({ page: currentPage, isRead: isReadFilter ? isReadFilter === 'true' : undefined }));
+    dispatch(
+      fetchUserNotifications({
+        page: currentPage,
+        isRead: isReadFilter ? isReadFilter === 'true' : undefined,
+      }),
+    );
     dispatch(fetchUnreadCount());
   }, [dispatch, currentPage, isReadFilter]);
 
@@ -135,7 +147,9 @@ const UserNotifications: React.FC = () => {
         <div className="text-center py-12">
           <div className="text-gray-400 text-6xl mb-4">🔔</div>
           <h3 className="text-xl font-semibold text-gray-600 mb-2">Уведомлений пока нет</h3>
-          <p className="text-gray-500">Когда появятся новые уведомления, они будут отображаться здесь</p>
+          <p className="text-gray-500">
+            Когда появятся новые уведомления, они будут отображаться здесь
+          </p>
         </div>
       ) : (
         <div className="space-y-4">
@@ -150,11 +164,19 @@ const UserNotifications: React.FC = () => {
                 <div className="text-2xl">{getTypeIcon(notification.type)}</div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between mb-2">
-                    <h3 className={`text-lg font-semibold ${!notification.isRead ? 'text-gray-900' : 'text-gray-600'}`}>
+                    <h3
+                      className={`text-lg font-semibold ${
+                        !notification.isRead ? 'text-gray-900' : 'text-gray-600'
+                      }`}
+                    >
                       {notification.title}
                     </h3>
                     <div className="flex items-center space-x-2">
-                      <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${getTypeColor(notification.type)}`}>
+                      <span
+                        className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${getTypeColor(
+                          notification.type,
+                        )}`}
+                      >
                         {notification.type}
                       </span>
                       {!notification.isRead && (
@@ -162,11 +184,11 @@ const UserNotifications: React.FC = () => {
                       )}
                     </div>
                   </div>
-                  
+
                   <p className={`text-gray-600 mb-3 ${!notification.isRead ? 'font-medium' : ''}`}>
                     {notification.message}
                   </p>
-                  
+
                   <div className="flex items-center justify-between text-sm text-gray-500">
                     <span>{formatDate(notification.sentAt || notification.createdAt)}</span>
                     <div className="flex space-x-2">
@@ -197,7 +219,7 @@ const UserNotifications: React.FC = () => {
       {pagination.pages > 1 && (
         <div className="flex justify-center items-center space-x-2">
           <button
-            onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+            onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
             disabled={currentPage === 1}
             className="px-3 py-2 border border-border rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
           >
@@ -207,7 +229,7 @@ const UserNotifications: React.FC = () => {
             Страница {currentPage} из {pagination.pages}
           </span>
           <button
-            onClick={() => setCurrentPage(prev => Math.min(pagination.pages, prev + 1))}
+            onClick={() => setCurrentPage((prev) => Math.min(pagination.pages, prev + 1))}
             disabled={currentPage === pagination.pages}
             className="px-3 py-2 border border-border rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
           >
