@@ -1,9 +1,9 @@
-import React, { useState, InputHTMLAttributes, TextareaHTMLAttributes } from 'react';
+import React, { useState } from 'react';
 import { Phone, Mail, MapPin, Clock, Send } from 'lucide-react';
 
 // Карточки и заголовки
 type CardProps = React.HTMLAttributes<HTMLDivElement> & { children: React.ReactNode };
-const Card = ({ children, className = '', ...props }: CardProps) => (
+const Card = ({ children, className = '', ...props }: CardProps): React.ReactElement => (
   <div
     className={`glass-effect rounded-xl border border-border/30 hover:border-[hsl(200_80%_70%)]/50 transition-all duration-300 backdrop-blur-md ${className}`}
     {...props}
@@ -11,17 +11,17 @@ const Card = ({ children, className = '', ...props }: CardProps) => (
     {children}
   </div>
 );
-const CardHeader = ({ children, className = '', ...props }: CardProps) => (
+const CardHeader = ({ children, className = '', ...props }: CardProps): React.ReactElement => (
   <div className={`p-6 pb-0 ${className}`} {...props}>
     {children}
   </div>
 );
-const CardTitle = ({ children, className = '', ...props }: CardProps) => (
+const CardTitle = ({ children, className = '', ...props }: CardProps): React.ReactElement => (
   <h3 className={`text-xl font-semibold text-foreground ${className}`} {...props}>
     {children}
   </h3>
 );
-const CardContent = ({ children, className = '', ...props }: CardProps) => (
+const CardContent = ({ children, className = '', ...props }: CardProps): React.ReactElement => (
   <div className={`p-6 ${className}`} {...props}>
     {children}
   </div>
@@ -44,7 +44,7 @@ const faqData = [
 ];
 
 // FAQ компонент с аккордеоном
-const FAQ = () => {
+const FAQ = (): React.ReactElement => {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   return (
@@ -52,14 +52,17 @@ const FAQ = () => {
       {faqData.map(({ question, answer }, index) => {
         const isOpen = openIndex === index;
         return (
-          <div key={index} className="rounded-lg border border-border bg-transparent">
+          <div
+            key={`faq-${String(index)}`}
+            className="rounded-lg border border-border bg-transparent"
+          >
             <button
               type="button"
               onClick={() => setOpenIndex(isOpen ? null : index)}
               className="w-full flex justify-between items-center px-6 py-4 font-semibold text-foreground focus:outline-none focus:ring-2 focus:ring-primary rounded-lg transition-colors"
               aria-expanded={isOpen}
-              aria-controls={`faq-content-${index}`}
-              id={`faq-header-${index}`}
+              aria-controls={`faq-content-${String(index)}`}
+              id={`faq-header-${String(index)}`}
             >
               <span>{question}</span>
               <svg
@@ -76,9 +79,9 @@ const FAQ = () => {
             </button>
             {isOpen && (
               <div
-                id={`faq-content-${index}`}
+                id={`faq-content-${String(index)}`}
                 role="region"
-                aria-labelledby={`faq-header-${index}`}
+                aria-labelledby={`faq-header-${String(index)}`}
                 className="px-6 py-4 border-t border-border text-foreground rounded-b-lg transition-colors"
               >
                 {answer}
@@ -120,7 +123,7 @@ const contactInfo = [
 ];
 
 // Основной компонент секции контактов
-const ContactSection = () => (
+const ContactSection = (): React.ReactElement => (
   <section id="contact" className="section section-alt">
     <div className="container mx-auto px-4">
       <div className="text-center mb-16 animate-fade-in">
@@ -148,9 +151,9 @@ const ContactSection = () => (
                 const IconComponent = info.icon;
                 return (
                   <div
-                    key={index}
+                    key={`contact-${String(index)}`}
                     className="card group animate-slide-up"
-                    style={{ animationDelay: `${index * 0.1}s` }}
+                    style={{ animationDelay: `${String(index * 0.1)}s` }}
                   >
                     <CardContent>
                       <div className="flex flex-col items-center text-center space-y-3">
@@ -160,7 +163,10 @@ const ContactSection = () => (
                         <h4 className="font-semibold text-foreground">{info.title}</h4>
                         <div className="space-y-1">
                           {info.details.map((detail, idx) => (
-                            <p key={idx} className="text-sm text-muted-foreground">
+                            <p
+                              key={`detail-${String(idx)}`}
+                              className="text-sm text-muted-foreground"
+                            >
                               {detail}
                             </p>
                           ))}
