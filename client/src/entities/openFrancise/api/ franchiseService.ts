@@ -18,17 +18,19 @@ class FranchiseService {
   }: {
     image: File;
     franchiseId: number;
-  }): Promise<void> {
-    await axiosInstance.post(
-      '/franchise/upload',
-      { image, franchiseId },
-      {
-        responseType: 'blob',
-        headers: {
-          'Content-Type': 'multipart/form-data', // Указываем, что отправляем файл
-        },
+  }): Promise<FranchiseT> {
+    const formData = new FormData();
+    formData.append('image', image);
+    formData.append('franchiseId', franchiseId.toString());
+
+    const response = await axiosInstance.post('/franchise/upload', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
       },
-    );
+    });
+
+    const validatedResponse = FranchiseSchema.parse(response.data);
+    return validatedResponse;
   }
 
   static async updateFranchise(franchise: FranchiseUpdateT): Promise<FranchiseT> {

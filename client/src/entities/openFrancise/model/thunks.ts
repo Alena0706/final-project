@@ -17,6 +17,7 @@ export const deleteFranchise = createAsyncThunk(
   'franchise/deleteFranchise',
   async (franchiseId: number): Promise<void> => FranchiseService.deleteFranchise(franchiseId),
 );
-export const uploadImage = createAsyncThunk('franchise/uploadImage', async (formData: {image: File, franchiseId: number}) =>
-  FranchiseService.uploadImage(formData),
+export const uploadImage = createAsyncThunk(
+  'franchise/uploadImage',
+  async (formData: { image: File; franchiseId: number }) => FranchiseService.uploadImage(formData),
 );

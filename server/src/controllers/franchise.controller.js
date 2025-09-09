@@ -16,11 +16,12 @@ class FranchiseController {
   static async updateFranchise(req, res) {
     try {
       if (!res.locals.user.admin) {
-        res.status(403).json({ message: 'Только админ может вносить изменения' });
+        return res.status(403).json({ message: 'Только админ может вносить изменения' });
       }
       const franchise = await FranchiseService.updateFranchise(req.body);
       res.status(200).json(franchise);
     } catch (error) {
+      console.error('Error updating franchise:', error);
       res.status(500).json({ message: error.message });
     }
   }
@@ -33,7 +34,7 @@ class FranchiseController {
       // Создаём запись франшизы в БД
       await FranchiseService.createFranchise(req.body);
       const franchise = await FranchiseService.getFranchise(req.body.name);
-      const {id} = franchise.get();
+      const { id } = franchise.get();
       console.log(id, 'franchise');
 
       const files = req.files || {};
@@ -72,12 +73,16 @@ class FranchiseController {
   static async deleteFranchise(req, res) {
     try {
       if (!res.locals.user.admin) {
-        res.status(403).json({ message: 'Только админ может вносить изменения' });
+        return res.status(403).json({ message: 'Только админ может вносить изменения' });
       }
-      console.log(req.params, 'ddd222222dd');
-      await FranchiseService.deleteFranchise(+req.params.id);
+      const franchiseId = parseInt(req.params.id);
+      if (isNaN(franchiseId)) {
+        return res.status(400).json({ message: 'Некорректный ID франшизы' });
+      }
+      await FranchiseService.deleteFranchise(franchiseId);
       res.sendStatus(204);
     } catch (error) {
+      console.error('Error deleting franchise:', error);
       res.status(500).json({ message: error.message });
     }
   }
@@ -85,11 +90,22 @@ class FranchiseController {
   static async uploadImage(req, res) {
     try {
       if (!res.locals.user.admin) {
-        res.status(403).json({ message: 'Только админ может вносить изменения' });
+        return res.status(403).json({ message: 'Только админ может вносить изменения' });
       }
-      await FranchiseService.uploadImage(req.file, +req.body.franchiseId);
-      res.status(200).json({ message: `Изображение успешно сохранено` });
+
+      if (!req.file) {
+        return res.status(400).json({ message: 'Файл изображения не найден' });
+      }
+
+      const franchiseId = parseInt(req.body.franchiseId);
+      if (isNaN(franchiseId)) {
+        return res.status(400).json({ message: 'Некорректный ID франшизы' });
+      }
+
+      const updatedFranchise = await FranchiseService.uploadImage(req.file, franchiseId);
+      res.status(200).json(updatedFranchise);
     } catch (error) {
+      console.error('Error uploading image:', error);
       res.status(500).json({ message: error.message });
     }
   }

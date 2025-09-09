@@ -58,7 +58,7 @@ export default function FranchiseCard({
             </button>
 
             {isVideoVisible && (
-              <div 
+              <div
                 className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-[1000]"
                 onClick={handleCloseVideo}
               >
@@ -108,24 +108,26 @@ export default function FranchiseCard({
           <p className="text-sm opacity-90">{franchise.address}</p>
         </div>
       </div>
-      <div className="p-4">
+      <div className={`p-4 ${admin ? 'pb-2' : ''}`}>
         <p className="text-sm text-muted-foreground">{franchise.description}</p>
       </div>
       {admin && (
-        <>
+        <div className="flex space-x-2 px-4 pb-4">
           <button
             onClick={setIsOpen}
-            className="mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+            className="flex-1 px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200 font-medium text-sm shadow-md hover:shadow-lg flex items-center justify-center space-x-1"
           >
-            Редактировать
+            <span>✏️</span>
+            <span>Редактировать</span>
           </button>
           <button
             onClick={() => dispatch(deleteFranchise(franchise.id))}
-            className="mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+            className="flex-1 px-4 py-2 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-lg hover:from-red-700 hover:to-red-800 transition-all duration-200 font-medium text-sm shadow-md hover:shadow-lg flex items-center justify-center space-x-1"
           >
-            Удалить
+            <span>🗑️</span>
+            <span>Удалить</span>
           </button>
-        </>
+        </div>
       )}
     </div>
   );

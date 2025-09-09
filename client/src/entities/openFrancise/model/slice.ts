@@ -107,16 +107,26 @@ export const franchiseSlice = createSlice({
       });
 
     builder
-      .addCase(uploadImage.fulfilled, (state) => {
+      .addCase(uploadImage.fulfilled, (state, action) => {
+        const updatedFranchise = action.payload;
+        state.franchises = state.franchises.map((item) => {
+          if (item.id === updatedFranchise.id) {
+            return updatedFranchise;
+          }
+          return item;
+        });
+        state.status = 'loaded';
         state.error = null;
       })
       .addCase(uploadImage.rejected, (state, action) => {
         state.error = action.error.message ?? 'Unknown error';
+        state.status = 'error';
       })
       .addCase(uploadImage.pending, (state) => {
+        state.status = 'loading';
         state.error = null;
       });
   },
-})  
+});
 
 export default franchiseSlice.reducer;
