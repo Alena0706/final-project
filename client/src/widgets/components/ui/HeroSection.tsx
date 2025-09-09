@@ -8,6 +8,7 @@ import { Link } from 'react-router';
 
 // Удален неиспользуемый компонент ArrowRightIcon
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const HeroSection = (): React.JSX.Element => {
   const user = useAppSelector((store) => store.user.user?.user);
   const [isModalOpen, setModalOpen] = useState(false);

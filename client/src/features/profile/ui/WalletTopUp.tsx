@@ -1,4 +1,5 @@
 import { walletSchema } from '@/entities/wallet/model/schemas';
+import { setBalance } from '@/entities/wallet/model/slice';
 
 import { topUpWallet } from '@/entities/wallet/model/thunks';
 import { useAppDispatch, useAppSelector } from '@/shared/hooks/hooks';

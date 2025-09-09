@@ -8,7 +8,7 @@ franchiseRouter.post('/upload', verifyAccessToken, upload.single('image'), Franc
 
 franchiseRouter.get('/', verifyAccessToken, FranchiseController.getAllFranchises);
 franchiseRouter.patch('/', verifyAccessToken, FranchiseController.updateFranchise);
-franchiseRouter.post('/', verifyAccessToken, FranchiseController.createFranchise);
-franchiseRouter.delete('/', verifyAccessToken, FranchiseController.deleteFranchise);
+franchiseRouter.post('/', verifyAccessToken, upload.fields([{ name: 'image' }, { name: 'video' }]),  FranchiseController.createFranchise);
+franchiseRouter.delete('/:id', verifyAccessToken, FranchiseController.deleteFranchise);
 
 module.exports = franchiseRouter;

@@ -1,17 +1,37 @@
 const multer = require('multer');
 const path = require('path');
 
-// Конфигурация Multer для обработки загрузки файлов
+const imageStorage = multer.memoryStorage(); // для обработки sharp
+const videoStorage = multer.diskStorage({
+  destination(req, file, cb) {
+    cb(null, 'public/videoFranchise');
+  },
+  filename(req, file, cb) {
+    const uniqueName = Date.now() + path.extname(file.originalname);
+    cb(null, uniqueName);
+  }
+});
+
+// Будем использовать memoryStorage, но для видео после можно выполнять отдельную обработку и сохранять на диск
+
+const storage = multer.memoryStorage();
+
 const upload = multer({
-  storage: multer.memoryStorage(), // Храним файлы в памяти для последующей обработки Sharp
+  storage,
   fileFilter: (req, file, cb) => {
-    const filetypes = /jpeg|jpg|png/; // Допустимые форматы файлов
-    const mimetype = filetypes.test(file.mimetype);
-    const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
-    if (mimetype && extname) {
-      return cb(null, true); // Разрешаем загрузку, если формат верный
+    const imageFileTypes = /jpeg|jpg|png/;
+    const videoFileTypes = /mp4|x-m4v|quicktime|ogg|mpeg/;
+
+    if (imageFileTypes.test(file.mimetype)) {
+      cb(null, true);
+    } else if (videoFileTypes.test(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error('Ошибка: разрешены только изображения (jpeg, jpg, png) и видео (mp4 и др.)!'), false);
     }
-    cb('Ошибка: разрешены только изображения (jpeg, jpg, png)!'); // Ошибка при неверном формате
+  },
+  limits: {
+    fileSize: 100 * 1024 * 1024, // 100MB
   },
 });
 
