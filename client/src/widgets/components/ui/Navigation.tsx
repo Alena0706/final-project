@@ -126,7 +126,17 @@ const Navigation = (): React.JSX.Element => {
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           {/* Пустое место для логотипа */}
-          <div></div>
+          <div>
+            <Link to="/">
+              <img
+                src="/Logo3.png"
+                alt="Логотип"
+                width={60}
+              
+                
+              />
+            </Link>
+          </div>
 
           {/* Десктопное меню */}
           <div className="hidden md:flex items-center space-x-8">

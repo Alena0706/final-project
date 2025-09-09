@@ -1,6 +1,6 @@
 import type z from 'zod';
 import type { user2faSchema, userRegister2faSchema, userVerify2faSchema } from './schemas';
-import type { AuthResponseT } from '@/entities/user/model/types';
+import type { AuthResponseT } from '@/entities/auth/model/types';
 
 export type userRegister2faSchemaT = z.infer<typeof userRegister2faSchema>;
 export type userVerify2faSchemaT = z.infer<typeof userVerify2faSchema>;
