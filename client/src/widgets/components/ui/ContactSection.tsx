@@ -1,9 +1,10 @@
-import React, { useState, InputHTMLAttributes, TextareaHTMLAttributes } from 'react';
+import React, { useState } from 'react';
 import { Phone, Mail, MapPin, Clock, Send } from 'lucide-react';
+import type {JSX} from 'react';
 
-// Карточки и заголовки
+
 type CardProps = React.HTMLAttributes<HTMLDivElement> & { children: React.ReactNode };
-const Card = ({ children, className = '', ...props }: CardProps) => (
+const Card = ({ children, className = '', ...props }: CardProps):JSX.Element => (
   <div
     className={`glass-effect rounded-xl border border-border/30 hover:border-[hsl(200_80%_70%)]/50 transition-all duration-300 backdrop-blur-md ${className}`}
     {...props}
@@ -11,55 +12,58 @@ const Card = ({ children, className = '', ...props }: CardProps) => (
     {children}
   </div>
 );
-const CardHeader = ({ children, className = '', ...props }: CardProps) => (
+const CardHeader = ({ children, className = '', ...props }: CardProps):JSX.Element => (
   <div className={`p-6 pb-0 ${className}`} {...props}>
     {children}
   </div>
 );
-const CardTitle = ({ children, className = '', ...props }: CardProps) => (
+const CardTitle = ({ children, className = '', ...props }: CardProps):JSX.Element => (
   <h3 className={`text-xl font-semibold text-foreground ${className}`} {...props}>
     {children}
   </h3>
 );
-const CardContent = ({ children, className = '', ...props }: CardProps) => (
+const CardContent = ({ children, className = '', ...props }: CardProps):JSX.Element => (
   <div className={`p-6 ${className}`} {...props}>
     {children}
   </div>
 );
 
-// FAQ данные (один раз, без дублирования)
+
 const faqData = [
   {
+    id: 'faq-1',
     question: 'Какой опыт нужен для работы с франшизой?',
     answer: 'Специальный опыт не требуется. Мы предоставляем полное обучение.',
   },
   {
+    id: 'faq-2',
     question: 'В каких городах можно открыть студию?',
     answer: 'В любом городе с населением от 100 000 человек.',
   },
   {
+    id: 'faq-3',
     question: 'Сколько времени занимает запуск?',
     answer: 'От подписания договора до открытия: 2-4 недели.',
   },
 ];
 
-// FAQ компонент с аккордеоном
-const FAQ = () => {
-  const [openIndex, setOpenIndex] = useState<number | null>(null);
+
+const FAQ = ():JSX.Element => {
+  const [openId, setOpenId] = useState<string | null>(null);
 
   return (
     <div className="space-y-4">
-      {faqData.map(({ question, answer }, index) => {
-        const isOpen = openIndex === index;
+      {faqData.map(({ id, question, answer }) => {
+        const isOpen = openId === id;
         return (
-          <div key={index} className="rounded-lg border border-border bg-transparent">
+          <div key={id} className="rounded-lg border border-border bg-transparent">
             <button
               type="button"
-              onClick={() => setOpenIndex(isOpen ? null : index)}
+              onClick={() => setOpenId(isOpen ? null : id)}
               className="w-full flex justify-between items-center px-6 py-4 font-semibold text-foreground focus:outline-none focus:ring-2 focus:ring-primary rounded-lg transition-colors"
               aria-expanded={isOpen}
-              aria-controls={`faq-content-${index}`}
-              id={`faq-header-${index}`}
+              aria-controls={`faq-content-${id}`}
+              id={`faq-header-${id}`}
             >
               <span>{question}</span>
               <svg
@@ -76,9 +80,9 @@ const FAQ = () => {
             </button>
             {isOpen && (
               <div
-                id={`faq-content-${index}`}
+                id={`faq-content-${id}`}
                 role="region"
-                aria-labelledby={`faq-header-${index}`}
+                aria-labelledby={`faq-header-${id}`}
                 className="px-6 py-4 border-t border-border text-foreground rounded-b-lg transition-colors"
               >
                 {answer}
@@ -91,36 +95,44 @@ const FAQ = () => {
   );
 };
 
-// Контактная информация
+
 const contactInfo = [
   {
+    id: 'contact-phone',
     icon: Phone,
     title: 'Телефон',
     details: ['+7 (908) 520-98-86'],
     subtitle: 'Звонки по России бесплатно',
+    animationDelay: '0s',
   },
   {
+    id: 'contact-email',
     icon: Mail,
     title: 'Email',
     details: ['@tvooyvzglyad'],
     subtitle: 'Подписываетесь на наш телеграмм',
+    animationDelay: '0.1s',
   },
   {
+    id: 'contact-office',
     icon: MapPin,
     title: 'Офис',
     details: ['г. Пенза, ул. Московская, 37., ТЦ Высшая лига, 4 этаж.'],
     subtitle: 'Приём по предварительной записи',
+    animationDelay: '0.2s',
   },
   {
+    id: 'contact-schedule',
     icon: Clock,
     title: 'График работы',
     details: ['Пн-Пт: 12:00 - 21:00', 'Сб-Вс: 10:00 - 21:00'],
     subtitle: 'Московское время',
+    animationDelay: '0.3s',
   },
 ];
 
-// Основной компонент секции контактов
-const ContactSection = () => (
+
+const ContactSection = ():JSX.Element => (
   <section id="contact" className="section section-alt">
     <div className="container mx-auto px-4">
       <div className="text-center mb-16 animate-fade-in">
@@ -137,20 +149,20 @@ const ContactSection = () => (
         </p>
       </div>
       <div className="flex flex-col gap-8">
-        {/* 1. Как с нами связаться */}
+       
         <Card>
           <CardHeader>
             <CardTitle>Как с нами связаться</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {contactInfo.map((info, index) => {
+              {contactInfo.map((info) => {
                 const IconComponent = info.icon;
                 return (
                   <div
-                    key={index}
+                    key={info.id}
                     className="card group animate-slide-up"
-                    style={{ animationDelay: `${index * 0.1}s` }}
+                    style={{ animationDelay: info.animationDelay }}
                   >
                     <CardContent>
                       <div className="flex flex-col items-center text-center space-y-3">
@@ -159,8 +171,8 @@ const ContactSection = () => (
                         </div>
                         <h4 className="font-semibold text-foreground">{info.title}</h4>
                         <div className="space-y-1">
-                          {info.details.map((detail, idx) => (
-                            <p key={idx} className="text-sm text-muted-foreground">
+                          {info.details.map((detail) => (
+                            <p key={detail} className="text-sm text-muted-foreground">
                               {detail}
                             </p>
                           ))}
@@ -174,7 +186,7 @@ const ContactSection = () => (
             </div>
           </CardContent>
         </Card>
-        {/* 2. Оставить заявку */}
+    
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
@@ -217,7 +229,7 @@ const ContactSection = () => (
             </p>
           </CardContent>
         </Card>
-        {/* 3. Часто задаваемые вопросы с интерактивным аккордеоном */}
+        
         <Card>
           <CardHeader>
             <CardTitle>Часто задаваемые вопросы</CardTitle>
