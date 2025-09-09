@@ -17,7 +17,7 @@ export default function FranchiseCard({
   const dispatch = useAppDispatch();
   const admin = useAppSelector((store) => store.user.user?.user.admin);
 
-  const handlePlayVideo = () => {
+  const handlePlayVideo = (): void => {
     setIsVideoVisible(true);
     setIsPlaying(true);
     if (videoRef.current) {
@@ -25,7 +25,7 @@ export default function FranchiseCard({
     }
   };
 
-  const handleCloseVideo = () => {
+  const handleCloseVideo = (): void => {
     if (videoRef.current) {
       videoRef.current.pause();
       videoRef.current.currentTime = 0;
@@ -38,7 +38,7 @@ export default function FranchiseCard({
     <div
       key={franchise.id}
       className="card group animate-slide-up relative"
-      style={{ animationDelay: `${franchise.id * 0.1}s` }}
+      style={{ animationDelay: `${(franchise.id * 0.1).toString()}s` }}
     >
       <div className="relative">
         <img
