@@ -1,6 +1,6 @@
 import React from 'react';
 
-const EyeIcon = ({ className }: { className?: string }) => (
+const EyeIcon = ({ className }: { className?: string }) : React.JSX.Element => (
   <svg
     className={className}
     xmlns="http://www.w3.org/2000/svg"
@@ -18,7 +18,7 @@ const EyeIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const TargetIcon = ({ className }: { className?: string }) => (
+const TargetIcon = ({ className }: { className?: string }): React.JSX.Element => (
   <svg
     className={className}
     xmlns="http://www.w3.org/2000/svg"
@@ -33,7 +33,7 @@ const TargetIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const UsersIcon = ({ className }: { className?: string }) => (
+const UsersIcon = ({ className }: { className?: string }): React.JSX.Element => (
   <svg
     className={className}
     xmlns="http://www.w3.org/2000/svg"
@@ -51,7 +51,7 @@ const UsersIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const AwardIcon = ({ className }: { className?: string }) => (
+const AwardIcon = ({ className }: { className?: string }): React.JSX.Element => (
   <svg
     className={className}
     xmlns="http://www.w3.org/2000/svg"
@@ -65,54 +65,39 @@ const AwardIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const Badge = ({ children, className }: { children: React.ReactNode; className?: string }) => (
-  <span
-    className={`inline-block rounded-full px-4 py-1 font-semibold text-sm uppercase tracking-wide bg-[hsl(200_75%_55%)] text-white ${className}`}
-  >
-    {children}
-  </span>
-);
 
-const Card = ({ children, className }: { children: React.ReactNode; className?: string }) => (
-  <div
-    className={`glass-effect rounded-xl p-6 border border-border/30 hover:border-[hsl(200_80%_70%)]/50 transition-all duration-300 animate-slide-up backdrop-blur-md ${className}`}
-  >
-    {children}
-  </div>
-);
-
-const CardContent = ({
-  children,
-  className,
-}: {
-  children: React.ReactNode;
-  className?: string;
-}) => <div className={`p-6 ${className}`}>{children}</div>;
-
-const AboutSection = () => {
+const AboutSection = ():React.JSX.Element => {
   const features = [
     {
+      id: 'feature-unique-tech',
       icon: EyeIcon,
       title: 'Уникальная технология',
       description:
         'Профессиональная фотография радужки глаза с использованием специального оборудования и программного обеспечения',
+      animationDelay: '0s',
     },
     {
+      id: 'feature-personalized',
       icon: TargetIcon,
       title: 'Персонализированный подход',
       description:
         'Каждый снимок - это произведение искусства, созданное индивидуально для клиента',
+      animationDelay: '0.1s',
     },
     {
+      id: 'feature-wide-audience',
       icon: UsersIcon,
       title: 'Широкая аудитория',
       description: 'От личных портретов до корпоративных подарков - наши услуги востребованы везде',
+      animationDelay: '0.2s',
     },
     {
+      id: 'feature-high-quality',
       icon: AwardIcon,
       title: 'Высокое качество',
       description:
         'Только проверенные технологии и профессиональное оборудование для идеального результата',
+      animationDelay: '0.3s',
     },
   ];
 
@@ -170,13 +155,13 @@ const AboutSection = () => {
           </div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {features.map((feature, index) => {
+          {features.map((feature) => {
             const IconComponent = feature.icon;
             return (
               <div
-                key={index}
+                key={feature.id}
                 className="card group animate-slide-up"
-                style={{ animationDelay: `${index * 0.1}s` }}
+                style={{ animationDelay: feature.animationDelay }}
               >
                 <div className="flex flex-col items-center text-center space-y-4">
                   <div className="p-3 bg-gradient-to-r from-[hsl(200_75%_55%)] to-[hsl(210_75%_35%)] rounded-xl group-hover:scale-110 transition-transform duration-300 shadow-iris">

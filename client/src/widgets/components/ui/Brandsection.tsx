@@ -5,7 +5,7 @@ type BadgeProps = React.HTMLAttributes<HTMLSpanElement> & {
   children: React.ReactNode;
 };
 
-const Badge = ({ children, variant = 'filled', className = '', ...props }: BadgeProps) => {
+const Badge = ({ children, variant = 'filled', className = '', ...props }: BadgeProps): React.JSX.Element => {
   const baseStyle =
     'inline-block rounded-full px-4 py-1 font-semibold text-sm uppercase tracking-wide';
   const variantStyle =
@@ -20,24 +20,13 @@ const Badge = ({ children, variant = 'filled', className = '', ...props }: Badge
   );
 };
 
-type CardProps = React.HTMLAttributes<HTMLDivElement> & {
-  children: React.ReactNode;
-};
 
-const Card = ({ children, className = '', ...props }: CardProps) => (
-  <div
-    className={`glass-effect rounded-xl p-6 border border-border/30 hover:border-[hsl(200_80%_70%)]/50 transition-all duration-300 animate-slide-up backdrop-blur-md ${className}`}
-    {...props}
-  >
-    {children}
-  </div>
-);
 
 const CardContent = ({
   children,
   className = '',
   ...props
-}: React.HTMLAttributes<HTMLDivElement> & { children: React.ReactNode }) => (
+}: React.HTMLAttributes<HTMLDivElement> & { children: React.ReactNode }): React.JSX.Element => (
   <div className={`p-6 ${className}`} {...props}>
     {children}
   </div>
@@ -45,7 +34,7 @@ const CardContent = ({
 
 import { MapPin, Calendar, Users, Award } from 'lucide-react';
 
-const BrandSection = () => {
+const BrandSection = (): React.JSX.Element => {
   const milestones = [
     { year: '2023', event: 'Основание компании в Пензе', icon: Calendar },
     {
@@ -144,11 +133,11 @@ const BrandSection = () => {
           </div>
           <div className="max-w-4xl mx-auto overflow-x-auto">
             <div className="flex space-x-6 pb-4">
-              {milestones.map((milestone, index) => {
+              {milestones.map((milestone) => {
                 const IconComponent = milestone.icon;
                 return (
                   <div
-                    key={index}
+                    key={`${milestone.year}-${milestone.event}`}
                     className="flex-shrink-0 flex items-center gap-6 p-6 card group animate-slide-up"
                     style={{ minWidth: '280px' }}
                   >
