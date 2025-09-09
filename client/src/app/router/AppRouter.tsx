@@ -10,18 +10,26 @@ import WalletTopUp from '@/features/profile/ui/WalletTopUp';
 import ProfileSection from '@/features/profile/ui/ProfileSection';
 import ChangePassword from '@/features/profile/ui/ChangePassword';
 import NotFoundPage from '@/pages/NotFound/ui/NotFoundPage';
+import ProtectedRoute from '@/shared/lib/ProtectedRoute';
+import { useAppSelector } from '@/shared/hooks/hooks';
 
 export default function AppRouter(): React.JSX.Element {
+  const userStatus = useAppSelector((store) => store.user.status);
+
   return (
     <Routes>
       <Route element={<Layout />}>
         <Route path="/" element={<MainPage />} />
-        <Route path="/profile" element={<ProfilePage />}>
-          <Route index element={<Navigate to="wallet" replace />} />
-          <Route path="wallet" element={<WalletTopUp />} />
-          <Route path="personal" element={<ProfileSection />} />
-          <Route path="password" element={<ChangePassword />} />
+        {/* Приватные маршруты */}
+        <Route element={<ProtectedRoute isAllowed={userStatus !== 'guest'} redirectTo="/signup" />}>
+          <Route path="/profile" element={<ProfilePage />}>
+            <Route index element={<Navigate to="wallet" replace />} />
+            <Route path="wallet" element={<WalletTopUp />} />
+            <Route path="personal" element={<ProfileSection />} />
+            <Route path="password" element={<ChangePassword />} />
+          </Route>
         </Route>
+
         <Route path="/franchise" element={<FranchisePage />} />
         <Route path="/signin" element={<SignInPage />} />
         <Route path="/signup" element={<SignUpPage />} />
