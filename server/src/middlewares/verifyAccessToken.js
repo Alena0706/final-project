@@ -13,6 +13,7 @@ function verifyAccessToken(req, res, next) {
     const { user } = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET);
 
     res.locals.user = user;
+    req.user = user; // Добавляем пользователя в req для совместимости с checkRole
 
     next();
   } catch (err) {

@@ -1,6 +1,7 @@
 import { updateUser } from '@/entities/auth/model/thunks';
 import { walletSchema } from '@/entities/wallet/model/schemas';
-import {  setBalance } from '@/entities/wallet/model/slice';
+import { addTransaction, setBalance } from '@/entities/wallet/model/slice';
+import { topUpWallet } from '@/entities/wallet/model/thunks';
 import { useAppDispatch, useAppSelector } from '@/shared/hooks/hooks';
 import React, { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
@@ -8,14 +9,14 @@ import z from 'zod';
 
 const WalletTopUp = (): React.JSX.Element => {
   const dispatch = useAppDispatch();
-  const balance = useAppSelector((store) => store.user.user?.user.balance);
+  const balance = useAppSelector((store) => store.wallet.balance);
   const transactions = useAppSelector((store) => store.wallet.transactions);
   const trans = useAppSelector((store) => store.user.user?.user.transactions);
   const [amount, setAmount] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     const numAmount = parseFloat(amount);
     try {
@@ -25,30 +26,25 @@ const WalletTopUp = (): React.JSX.Element => {
         return;
       }
       setError(null);
-      // Здесь логика отправки платежа, API запрос и т.д.
-      if (numAmount > 0) {
-        const dataValidate = walletSchema.parse(numAmount);
-        const transaction = { id: uuidv4(), amount: dataValidate, date: new Date().toISOString() };
-        // dispatch(addTransaction(transaction));
-        void dispatch(
-          updateUser({
-            balance: (balance ?? 0) + dataValidate,
-            transactions: [...transactions, transaction],
-          }),
-        );
-        if (balance && balance < dataValidate) {
-          dispatch(setBalance(balance));
-        }
-        console.log(`Пополнение кошелька на сумму: ${numAmount.toString()}`);
-        setSuccess(true);
-        setAmount('');
-      }
-    } catch (err) {
-      if (err instanceof z.ZodError) {
+      
+      // Валидируем сумму
+      const dataValidate = walletSchema.parse(numAmount);
+      
+      // Используем API для пополнения кошелька
+      await dispatch(topUpWallet({
+        amount: dataValidate,
+        description: 'Пополнение кошелька'
+      })).unwrap();
+      
+      console.log(`Пополнение кошелька на сумму: ${numAmount.toString()}`);
+      setSuccess(true);
+      setAmount('');
+    } catch (error) {
+      if (error instanceof z.ZodError) {
         setError('Пожалуйста, введите корректную сумму меньше или равно 1000000');
         setSuccess(false);
       } else {
-        setError('Ошибка валидации');
+        setError('Ошибка пополнения кошелька');
         setSuccess(false);
       }
     }
@@ -91,13 +87,13 @@ const WalletTopUp = (): React.JSX.Element => {
         </button>
       </form>
 
-      {(trans?.length ?? 0) > 0 && (
+      {(transactions?.length ?? 0) > 0 && (
         <div className="mt-12">
           <h3 className="text-2xl font-bold mb-6 text-gradient-primary text-center">
             История пополнений
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {trans?.map((transaction, index) => (
+            {transactions?.map((transaction, index) => (
               <div
                 key={`${transaction.id}-${index.toString()}`}
                 className="bg-gradient-card rounded-lg p-4 border border-border shadow-elegant hover:shadow-iris transition-all duration-300"

@@ -57,7 +57,7 @@ const GallerySection = (): JSX.Element => {
     <section id="gallery" className="section section-alt">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16 animate-fade-in">
-          <div className="inline-flex items-center space-x-2 glass-effect rounded-full px-6 py-2 mb-4">
+          <div className="sr-only">
             <span className="text-foreground font-medium uppercase tracking-wide text-sm">
               Галерея
             </span>

@@ -3,6 +3,8 @@ import { Link, Outlet, useLocation } from 'react-router';
 
 const tabs = [
   { id: 'wallet', label: 'Пополнение кошелька' },
+  { id: 'invoices', label: 'Мои счета' },
+  { id: 'notifications', label: 'Уведомления' },
   { id: 'personal', label: 'Персональные данные' },
   { id: 'password', label: 'Изменение пароля' },
 ];
