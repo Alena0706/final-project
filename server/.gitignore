@@ -143,3 +143,8 @@ vite.config.ts.timestamp-*
 # Uploads directory
 uploads/
 public/uploads
+
+
+node_modules/
+dist/
+.env

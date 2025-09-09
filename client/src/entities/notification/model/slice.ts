@@ -1,7 +1,8 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import type { PayloadAction } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 import type { Notification } from '../api/notificationService';
 
-interface NotificationState {
+type NotificationState = {
   notifications: Notification[];
   unreadCount: number;
   loading: boolean;
@@ -12,7 +13,7 @@ interface NotificationState {
     total: number;
     pages: number;
   };
-}
+};
 
 const initialState: NotificationState = {
   notifications: [],
@@ -41,24 +42,24 @@ export const notificationSlice = createSlice({
       }
     },
     markAsRead(state, action: PayloadAction<number>) {
-      const notification = state.notifications.find(n => n.id === action.payload);
+      const notification = state.notifications.find((n) => n.id === action.payload);
       if (notification && !notification.isRead) {
         notification.isRead = true;
         state.unreadCount = Math.max(0, state.unreadCount - 1);
       }
     },
     markAllAsRead(state) {
-      state.notifications.forEach(notification => {
+      state.notifications.forEach((notification) => {
         notification.isRead = true;
       });
       state.unreadCount = 0;
     },
     removeNotification(state, action: PayloadAction<number>) {
-      const notification = state.notifications.find(n => n.id === action.payload);
+      const notification = state.notifications.find((n) => n.id === action.payload);
       if (notification && !notification.isRead) {
         state.unreadCount = Math.max(0, state.unreadCount - 1);
       }
-      state.notifications = state.notifications.filter(n => n.id !== action.payload);
+      state.notifications = state.notifications.filter((n) => n.id !== action.payload);
     },
     setUnreadCount(state, action: PayloadAction<number>) {
       state.unreadCount = action.payload;
@@ -69,12 +70,15 @@ export const notificationSlice = createSlice({
     setError(state, action: PayloadAction<string | null>) {
       state.error = action.payload;
     },
-    setPagination(state, action: PayloadAction<{
-      page: number;
-      limit: number;
-      total: number;
-      pages: number;
-    }>) {
+    setPagination(
+      state,
+      action: PayloadAction<{
+        page: number;
+        limit: number;
+        total: number;
+        pages: number;
+      }>,
+    ) {
       state.pagination = action.payload;
     },
     clearNotifications(state) {
