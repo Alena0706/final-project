@@ -18,10 +18,7 @@ const ProfilePage = (): React.JSX.Element => {
       <div className="container mx-auto px-4">
         {/* Заголовок профиля */}
         <div className="text-center mb-12 animate-fade-in">
-          <div className="inline-flex items-center space-x-3 mb-4">
-            <div className="w-12 h-12 bg-gradient-iris rounded-xl flex items-center justify-center shadow-iris">
-              <span className="text-white font-bold text-lg">I</span>
-            </div>
+          <div className="mb-4">
             <h1 className="heading-2 text-gradient-primary">Профиль партнера</h1>
           </div>
           <p className="text-muted-foreground">Управляйте своим аккаунтом и настройками</p>
@@ -34,7 +31,7 @@ const ProfilePage = (): React.JSX.Element => {
               <h2 className="text-lg font-semibold text-foreground mb-4">Навигация</h2>
               <ul className="space-y-2">
                 {tabs.map(({ id, label }) => {
-                  const isActive = location.pathname.endsWith(id);
+                  const isActive = location.pathname === `/profile/${id}`;
                   return (
                     <li key={id}>
                       <Link

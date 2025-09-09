@@ -5,6 +5,7 @@ import SignUpPage from '@/pages/SignUp/ui/SignUpPage';
 import SignInPage from '@/pages/SignIn/ui/SignInPage';
 import MainPage from '@/pages/main/ui/MainPage';
 import ProfilePage from '@/pages/Profile/ui/ProfilePage';
+import ProfileNotFound from '@/pages/Profile/ui/ProfileNotFound';
 import FranchisePage from '@/pages/franchisePage/ui/FranchisePage';
 import WalletTopUp from '@/features/profile/ui/WalletTopUp';
 import ProfileSection from '@/features/profile/ui/ProfileSection';
@@ -14,6 +15,7 @@ import UserNotifications from '@/features/notifications/ui/UserNotifications';
 import AdminDashboard from '@/features/admin/ui/AdminDashboard';
 import NotFoundPage from '@/pages/NotFound/ui/NotFoundPage';
 import ProtectedRoute from '@/shared/lib/ProtectedRoute';
+import AuthRoute from '@/shared/lib/AuthRoute';
 import PageLoader from '@/widgets/components/ui/PageLoader';
 import PageTransition from '@/widgets/components/ui/PageTransition';
 import AuthTransition from '@/widgets/components/ui/AuthTransition';
@@ -53,9 +55,18 @@ export default function AppRouter(): React.JSX.Element {
               <Route path="notifications" element={<UserNotifications />} />
               <Route path="personal" element={<ProfileSection />} />
               <Route path="password" element={<ChangePassword />} />
+              <Route path="*" element={<ProfileNotFound />} />
             </Route>
             <Route 
               path="/admin" 
+              element={
+                <PageTransition>
+                  <AdminDashboard />
+                </PageTransition>
+              } 
+            />
+            <Route 
+              path="/admin/*" 
               element={
                 <PageTransition>
                   <AdminDashboard />
@@ -75,17 +86,29 @@ export default function AppRouter(): React.JSX.Element {
           <Route 
             path="/signin" 
             element={
-              <AuthTransition>
-                <SignInPage />
-              </AuthTransition>
+              <AuthRoute 
+                isAuthenticated={userStatus === 'logged'} 
+                redirectTo="/profile" 
+                isLoading={isLoading}
+              >
+                <AuthTransition>
+                  <SignInPage />
+                </AuthTransition>
+              </AuthRoute>
             } 
           />
           <Route 
-            path="/signup" 
+            path="/signup"
             element={
-              <AuthTransition>
-                <SignUpPage />
-              </AuthTransition>
+              <AuthRoute 
+                isAuthenticated={userStatus === 'logged'} 
+                redirectTo="/profile" 
+                isLoading={isLoading}
+              >
+                <AuthTransition>
+                  <SignUpPage />
+                </AuthTransition>
+              </AuthRoute>
             } 
           />
           <Route 
