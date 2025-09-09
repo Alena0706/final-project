@@ -12,17 +12,20 @@ const Card = ({ children, className = '', ...props }: CardProps):JSX.Element => 
     {children}
   </div>
 );
-const CardHeader = ({ children, className = '', ...props }: CardProps):JSX.Element => (
+
+const CardHeader = ({ children, className = '', ...props }: CardProps): React.ReactElement => (
   <div className={`p-6 pb-0 ${className}`} {...props}>
     {children}
   </div>
 );
-const CardTitle = ({ children, className = '', ...props }: CardProps):JSX.Element => (
+
+const CardTitle = ({ children, className = '', ...props }: CardProps): React.ReactElement => (
   <h3 className={`text-xl font-semibold text-foreground ${className}`} {...props}>
     {children}
   </h3>
 );
-const CardContent = ({ children, className = '', ...props }: CardProps):JSX.Element => (
+
+const CardContent = ({ children, className = '', ...props }: CardProps): React.ReactElement => (
   <div className={`p-6 ${className}`} {...props}>
     {children}
   </div>
@@ -46,7 +49,6 @@ const faqData = [
     answer: 'От подписания договора до открытия: 2-4 недели.',
   },
 ];
-
 
 const FAQ = ():JSX.Element => {
   const [openId, setOpenId] = useState<string | null>(null);
@@ -130,7 +132,6 @@ const contactInfo = [
     animationDelay: '0.3s',
   },
 ];
-
 
 const ContactSection = ():JSX.Element => (
   <section id="contact" className="section section-alt">

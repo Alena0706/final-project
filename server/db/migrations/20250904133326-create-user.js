@@ -41,11 +41,23 @@ module.exports = {
         defaultValue: false,
       },
       balance: {
-        type: Sequelize.INTEGER,
-        defaultValue: 0,
+        type: Sequelize.DECIMAL(10,2),
+        defaultValue: 0.00,
       },
       transactions: {
         type: Sequelize.JSONB,
+      },
+      role: {
+        type: Sequelize.STRING,
+        defaultValue: 'franchise_owner',
+      },
+      registrationDate: {
+        type: Sequelize.DATE,
+        allowNull: true,
+      },
+      monthlyAmount: {
+        type: Sequelize.DECIMAL(10,2),
+        defaultValue: 0.00,
       },
       createdAt: {
         allowNull: false,

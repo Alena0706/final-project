@@ -10,7 +10,13 @@ const Navigation = (): React.JSX.Element => {
   const navigate = useNavigate();
   const location = useLocation();
   const user = useAppSelector((store) => store.user.user);
+  const status = useAppSelector((store) => store.user.status);
   const dispatch = useAppDispatch();
+
+  // Отладка изменений пользователя
+  useEffect(() => {
+    console.log('Navigation - user changed:', { user, status });
+  }, [user, status]);
 
   const navItems = [
     { href: '#', label: 'Главная', id: 'hero' },
@@ -128,13 +134,7 @@ const Navigation = (): React.JSX.Element => {
           {/* Пустое место для логотипа */}
           <div>
             <Link to="/">
-              <img
-                src="/Logo3.png"
-                alt="Логотип"
-                width={60}
-              
-                
-              />
+              <img src="/Logo3.png" alt="Логотип" width={60} />
             </Link>
           </div>
 
@@ -165,6 +165,16 @@ const Navigation = (): React.JSX.Element => {
                 >
                   Профиль
                 </Link>
+                {/* Отладочная информация и ссылка на админку */}
+                {console.log('Navigation - user data:', { user, status, admin: user?.user?.admin })}
+                {user?.user?.admin && (
+                  <Link
+                    to="/admin"
+                    className="px-4 py-2 text-foreground hover:text-[hsl(200_80%_70%)] font-medium transition-colors duration-300"
+                  >
+                    Админка
+                  </Link>
+                )}
                 <button
                   onClick={() => void dispatch(logoutUser())}
                   className="px-5 py-2 bg-gradient-to-r from-[hsl(200_75%_55%)] to-[hsl(210_75%_35%)] text-white hover:from-[hsl(200_80%_60%)] hover:to-[hsl(210_80%_40%)] transition-all duration-300 shadow-lg hover:shadow-[hsl(200_80%_70%)]/30 rounded-lg font-medium"
@@ -229,6 +239,15 @@ const Navigation = (): React.JSX.Element => {
                     >
                       Профиль
                     </Link>
+                    {user?.user?.admin && (
+                      <Link
+                        to="/admin"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className="px-4 py-2 text-foreground hover:text-[hsl(200_80%_70%)] font-medium transition-colors duration-300 text-left"
+                      >
+                        Админка
+                      </Link>
+                    )}
                     <button
                       onClick={() => {
                         void dispatch(logoutUser());
