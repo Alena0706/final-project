@@ -4,7 +4,10 @@ import { Phone, Mail, MapPin, Clock, Send } from 'lucide-react';
 // Карточки и заголовки
 type CardProps = React.HTMLAttributes<HTMLDivElement> & { children: React.ReactNode };
 const Card = ({ children, className = '', ...props }: CardProps) => (
-  <div className={`bg-gradient-card border-0 shadow-elegant rounded-2xl ${className}`} {...props}>
+  <div
+    className={`glass-effect rounded-xl border border-border/30 hover:border-[hsl(200_80%_70%)]/50 transition-all duration-300 backdrop-blur-md ${className}`}
+    {...props}
+  >
     {children}
   </div>
 );
@@ -121,12 +124,14 @@ const ContactSection = () => (
   <section id="contact" className="section section-alt">
     <div className="container mx-auto px-4">
       <div className="text-center mb-16 animate-fade-in">
-        <div className="sr-only">
+        <div className="inline-flex items-center space-x-2 glass-effect rounded-full px-6 py-2 mb-4 ">
           <span className="text-foreground font-medium uppercase tracking-wide text-sm">
             Контакты
           </span>
         </div>
-        <h2 className="heading-2 text-gradient-primary mb-6">Свяжитесь с нами</h2>
+        <h2 className="heading-2 bg-gradient-to-r from-[hsl(200_80%_70%)] to-[hsl(210_90%_30%)] bg-clip-text text-transparent mb-6">
+          Свяжитесь с нами
+        </h2>
         <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
           Готовы ответить на все ваши вопросы и помочь начать успешный бизнес
         </p>
@@ -149,7 +154,7 @@ const ContactSection = () => (
                   >
                     <CardContent>
                       <div className="flex flex-col items-center text-center space-y-3">
-                        <div className="p-3 bg-gradient-iris rounded-xl group-hover:scale-110 transition-transform duration-300">
+                        <div className="p-3 bg-gradient-to-r from-[hsl(200_75%_55%)] to-[hsl(210_75%_35%)] rounded-xl group-hover:scale-110 transition-transform duration-300">
                           <IconComponent className="h-5 w-5 text-white" />
                         </div>
                         <h4 className="font-semibold text-foreground">{info.title}</h4>

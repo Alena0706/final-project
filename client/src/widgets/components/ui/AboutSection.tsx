@@ -67,14 +67,18 @@ const AwardIcon = ({ className }: { className?: string }) => (
 
 const Badge = ({ children, className }: { children: React.ReactNode; className?: string }) => (
   <span
-    className={`inline-block rounded-full px-4 py-1 font-semibold text-sm uppercase tracking-wide ${className}`}
+    className={`inline-block rounded-full px-4 py-1 font-semibold text-sm uppercase tracking-wide bg-[hsl(200_75%_55%)] text-white ${className}`}
   >
     {children}
   </span>
 );
 
 const Card = ({ children, className }: { children: React.ReactNode; className?: string }) => (
-  <div className={`rounded-3xl bg-white bg-opacity-10 shadow-lg ${className}`}>{children}</div>
+  <div
+    className={`glass-effect rounded-xl p-6 border border-border/30 hover:border-[hsl(200_80%_70%)]/50 transition-all duration-300 animate-slide-up backdrop-blur-md ${className}`}
+  >
+    {children}
+  </div>
 );
 
 const CardContent = ({
@@ -121,7 +125,9 @@ const AboutSection = () => {
               О нас
             </span>
           </div>
-          <h2 className="heading-2 text-gradient-primary mb-6">Магия взгляда в деталях</h2>
+          <h2 className="heading-2 bg-gradient-to-r from-[hsl(200_80%_70%)] to-[hsl(210_90%_30%)] bg-clip-text text-transparent mb-6">
+            Магия взгляда в деталях
+          </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
             Мы создаем уникальные художественные портреты радужки глаза, превращая каждый взгляд в
             произведение искусства
@@ -147,10 +153,10 @@ const AboutSection = () => {
             </div>
           </div>
           <div className="relative animate-slide-up" style={{ animationDelay: '0.2s' }}>
-            <div className="absolute inset-0 bg-primary/10 rounded-3xl blur-3xl opacity-50"></div>
+            <div className="absolute inset-0 bg-[hsl(200_80%_70%)]/10 rounded-3xl blur-3xl opacity-50"></div>
             <div className="card relative">
               <div className="text-center">
-                <div className="inline-flex p-4 bg-gradient-iris rounded-2xl mb-4 shadow-iris">
+                <div className="inline-flex p-4 bg-gradient-to-r from-[hsl(200_75%_55%)] to-[hsl(210_75%_35%)] rounded-2xl mb-4 shadow-iris">
                   <EyeIcon className="h-8 w-8 text-white" />
                 </div>
                 <h4 className="text-xl font-bold text-foreground mb-4">Почему радужка?</h4>
@@ -173,10 +179,10 @@ const AboutSection = () => {
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
                 <div className="flex flex-col items-center text-center space-y-4">
-                  <div className="p-3 bg-gradient-iris rounded-xl group-hover:scale-110 transition-transform duration-300 shadow-iris">
+                  <div className="p-3 bg-gradient-to-r from-[hsl(200_75%_55%)] to-[hsl(210_75%_35%)] rounded-xl group-hover:scale-110 transition-transform duration-300 shadow-iris">
                     <IconComponent className="h-6 w-6 text-white" />
                   </div>
-                  <h3 className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors">
+                  <h3 className="text-lg font-semibold text-foreground group-hover:text-[hsl(200_80%_70%)] transition-colors">
                     {feature.title}
                   </h3>
                   <p className="text-sm text-muted-foreground leading-relaxed">

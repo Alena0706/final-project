@@ -2,11 +2,15 @@
 
 :root {
   /* Основная цветовая палитра - темные тона с голубыми акцентами */
-  --primary: #3b82f6; /* Голубой вместо зеленого */
+  --primary: hsl(200, 80%, 70%); /* Голубой в стиле HeroSection */
   --primary-foreground: #f8fafc;
   --secondary: #2d2d36; /* Темно-серый */
   --secondary-foreground: #f8fafc;
-  --accent: linear-gradient(135deg, hsl(210 90% 60%), hsl(210 80% 55%)); /* Голубой градиент */
+  --accent: linear-gradient(
+    135deg,
+    hsl(200, 80%, 70%),
+    hsl(210, 90%, 30%)
+  ); /* Голубой градиент в стиле HeroSection */
   --accent-foreground: #f8fafc;
 
   /* Фоновые цвета - темная тема */
@@ -31,19 +35,23 @@
   --gold-foreground: #451a03;
 
   /* Градиенты для темной темы с голубыми тонами */
-  --gradient-primary: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%); /* Голубой градиент */
+  --gradient-primary: linear-gradient(
+    135deg,
+    hsl(200, 75%, 55%),
+    hsl(210, 75%, 35%)
+  ); /* Голубой градиент в стиле HeroSection */
   --gradient-card: linear-gradient(135deg, #16161d 0%, #1e1e26 100%);
   --gradient-hero: transparent; /* Добавлен синий */
   --gradient-iris: linear-gradient(
     135deg,
-    #3b82f6 0%,
-    #2563eb 50%,
-    #1d4ed8 100%
-  ); /* Голубой градиент */
+    hsl(200, 75%, 55%) 0%,
+    hsl(210, 75%, 35%) 100%
+  ); /* Голубой градиент в стиле HeroSection */
 
   /* Тени для темной темы */
   --shadow-elegant: 0 10px 25px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -4px rgba(0, 0, 0, 0.2);
-  --shadow-iris: 0 20px 25px -5px rgba(59, 130, 246, 0.3), 0 10px 10px -5px rgba(59, 130, 246, 0.1); /* Голубые тени */
+  --shadow-iris: 0 20px 25px -5px hsla(200, 75%, 55%, 0.3),
+    0 10px 10px -5px hsla(200, 75%, 55%, 0.1); /* Голубые тени в стиле HeroSection */
   --shadow-gold: 0 20px 25px -5px rgba(251, 191, 36, 0.3), 0 10px 10px -5px rgba(251, 191, 36, 0.1);
 
   /* Радиусы */
@@ -58,6 +66,17 @@ body {
   color: var(--foreground);
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
   line-height: 1.6;
+}
+
+/* Скрыть якорные ссылки */
+a[href^="#"] {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
 }
 
 /* Утилитарные классы */
@@ -208,8 +227,8 @@ body {
 
 .form-input:focus {
   outline: none;
-  border-color: var(--primary);
-  box-shadow: 0 0 0 2px rgba(76, 130, 247, 0.2);
+  border-color: hsl(200, 80%, 70%);
+  box-shadow: 0 0 0 2px hsla(200, 80%, 70%, 0.2);
 }
 
 .form-input::placeholder {
@@ -374,7 +393,7 @@ textarea:disabled::placeholder {
 }
 
 .btn-primary {
-  background: var(--gradient-primary);
+  background: linear-gradient(135deg, hsl(200, 75%, 55%), hsl(210, 75%, 35%));
   color: white;
   padding: 0.75rem 1.5rem;
   box-shadow: var(--shadow-iris);

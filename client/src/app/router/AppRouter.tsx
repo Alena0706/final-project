@@ -12,6 +12,7 @@ import ChangePassword from '@/features/profile/ui/ChangePassword';
 import UserInvoices from '@/features/invoices/ui/UserInvoices';
 import UserNotifications from '@/features/notifications/ui/UserNotifications';
 import AdminDashboard from '@/features/admin/ui/AdminDashboard';
+import NotFoundPage from '@/pages/NotFound/ui/NotFoundPage';
 
 export default function AppRouter(): React.JSX.Element {
   return (
@@ -30,6 +31,7 @@ export default function AppRouter(): React.JSX.Element {
         <Route path="/franchise" element={<FranchisePage />} />
         <Route path="/signin" element={<SignInPage />} />
         <Route path="/signup" element={<SignUpPage />} />
+        <Route path="*" element={<NotFoundPage />} />
       </Route>
     </Routes>
   );

@@ -1,6 +1,6 @@
 import { useAppSelector } from '@/shared/hooks/hooks';
 import PartnerFormModal from '@/widgets/modalMain/ui/PartnerFormModal';
-import { ArrowRight, ArrowRightIcon } from 'lucide-react';
+import { ArrowRight} from 'lucide-react';
 import React, { useState } from 'react';
 import { Link } from 'react-router';
 import {
@@ -244,7 +244,13 @@ const FranchisePage = (): React.JSX.Element => {
                       value.toLocaleString('ru-RU', { style: 'currency', currency: 'RUB' })
                     }
                   />
-                  <Line type="monotone" dataKey="profit" stroke="#8884d8" strokeWidth={3} dot />
+                  <Line
+                    type="monotone"
+                    dataKey="profit"
+                    stroke="hsl(200, 75%, 55%)"
+                    strokeWidth={3}
+                    dot
+                  />
                 </LineChart>
               </ResponsiveContainer>
             </Card>
