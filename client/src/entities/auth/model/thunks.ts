@@ -19,10 +19,13 @@ export const registerUser = createAsyncThunk('user/register', async (user: UserR
   return response;
 });
 
-export const uploadAvatar = createAsyncThunk('user/uploadAvatar', async (formData: FormData) => {
-  const result: unknown = await UserServices.uploadAvatar(formData);
-  return result;
-});
+export const uploadAvatar = createAsyncThunk<{ user: { avatar: string } }, FormData>(
+  'user/uploadAvatar',
+  async (formData: FormData) => {
+    const result = await UserServices.uploadAvatar(formData);
+    return result as { user: { avatar: string } };
+  },
+);
 
 export const loginUser = createAsyncThunk('user/login', async (user: UserLoginT) => {
   const response = await UserServices.login(user);

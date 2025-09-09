@@ -9,6 +9,7 @@ import {
   uploadAvatar,
   verify2FA,
 } from './thunks';
+import type { AxiosError } from 'axios';
 
 const initialState: UserStateT = {
   user: null,
@@ -20,7 +21,11 @@ const initialState: UserStateT = {
 export const userSlice = createSlice({
   name: 'user',
   initialState,
-  reducers: {},
+  reducers: {
+    clearError: (state) => {
+      state.error = null;
+    },
+  },
   extraReducers(builder) {
     builder
       .addCase(refreshUser.fulfilled, (state, action) => {
@@ -62,7 +67,7 @@ export const userSlice = createSlice({
       .addCase(uploadAvatar.fulfilled, (state, action) => {
         state.error = null;
         // Обновляем аватар пользователя, если он есть в ответе
-        if (action.payload?.user && state.user?.user) {
+        if (state.user?.user) {
           state.user.user.avatar = action.payload.user.avatar;
         }
       })
@@ -84,9 +89,6 @@ export const userSlice = createSlice({
 
     builder
       .addCase(loginUser.fulfilled, (state, action) => {
-        console.log('Login fulfilled - setting user data:', action.payload);
-        console.log('User admin flag:', action.payload?.user?.admin);
-        console.log('User admin type:', typeof action.payload?.user?.admin);
         state.user = action.payload;
         state.status = 'logged';
         state.error = null;
@@ -101,9 +103,13 @@ export const userSlice = createSlice({
           state.error = action.error.message;
         } else if (action.error.name === 'AxiosError') {
           // Обработка Axios ошибок
-          const axiosError = action.error as any;
-          if (axiosError.response?.data?.message) {
-            state.error = axiosError.response.data.message;
+          const axiosError = action.error as unknown as AxiosError;
+          if (
+            axiosError.response?.data &&
+            typeof axiosError.response.data === 'object' &&
+            'message' in axiosError.response.data
+          ) {
+            state.error = (axiosError.response.data as { message: string }).message;
           } else if (axiosError.response?.status === 500) {
             state.error = 'Ошибка сервера. Попробуйте позже.';
           } else if (axiosError.response?.status === 401) {
@@ -151,4 +157,5 @@ export const userSlice = createSlice({
   },
 });
 
+export const { clearError } = userSlice.actions;
 export default userSlice.reducer;

@@ -16,13 +16,13 @@ class UserServices {
     return AuthResponseSchema.parse(updateUser.data);
   }
 
-  static async uploadAvatar(formData: FormData): Promise<unknown> {
+  static async uploadAvatar(formData: FormData): Promise<{ user: { avatar: string } }> {
     const response = await axiosInstance.post('/auth/upload', formData, {
       headers: {
         'Content-Type': 'multipart/form-data', // Указываем, что отправляем файл
       },
     });
-    return response.data;
+    return response.data as { user: { avatar: string } };
   }
 
   static async login(user: UserLoginT): Promise<AuthResponseT> {

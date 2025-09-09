@@ -4,9 +4,9 @@ interface PartnerFormModalProps {
   isOpen: boolean;
   onClose: () => void;
   user?: {
-    phone?: string;
+    phone?: string | null;
     name?: string;
-    city?: string;
+    city?: string | null;
   };
 }
 
