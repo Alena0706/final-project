@@ -33,12 +33,16 @@ export default function SignUpForm(): React.JSX.Element {
     return formatted;
   }
 
-  const handleSubmit: FormEventHandler<HTMLFormElement> = (e): void => {
+  const handleSubmit: FormEventHandler<HTMLFormElement> = async (e): Promise<void> => {
     e.preventDefault();
     const data = Object.fromEntries(new FormData(e.currentTarget));
     const dataValidate = userRegisterSchema.parse(data);
-    void dispatch(registerUser(dataValidate));
-    void navigate('/');
+    try {
+      await dispatch(registerUser(dataValidate)).unwrap();
+      navigate('/');
+    } catch (error) {
+      console.error('Registration failed:', error);
+    }
   };
 
   const handlePhoneChange: ChangeEventHandler<HTMLInputElement> = (e) => {
