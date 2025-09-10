@@ -2,7 +2,11 @@ import { userLoginSchema } from '@/entities/auth/model/schemas';
 import { loginUser } from '@/entities/auth/model/thunks';
 import { clearError } from '@/entities/auth/model/slice';
 import { useAppDispatch, useAppSelector } from '@/shared/hooks/hooks';
+
+import { TwoFactorVerification } from '@/entities/2fa/ui';
+
 import Spinner from '@/widgets/components/ui/Spinner';
+
 import type { FormEventHandler } from 'react';
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router';
@@ -10,15 +14,22 @@ import { useNavigate, Link } from 'react-router';
 export default function SignInForm(): React.JSX.Element {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { error, status } = useAppSelector((state) => state.user);
+  const { error, status, user } = useAppSelector((state) => state.user);
   const [validationError, setValidationError] = useState<string>('');
+  const [show2FA, setShow2FA] = useState<boolean>(false);
+  const [userEmail, setUserEmail] = useState<string>('');
 
   // Редирект после успешного входа
   useEffect(() => {
-    if (status === 'logged') {
-      void navigate('/');
+    if (status === 'logged' && user?.user) {
+      // Проверяем, требуется ли 2FA
+      if (user.user.secret) {
+        setShow2FA(true);
+      } else {
+        void navigate('/');
+      }
     }
-  }, [status, navigate]);
+  }, [status, user, navigate]);
 
   // Очищаем ошибки при загрузке компонента
   useEffect(() => {
@@ -41,6 +52,14 @@ export default function SignInForm(): React.JSX.Element {
         }
 
         const dataValidate = userLoginSchema.parse(data);
+
+        console.log('Validated data:', dataValidate);
+
+        // Сохраняем email для 2FA
+        setUserEmail(dataValidate.email);
+
+        console.log('Dispatching loginUser...');
+
         await dispatch(loginUser(dataValidate)).unwrap();
         // Редирект теперь происходит в useEffect
       } catch (loginError: unknown) {
@@ -60,6 +79,16 @@ export default function SignInForm(): React.JSX.Element {
         }
       }
     })();
+  };
+
+  const handle2FASuccess = (): void => {
+    setShow2FA(false);
+    void navigate('/');
+  };
+
+  const handle2FACancel = (): void => {
+    setShow2FA(false);
+    setUserEmail('');
   };
 
   return (
@@ -147,6 +176,15 @@ export default function SignInForm(): React.JSX.Element {
         </div>
         
       </div>
+
+      {/* Модальное окно 2FA */}
+      {show2FA && (
+        <TwoFactorVerification
+          email={userEmail}
+          onSuccess={handle2FASuccess}
+          onCancel={handle2FACancel}
+        />
+      )}
     </div>
   );
 }

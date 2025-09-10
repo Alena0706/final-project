@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { UserStateT } from './types';
+import type { userRegister2faSchemaT } from '@/entities/2fa/model/types';
 import {
   loginUser,
   logoutUser,
@@ -8,8 +9,14 @@ import {
   updateUser,
   uploadAvatar,
   verify2FA,
+
+  generate2FASecret,
+  verify2FAToken,
+  disable2FA,
+
   verifyEmail,
   resendVerificationEmail,
+
 } from './thunks';
 import type { AxiosError } from 'axios';
 
@@ -157,6 +164,37 @@ export const userSlice = createSlice({
         }
       });
 
+    // 2FA handlers
+    builder
+      .addCase(generate2FASecret.fulfilled, (state, action) => {
+        state.secret = action.payload as userRegister2faSchemaT;
+        state.error = null;
+      })
+      .addCase(generate2FASecret.rejected, (state, action) => {
+        state.error = action.error.message ?? 'Unknown error';
+      });
+
+    builder
+      .addCase(verify2FAToken.fulfilled, (state) => {
+        state.error = null;
+        // Можно добавить дополнительную логику при успешной проверке
+      })
+      .addCase(verify2FAToken.rejected, (state, action) => {
+        state.error = action.error.message ?? 'Unknown error';
+      });
+
+    builder
+      .addCase(disable2FA.fulfilled, (state) => {
+        state.secret = null;
+        state.error = null;
+        // Обновляем пользователя, убирая secret
+        if (state.user?.user) {
+          state.user.user.secret = null;
+        }
+      })
+      .addCase(disable2FA.rejected, (state, action) => {
+        state.error = action.error.message ?? 'Unknown error';
+
     builder
       .addCase(verifyEmail.fulfilled, (state) => {
         if (state.user?.user) {
@@ -174,6 +212,7 @@ export const userSlice = createSlice({
       })
       .addCase(resendVerificationEmail.rejected, (state, action) => {
         state.error = action.error.message ?? 'Ошибка отправки письма';
+
       });
   },
 });

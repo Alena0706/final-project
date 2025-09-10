@@ -15,7 +15,10 @@ module.exports = (sequelize, DataTypes) => {
   }
   Message.init({
     roomId: DataTypes.STRING,
-    sender: DataTypes.BOOLEAN,
+    sender: {
+      type: DataTypes.ENUM('user', 'admin', 'assistant', 'system'),
+      allowNull: false
+    },
     message: DataTypes.TEXT
   }, {
     sequelize,

@@ -4,7 +4,7 @@ import { createSlice } from '@reduxjs/toolkit';
 export type Message = {
   id: number; // или _id если используете UUID
   roomId: string;
-  sender: 'user' | 'admin';
+  sender: 'user' | 'admin' | 'assistant' | 'system';
   message: string;
   createdAt: string;
 };
