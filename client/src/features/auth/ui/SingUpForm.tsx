@@ -2,6 +2,7 @@ import { userRegisterSchema } from '@/entities/auth/model/schemas';
 import { registerUser } from '@/entities/auth/model/thunks';
 import { useAppDispatch, useAppSelector } from '@/shared/hooks/hooks';
 import Spinner from '@/widgets/components/ui/Spinner';
+import { ArrowLeft, Home } from 'lucide-react';
 import type { ChangeEventHandler, FormEventHandler } from 'react';
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router';
@@ -58,7 +59,17 @@ export default function SignUpForm(): React.JSX.Element {
   return (
     <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-lg w-full space-y-8">
-    
+        {/* Кнопка возврата на главную */}
+        <div className="flex justify-start">
+          <Link
+            to="/"
+            className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors duration-200 hover:bg-muted/50 rounded-lg group"
+          >
+            <ArrowLeft className="h-4 w-4 group-hover:-translate-x-1 transition-transform duration-200" />
+            <span className="hidden sm:inline">Вернуться на главную</span>
+            <span className="sm:hidden">На главную</span>
+          </Link>
+        </div>
 
         {/* Форма */}
         <div className="card">
