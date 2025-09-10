@@ -5,7 +5,7 @@ import { setAccessToken, removeAccessToken } from '@/shared/api/axiosInstance';
 
 type verify2FAT = {
   token: string;
-  email: string;
+  email: string | undefined;
 };
 
 export const updateUser = createAsyncThunk('user/updateUser', async (user: UserUpdateT) => {

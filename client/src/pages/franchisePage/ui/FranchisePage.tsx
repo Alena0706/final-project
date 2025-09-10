@@ -1,6 +1,7 @@
 import { useAppSelector } from '@/shared/hooks/hooks';
 import PartnerFormModal from '@/widgets/modalMain/ui/PartnerFormModal';
-import { ArrowRight } from 'lucide-react';
+import FranchiseList from '@/widgets/franchise/ui/FranchiseList';
+import { ArrowRight, Calculator, TrendingUp, FileText, Users } from 'lucide-react';
 import React, { useState } from 'react';
 import { Link } from 'react-router';
 import {
@@ -28,18 +29,25 @@ const Card = ({ children, className = '', ...props }: CardProps): React.JSX.Elem
 const FranchisePage = (): React.JSX.Element => {
   const user = useAppSelector((store) => store.user.user?.user);
   // Состояния для калькулятора
-  const [avgMonthlyRevenue, setAvgMonthlyRevenue] = useState(100000);
-  const [monthlyCosts, setMonthlyCosts] = useState(50000);
-  const [paushalnyVznos, ] = useState(300000);
-  const [investment, ] = useState(500000);
+  const [avgMonthlyRevenue, setAvgMonthlyRevenue] = useState('');
+  const [monthlyCosts, setMonthlyCosts] = useState('');
+  const [paushalnyVznos, setPaushalnyVznos] = useState('');
+  const [investment, setInvestment] = useState('');
   const [isModalOpen, setModalOpen] = useState(false);
 
-  // const openModal = (): void => setModalOpen(true);
   const closeModal = (): void => setModalOpen(false);
 
-  const netMonthlyProfit = avgMonthlyRevenue - monthlyCosts;
+  const avgMonthlyRevenueNum = Number(avgMonthlyRevenue) || 0;
+  const monthlyCostsNum = Number(monthlyCosts) || 0;
+  const paushalnyVznosNum = Number(paushalnyVznos) || 0;
+  const investmentNum = Number(investment) || 0;
+
+  const netMonthlyProfit = avgMonthlyRevenueNum - monthlyCostsNum;
+  const totalInvestment = paushalnyVznosNum + investmentNum;
   const paybackPeriodMonths =
-    netMonthlyProfit > 0 ? Math.ceil((paushalnyVznos + investment) / netMonthlyProfit) : 0;
+    netMonthlyProfit > 0 ? Math.ceil(totalInvestment / netMonthlyProfit) : 0;
+  const annualProfit = netMonthlyProfit * 12;
+  const roi = totalInvestment > 0 ? (annualProfit / totalInvestment) * 100 : 0;
 
   // Для документов
   const documents = [
@@ -58,202 +66,431 @@ const FranchisePage = (): React.JSX.Element => {
 
   // Пример данных отзывов
   const reviews = [
-    { id: 1,usr: 'Иван', text: 'Отличная франшиза, быстрый старт и поддержка на высоте.' },
-    { id: 2,usr: 'Мария', text: 'Очень выручает маркетинговая помощь, рекомендую!' },
-    { id: 3,usr: 'Олег', text: 'Учебные материалы помогли быстро освоиться.' },
+    { id: 1, usr: 'Иван', text: 'Отличная франшиза, быстрый старт и поддержка на высоте.' },
+    { id: 2, usr: 'Мария', text: 'Очень выручает маркетинговая помощь, рекомендую!' },
+    { id: 3, usr: 'Олег', text: 'Учебные материалы помогли быстро освоиться.' },
   ];
 
   // Данные для графика окупаемости — месяцы и накопленная прибыль
-  const profitabilityData = [
-    { month: 'Янв', profit: 0 },
-    { month: 'Фев', profit: 50000 },
-    { month: 'Мар', profit: 120000 },
-    { month: 'Апр', profit: 200000 },
-    { month: 'Май', profit: 300000 },
-    { month: 'Июн', profit: 380000 },
-  ];
+  const generateProfitabilityData = () => {
+    const months = [
+      'Янв',
+      'Фев',
+      'Мар',
+      'Апр',
+      'Май',
+      'Июн',
+      'Июл',
+      'Авг',
+      'Сен',
+      'Окт',
+      'Ноя',
+      'Дек',
+    ];
+    const data = [];
+    let cumulativeProfit = 0;
+
+    for (let i = 0; i < Math.min(12, paybackPeriodMonths + 6); i++) {
+      cumulativeProfit += netMonthlyProfit;
+      data.push({
+        month: months[i],
+        profit: Math.max(0, cumulativeProfit - totalInvestment),
+        cumulative: cumulativeProfit,
+        investment: totalInvestment,
+      });
+    }
+    return data;
+  };
+
+  const profitabilityData = generateProfitabilityData();
 
   return (
-    <main className="min-h-screen bg-background text-foreground">
-      <section className="container mx-auto p-6 space-y-16">
-        {/* Преимущества франшизы */}
-        <div>
-          <h2 className="text-4xl font-bold mb-6 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-            Преимущества франшизы
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <Card className="flex flex-col items-center text-center">
-              <div className="text-6xl mb-4">🚀</div>
-              <h3 className="font-semibold mb-2">Быстрый старт</h3>
-              <p>Поддержка и обучение помогут быстро открыть и запустить бизнес.</p>
-            </Card>
-            <Card className="flex flex-col items-center text-center">
-              <div className="text-6xl mb-4">💼</div>
-              <h3 className="font-semibold mb-2">Надежная модель</h3>
-              <p>Проверенная бизнес-модель для стабильной прибыли.</p>
-            </Card>
-            <Card className="flex flex-col items-center text-center">
-              <div className="text-6xl mb-4">📈</div>
-              <h3 className="font-semibold mb-2">Поддержка франчайзера</h3>
-              <p>Маркетинговая и техническая поддержка на всех этапах.</p>
-            </Card>
+    <div className="min-h-screen py-8">
+      <div className="container mx-auto px-4">
+        {/* Заголовок страницы */}
+        <div className="text-center mb-12 animate-fade-in">
+          <div className="mb-4">
+            <h1 className="heading-2 text-gradient-primary">Франшиза "Ирис-Арт"</h1>
           </div>
+          <p className="text-muted-foreground text-xl">
+            Уникальная возможность стать частью инновационного бизнеса
+          </p>
         </div>
+
+        {/* Преимущества франшизы */}
+        <section className="mb-16">
+          <div className="text-center mb-12">
+            <h2 className="heading-2 bg-gradient-to-r from-[hsl(200_80%_70%)] to-[hsl(210_90%_30%)] bg-clip-text text-transparent mb-6">
+              Преимущества франшизы
+            </h2>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              Станьте частью успешной сети и получите все необходимые инструменты для быстрого
+              старта
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="card group animate-slide-up">
+              <div className="flex flex-col items-center text-center space-y-4">
+                <div className="p-3 bg-gradient-to-r from-[hsl(200_75%_55%)] to-[hsl(210_75%_35%)] rounded-xl group-hover:scale-110 transition-transform duration-300 shadow-iris">
+                  <ArrowRight className="h-6 w-6 text-white" />
+                </div>
+                <h3 className="text-lg font-semibold text-foreground group-hover:text-[hsl(200_80%_70%)] transition-colors">
+                  Быстрый старт
+                </h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  Поддержка и обучение помогут быстро открыть и запустить бизнес
+                </p>
+              </div>
+            </div>
+            <div className="card group animate-slide-up" style={{ animationDelay: '0.1s' }}>
+              <div className="flex flex-col items-center text-center space-y-4">
+                <div className="p-3 bg-gradient-to-r from-[hsl(200_75%_55%)] to-[hsl(210_75%_35%)] rounded-xl group-hover:scale-110 transition-transform duration-300 shadow-iris">
+                  <TrendingUp className="h-6 w-6 text-white" />
+                </div>
+                <h3 className="text-lg font-semibold text-foreground group-hover:text-[hsl(200_80%_70%)] transition-colors">
+                  Надежная модель
+                </h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  Проверенная бизнес-модель для стабильной прибыли
+                </p>
+              </div>
+            </div>
+            <div className="card group animate-slide-up" style={{ animationDelay: '0.2s' }}>
+              <div className="flex flex-col items-center text-center space-y-4">
+                <div className="p-3 bg-gradient-to-r from-[hsl(200_75%_55%)] to-[hsl(210_75%_35%)] rounded-xl group-hover:scale-110 transition-transform duration-300 shadow-iris">
+                  <Users className="h-6 w-6 text-white" />
+                </div>
+                <h3 className="text-lg font-semibold text-foreground group-hover:text-[hsl(200_80%_70%)] transition-colors">
+                  Поддержка франчайзера
+                </h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  Маркетинговая и техническая поддержка на всех этапах
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
 
         {/* Калькулятор */}
-        <div>
-          <h2 className="text-4xl font-bold mb-6 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-            Калькулятор дохода и окупаемости
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl">
-            <div className="space-y-4">
-              <label>
-                Среднемесячный доход, ₽
-                <input
-                  type="number"
-                  className="w-full rounded border border-border bg-background px-3 py-2 mt-1"
-                  value={avgMonthlyRevenue}
-                  onChange={(e) => setAvgMonthlyRevenue(Number(e.target.value))}
-                />
-              </label>
-              <label>
-                Ежемесячные расходы, ₽
-                <input
-                  type="number"
-                  className="w-full rounded border border-border bg-background px-3 py-2 mt-1"
-                  value={monthlyCosts}
-                  onChange={(e) => setMonthlyCosts(Number(e.target.value))}
-                />
-              </label>
-            </div>
-            <div className="space-y-4 bg-gradient-card rounded-2xl p-6 shadow-elegant text-foreground">
-              <p>
-                Чистая прибыль: <b>{netMonthlyProfit.toLocaleString()} ₽</b>
-              </p>
-              <p>
-                Паушальный взнос: <b>{paushalnyVznos.toLocaleString()} ₽</b>
-              </p>
-              <p>
-                Общие инвестиции: <b>{investment.toLocaleString()} ₽</b>
-              </p>
-              <p>
-                Окупаемость:{' '}
-                <b>
-                  {paybackPeriodMonths > 0
-                    ? `${paybackPeriodMonths.toString()} мес.`
-                    : 'Невозможно рассчитать'}
-                </b>
-              </p>
-            </div>
-          </div>
-        </div>
-        <div className="flex  mb-16">
-          <Link
-            to="/signup"
-            className="bg-gradient-to-r from-[hsl(200_75%_55%)] to-[hsl(210_75%_35%)] text-primary-foreground text-lg px-8 py-4 rounded-xl shadow-iris hover:shadow-gold transition-all duration-300 hover:scale-105 flex items-center group hover:bg-gradient-to-r hover:from-[hsl(200_80%_60%)] hover:to-[hsl(210_80%_40%)]"
-          >
-            Стать партнером
-            <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-          </Link>
-        </div>
-        {/* Документы и загрузка */}
-        <div>
-          <h2 className="text-4xl font-bold mb-6 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-            Документы и договоры
-          </h2>
-          <div className="max-w-4xl space-y-4">
-            <div>
-              <h3 className="text-xl font-semibold mb-2">Доступные документы</h3>
-              <ul className="space-y-2">
-                {documents.map((doc) => (
-                  <li key={doc.id} className="flex items-center gap-2">
-                    <a href={doc.url} className="text-primary underline" download>
-                      {doc.name}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-xl font-semibold mb-2">Загрузите договор и чеки</h3>
-              <input
-                type="file"
-                multiple
-                onChange={onFileChange}
-                className="block w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white cursor-pointer"
-              />
-              {uploadedFiles.length > 0 && (
-                <ul className="mt-2 text-sm text-muted-foreground">
-                  {uploadedFiles.map((file) => (
-                    <li key={file.name}>{file.name}</li>
-                  ))}
-                </ul>
-              )}
-            </div>
-          </div>
-        </div>
-        <section className="container mx-auto p-6 space-y-16">
-          {/* Отзывы */}
-          <div>
-            <h2 className="text-4xl font-bold mb-6 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-              Отзывы партнеров
+        <section className="mb-16">
+          <div className="text-center mb-12">
+            <h2 className="heading-2 bg-gradient-to-r from-[hsl(200_80%_70%)] to-[hsl(210_90%_30%)] bg-clip-text text-transparent mb-6">
+              Калькулятор доходности
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {reviews.map(({ id, usr, text }) => (
-                <Card key={id} className="p-6 shadow-lg">
-                  <h3 className="font-semibold mb-2">{usr}</h3>
-                  <p>{text}</p>
-                </Card>
-              ))}
-            </div>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              Рассчитайте потенциальную прибыль и срок окупаемости вашей франшизы
+            </p>
           </div>
 
-          {/* График окупаемости */}
-          <div>
-            <h2 className="text-4xl font-bold mb-6 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
+            {/* Настройки калькулятора */}
+            <div className="card">
+              <div className="flex items-center space-x-3 mb-6">
+                <div className="p-2 bg-gradient-to-r from-[hsl(200_75%_55%)] to-[hsl(210_75%_35%)] rounded-lg">
+                  <Calculator className="h-5 w-5 text-white" />
+                </div>
+                <h3 className="text-xl font-semibold text-foreground">Параметры расчета</h3>
+              </div>
+
+              <div className="space-y-6">
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-2">
+                    Среднемесячный доход, ₽
+                  </label>
+                  <input
+                    type="number"
+                    className="w-full rounded-lg border border-border bg-background px-4 py-3 text-foreground focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                    value={avgMonthlyRevenue}
+                    onChange={(e) => setAvgMonthlyRevenue(e.target.value)}
+                    placeholder="100000"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-2">
+                    Ежемесячные расходы, ₽
+                  </label>
+                  <input
+                    type="number"
+                    className="w-full rounded-lg border border-border bg-background px-4 py-3 text-foreground focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                    value={monthlyCosts}
+                    onChange={(e) => setMonthlyCosts(e.target.value)}
+                    placeholder="50000"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-2">
+                    Паушальный взнос, ₽
+                  </label>
+                  <input
+                    type="number"
+                    className="w-full rounded-lg border border-border bg-background px-4 py-3 text-foreground focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                    value={paushalnyVznos}
+                    onChange={(e) => setPaushalnyVznos(e.target.value)}
+                    placeholder="300000"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-2">
+                    Дополнительные инвестиции, ₽
+                  </label>
+                  <input
+                    type="number"
+                    className="w-full rounded-lg border border-border bg-background px-4 py-3 text-foreground focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                    value={investment}
+                    onChange={(e) => setInvestment(e.target.value)}
+                    placeholder="500000"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Результаты расчета */}
+            <div className="card">
+              <div className="flex items-center space-x-3 mb-6">
+                <div className="p-2 bg-gradient-to-r from-[hsl(200_75%_55%)] to-[hsl(210_75%_35%)] rounded-lg">
+                  <TrendingUp className="h-5 w-5 text-white" />
+                </div>
+                <h3 className="text-xl font-semibold text-foreground">Результаты расчета</h3>
+              </div>
+
+              <div className="space-y-4">
+                <div className="flex justify-between items-center p-4 bg-muted/50 rounded-lg">
+                  <span className="text-muted-foreground">Чистая прибыль в месяц:</span>
+                  <span className="text-lg font-semibold text-foreground">
+                    {netMonthlyProfit.toLocaleString()} ₽
+                  </span>
+                </div>
+
+                <div className="flex justify-between items-center p-4 bg-muted/50 rounded-lg">
+                  <span className="text-muted-foreground">Годовая прибыль:</span>
+                  <span className="text-lg font-semibold text-foreground">
+                    {annualProfit.toLocaleString()} ₽
+                  </span>
+                </div>
+
+                <div className="flex justify-between items-center p-4 bg-muted/50 rounded-lg">
+                  <span className="text-muted-foreground">Общие инвестиции:</span>
+                  <span className="text-lg font-semibold text-foreground">
+                    {totalInvestment.toLocaleString()} ₽
+                  </span>
+                </div>
+
+                <div className="flex justify-between items-center p-4 bg-muted/50 rounded-lg">
+                  <span className="text-muted-foreground">Срок окупаемости:</span>
+                  <span className="text-lg font-semibold text-foreground">
+                    {paybackPeriodMonths > 0
+                      ? `${paybackPeriodMonths} мес.`
+                      : 'Невозможно рассчитать'}
+                  </span>
+                </div>
+
+                <div className="flex justify-between items-center p-4 bg-gradient-to-r from-[hsl(200_75%_55%)] to-[hsl(210_75%_35%)] rounded-lg text-white">
+                  <span className="font-medium">ROI (годовая доходность):</span>
+                  <span className="text-xl font-bold">{roi.toFixed(1)}%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* График окупаемости */}
+        <section className="mb-16">
+          <div className="text-center mb-12">
+            <h2 className="heading-2 bg-gradient-to-r from-[hsl(200_80%_70%)] to-[hsl(210_90%_30%)] bg-clip-text text-transparent mb-6">
               График окупаемости
             </h2>
-            <Card className="p-6 shadow-lg">
-              <ResponsiveContainer width="100%" height={300}>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              Визуализация накопленной прибыли и точки окупаемости инвестиций
+            </p>
+          </div>
+
+          <div className="card max-w-6xl mx-auto">
+            <div className="p-6">
+              <ResponsiveContainer width="100%" height={400}>
                 <LineChart
                   data={profitabilityData}
-                  margin={{ top: 20, right: 30, bottom: 5, left: 0 }}
+                  margin={{ top: 20, right: 30, bottom: 20, left: 20 }}
                 >
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" />
-                  <YAxis tickFormatter={(val) => `${(val / 1000).toString()}k ₽`} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--muted))" />
+                  <XAxis dataKey="month" stroke="hsl(var(--muted-foreground))" fontSize={12} />
+                  <YAxis
+                    tickFormatter={(val) => `${(val / 1000).toString()}k ₽`}
+                    stroke="hsl(var(--muted-foreground))"
+                    fontSize={12}
+                  />
                   <Tooltip
-                    formatter={(value: number) =>
-                      value.toLocaleString('ru-RU', { style: 'currency', currency: 'RUB' })
-                    }
+                    formatter={(value: number, name: string) => [
+                      value.toLocaleString('ru-RU', { style: 'currency', currency: 'RUB' }),
+                      name === 'profit' ? 'Накопленная прибыль' : 'Накопленный доход',
+                    ]}
+                    labelStyle={{ color: 'hsl(var(--foreground))' }}
+                    contentStyle={{
+                      backgroundColor: 'hsl(var(--card))',
+                      border: '1px solid hsl(var(--border))',
+                      borderRadius: '8px',
+                    }}
                   />
                   <Line
                     type="monotone"
                     dataKey="profit"
                     stroke="hsl(200, 75%, 55%)"
                     strokeWidth={3}
-                    dot
+                    dot={{ fill: 'hsl(200, 75%, 55%)', strokeWidth: 2, r: 4 }}
+                    activeDot={{ r: 6, stroke: 'hsl(200, 75%, 55%)', strokeWidth: 2 }}
                   />
                 </LineChart>
               </ResponsiveContainer>
-            </Card>
+            </div>
           </div>
         </section>
 
-        {/* Модальное окно обратной связи */}
-        <div className="text-center">
-          <button
-            className="px-8 py-3 mt-12 bg-gradient-iris rounded-xl text-white shadow-iris hover:shadow-gold transition-all duration-300 hover:scale-105"
-            onClick={() => setModalOpen(true)}
-          >
-            Обратная связь
-          </button>
-        </div>
+        {/* Список франшиз */}
+        <section className="mb-16">
+          <div className="text-center mb-12">
+            <h2 className="heading-2 bg-gradient-to-r from-[hsl(200_80%_70%)] to-[hsl(210_90%_30%)] bg-clip-text text-transparent mb-6">
+              Наши франшизы
+            </h2>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              Посмотрите на существующие франшизы и вдохновитесь успешными примерами
+            </p>
+          </div>
+
+          <FranchiseList />
+        </section>
+
+        {/* Кнопки действий */}
+        <section className="mb-16">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <Link
+              to="/signup"
+              className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-[hsl(200_75%_55%)] to-[hsl(210_75%_35%)] text-white text-lg font-semibold rounded-xl shadow-iris hover:shadow-gold transition-all duration-300 hover:scale-105 group"
+            >
+              Стать партнером
+              <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+            </Link>
+
+            <button
+              className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-[hsl(200_75%_55%)] to-[hsl(210_75%_35%)] text-white text-lg font-semibold rounded-xl shadow-iris hover:shadow-gold transition-all duration-300 hover:scale-105"
+              onClick={() => setModalOpen(true)}
+            >
+              Обратная связь
+            </button>
+          </div>
+        </section>
+
+        {/* Документы и загрузка */}
+        <section className="mb-16">
+          <div className="text-center mb-12">
+            <h2 className="heading-2 bg-gradient-to-r from-[hsl(200_80%_70%)] to-[hsl(210_90%_30%)] bg-clip-text text-transparent mb-6">
+              Документы и договоры
+            </h2>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              Все необходимые документы для начала работы с франшизой
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
+            <div className="card">
+              <div className="flex items-center space-x-3 mb-6">
+                <div className="p-2 bg-gradient-to-r from-[hsl(200_75%_55%)] to-[hsl(210_75%_35%)] rounded-lg">
+                  <FileText className="h-5 w-5 text-white" />
+                </div>
+                <h3 className="text-xl font-semibold text-foreground">Доступные документы</h3>
+              </div>
+
+              <div className="space-y-3">
+                {documents.map((doc) => (
+                  <div
+                    key={doc.id}
+                    className="flex items-center justify-between p-3 bg-muted/50 rounded-lg"
+                  >
+                    <span className="text-foreground font-medium">{doc.name}</span>
+                    <a
+                      href={doc.url}
+                      className="text-primary hover:text-primary/80 underline font-medium"
+                      download
+                    >
+                      Скачать
+                    </a>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="card">
+              <div className="flex items-center space-x-3 mb-6">
+                <div className="p-2 bg-gradient-to-r from-[hsl(200_75%_55%)] to-[hsl(210_75%_35%)] rounded-lg">
+                  <FileText className="h-5 w-5 text-white" />
+                </div>
+                <h3 className="text-xl font-semibold text-foreground">Загрузите документы</h3>
+              </div>
+
+              <div className="space-y-4">
+                <input
+                  type="file"
+                  multiple
+                  onChange={onFileChange}
+                  className="block w-full text-sm text-muted-foreground file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white cursor-pointer hover:file:bg-primary/90 transition-colors"
+                />
+                {uploadedFiles.length > 0 && (
+                  <div className="space-y-2">
+                    <p className="text-sm font-medium text-foreground">Загруженные файлы:</p>
+                    <ul className="space-y-1">
+                      {uploadedFiles.map((file) => (
+                        <li
+                          key={file.name}
+                          className="text-sm text-muted-foreground bg-muted/50 p-2 rounded"
+                        >
+                          {file.name}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Отзывы партнеров */}
+        <section className="mb-16">
+          <div className="text-center mb-12">
+            <h2 className="heading-2 bg-gradient-to-r from-[hsl(200_80%_70%)] to-[hsl(210_90%_30%)] bg-clip-text text-transparent mb-6">
+              Отзывы партнеров
+            </h2>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              Реальные истории успеха наших партнеров
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+            {reviews.map(({ id, usr, text }) => (
+              <div
+                key={id}
+                className="card group animate-slide-up"
+                style={{ animationDelay: `${id * 0.1}s` }}
+              >
+                <div className="p-6">
+                  <div className="flex items-center space-x-3 mb-4">
+                    <div className="w-10 h-10 bg-gradient-to-r from-[hsl(200_75%_55%)] to-[hsl(210_75%_35%)] rounded-full flex items-center justify-center text-white font-semibold">
+                      {usr.charAt(0)}
+                    </div>
+                    <h3 className="font-semibold text-foreground">{usr}</h3>
+                  </div>
+                  <p className="text-muted-foreground leading-relaxed">"{text}"</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
 
         {/* Модалка */}
         <PartnerFormModal isOpen={isModalOpen} onClose={closeModal} user={user} />
-      </section>
-    </main>
+      </div>
+    </div>
   );
 };
 

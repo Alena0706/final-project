@@ -194,7 +194,7 @@ export const userSlice = createSlice({
       })
       .addCase(disable2FA.rejected, (state, action) => {
         state.error = action.error.message ?? 'Unknown error';
-
+      });
     builder
       .addCase(verifyEmail.fulfilled, (state) => {
         if (state.user?.user) {
