@@ -8,6 +8,8 @@ import {
   updateUser,
   uploadAvatar,
   verify2FA,
+  verifyEmail,
+  resendVerificationEmail,
 } from './thunks';
 import type { AxiosError } from 'axios';
 
@@ -153,6 +155,25 @@ export const userSlice = createSlice({
         } else {
           state.error = null;
         }
+      });
+
+    builder
+      .addCase(verifyEmail.fulfilled, (state) => {
+        if (state.user?.user) {
+          state.user.user.emailVerified = true;
+        }
+        state.error = null;
+      })
+      .addCase(verifyEmail.rejected, (state, action) => {
+        state.error = action.error.message ?? 'Ошибка подтверждения email';
+      });
+
+    builder
+      .addCase(resendVerificationEmail.fulfilled, (state) => {
+        state.error = null;
+      })
+      .addCase(resendVerificationEmail.rejected, (state, action) => {
+        state.error = action.error.message ?? 'Ошибка отправки письма';
       });
   },
 });

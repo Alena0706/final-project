@@ -2,9 +2,10 @@ import { userLoginSchema } from '@/entities/auth/model/schemas';
 import { loginUser } from '@/entities/auth/model/thunks';
 import { clearError } from '@/entities/auth/model/slice';
 import { useAppDispatch, useAppSelector } from '@/shared/hooks/hooks';
+import Spinner from '@/widgets/components/ui/Spinner';
 import type { FormEventHandler } from 'react';
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate, Link } from 'react-router';
 
 export default function SignInForm(): React.JSX.Element {
   const dispatch = useAppDispatch();
@@ -116,45 +117,35 @@ export default function SignInForm(): React.JSX.Element {
 
             <div className="flex items-center justify-between">
               <label className="flex items-center">
-                <input
-                  type="checkbox"
-                  className="w-4 h-4 text-primary bg-input border-border rounded focus:ring-primary focus:ring-2"
-                />
-                <span className="ml-2 text-sm text-muted-foreground">Запомнить меня</span>
+      
               </label>
-              <a href="#" className="text-sm text-primary hover:text-accent">
+              <a href="#" className="text-sm text-primary hover:text-accent transition-colors duration-200">
                 Забыли пароль?
               </a>
             </div>
 
             <button type="submit" className="btn-primary w-full" disabled={status === 'loading'}>
-              {status === 'loading' ? 'Вход...' : 'Войти'}
+              {status === 'loading' ? (
+                <div className="flex items-center justify-center gap-2">
+                  <Spinner size="sm" />
+                  <span>Вход...</span>
+                </div>
+              ) : (
+                'Войти'
+              )}
             </button>
 
             <div className="text-center">
               <p className="text-sm text-muted-foreground">
                 Нет аккаунта?{' '}
-                <a href="/signup" className="font-medium text-primary hover:text-accent">
+                <Link to="/signup" className="font-medium text-primary hover:text-accent transition-colors duration-200">
                   Зарегистрироваться
-                </a>
+                </Link>
               </p>
             </div>
           </form>
         </div>
-
-        {/* Дополнительная информация */}
-        <div className="text-center">
-          <p className="text-xs text-muted-foreground">
-            Входя в систему, вы соглашаетесь с нашими{' '}
-            <a href="#" className="text-primary hover:text-accent">
-              Условиями использования
-            </a>{' '}
-            и{' '}
-            <a href="#" className="text-primary hover:text-accent">
-              Политикой конфиденциальности
-            </a>
-          </p>
-        </div>
+        
       </div>
     </div>
   );

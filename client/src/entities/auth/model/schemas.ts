@@ -18,6 +18,8 @@ export const userSchema = z.object({
   monthlyAmount: z.string().optional(),
   createdAt: z.string().optional(),
   updatedAt: z.string().optional(),
+  emailVerified: z.boolean().optional().default(false),
+  emailVerificationToken: z.string().nullable().optional(),
 });
 
 export const userUpdateSchema = z.object({
@@ -63,4 +65,12 @@ export const userLoginSchema = z.object({
 export const AuthResponseSchema = z.object({
   user: userSchema,
   accessToken: z.string(),
+});
+
+export const emailVerificationSchema = z.object({
+  token: z.string(),
+});
+
+export const resendVerificationSchema = z.object({
+  email: z.string().email(),
 });

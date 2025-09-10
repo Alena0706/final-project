@@ -129,6 +129,50 @@ class AuthController {
       res.status(500).json({ message: 'Internal server error' });
     }
   }
+
+  // Подтверждение email (POST)
+  static async verifyEmail(req, res) {
+    try {
+      const { token } = req.body;
+      const result = await AuthService.verifyEmail(token);
+      res.json(result);
+    } catch (error) {
+      console.error('Verify email error:', error);
+      res.status(400).json({ message: error.message });
+    }
+  }
+
+  // Подтверждение email (GET) - перенаправление на фронтенд
+  static async verifyEmailGet(req, res) {
+    try {
+      const { token } = req.query;
+      
+      if (!token) {
+        return res.redirect(`${process.env.CLIENT_URL || 'http://localhost:5173'}/?error=missing-token`);
+      }
+
+      const result = await AuthService.verifyEmail(token);
+      
+      // Перенаправляем на фронтенд с успешным статусом
+      res.redirect(`${process.env.CLIENT_URL || 'http://localhost:5173'}/?email-verified=success`);
+    } catch (error) {
+      console.error('Verify email error:', error);
+      // Перенаправляем на фронтенд с ошибкой
+      res.redirect(`${process.env.CLIENT_URL || 'http://localhost:5173'}/?email-verified=error&message=${encodeURIComponent(error.message)}`);
+    }
+  }
+
+  // Повторная отправка письма подтверждения
+  static async resendVerification(req, res) {
+    try {
+      const { email } = req.body;
+      const result = await AuthService.resendVerificationEmail(email);
+      res.json(result);
+    } catch (error) {
+      console.error('Resend verification error:', error);
+      res.status(400).json({ message: error.message });
+    }
+  }
 }
 
 module.exports = AuthController;
