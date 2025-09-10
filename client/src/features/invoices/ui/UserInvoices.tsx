@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '@/shared/hooks/hooks';
 import { fetchUserInvoices, payInvoice } from '@/entities/invoice/model/thunks';
-import type { Invoice } from '@/entities/invoice/api/invoiceService';
 
 const UserInvoices: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -20,7 +19,7 @@ const UserInvoices: React.FC = () => {
       console.log('✅ Invoice paid successfully');
       // Обновляем список счетов после оплаты
       dispatch(fetchUserInvoices({ page: currentPage, status: statusFilter }));
-    } catch (error) {
+    } catch (error: any) {
       console.error('❌ Ошибка оплаты счета:', error);
       console.error('❌ Error details:', error.response?.data);
     }
@@ -119,13 +118,15 @@ const UserInvoices: React.FC = () => {
             >
               <div className="flex justify-between items-start mb-4">
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900">
-                    Счет #{invoice.id}
-                  </h3>
+                  <h3 className="text-lg font-semibold text-gray-900">Счет #{invoice.id}</h3>
                   <p className="text-gray-600">{invoice.description}</p>
                 </div>
                 <div className="text-right">
-                  <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(invoice.status)}`}>
+                  <span
+                    className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(
+                      invoice.status,
+                    )}`}
+                  >
                     {getStatusText(invoice.status)}
                   </span>
                   <p className="text-2xl font-bold text-gray-900 mt-2">
@@ -183,7 +184,7 @@ const UserInvoices: React.FC = () => {
       {pagination.pages > 1 && (
         <div className="flex justify-center items-center space-x-2">
           <button
-            onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+            onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
             disabled={currentPage === 1}
             className="px-3 py-2 border border-border rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
           >
@@ -193,7 +194,7 @@ const UserInvoices: React.FC = () => {
             Страница {currentPage} из {pagination.pages}
           </span>
           <button
-            onClick={() => setCurrentPage(prev => Math.min(pagination.pages, prev + 1))}
+            onClick={() => setCurrentPage((prev) => Math.min(pagination.pages, prev + 1))}
             disabled={currentPage === pagination.pages}
             className="px-3 py-2 border border-border rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
           >

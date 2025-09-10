@@ -1,7 +1,9 @@
 import { walletSchema } from '@/entities/wallet/model/schemas';
+import { setBalance } from '@/entities/wallet/model/slice';
 
 import { topUpWallet } from '@/entities/wallet/model/thunks';
 import { useAppDispatch, useAppSelector } from '@/shared/hooks/hooks';
+import EmailVerificationRequired from '@/widgets/components/ui/EmailVerificationRequired';
 import React, { useState } from 'react';
 
 import z from 'zod';
@@ -10,10 +12,16 @@ const WalletTopUp = (): React.JSX.Element => {
   const dispatch = useAppDispatch();
   const balance = useAppSelector((store) => store.wallet.balance);
   const transactions = useAppSelector((store) => store.wallet.transactions);
+  const user = useAppSelector((store) => store.user.user);
 
   const [amount, setAmount] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+
+  // Проверяем, подтвержден ли email
+  if (!user?.user?.emailVerified) {
+    return <EmailVerificationRequired />;
+  }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();

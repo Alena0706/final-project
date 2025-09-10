@@ -18,6 +18,9 @@ authRouter.post(
 );
 authRouter.patch('/update', verifyAccessToken, AuthController.updateUser);
 authRouter.get('/users', verifyAccessToken, requireAdmin, UserController.getAllUsers);
+authRouter.post('/verify-email', AuthController.verifyEmail);
+authRouter.get('/verify-email', AuthController.verifyEmailGet);
+authRouter.post('/resend-verification', AuthController.resendVerification);
 
 // 2FA routes
 authRouter.post('/2fa/generate', verifyAccessToken, AuthController.generate2FASecret);

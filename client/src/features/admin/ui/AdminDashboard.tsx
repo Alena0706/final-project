@@ -4,13 +4,10 @@ import { fetchAllInvoices, createInvoice, cancelInvoice } from '@/entities/invoi
 import {
   fetchAllNotifications,
   sendBroadcastNotification,
-  sendUserNotification,
 } from '@/entities/notification/model/thunks';
 import UserService, { type User } from '@/entities/user/api/userService';
-import type {
-  CreateInvoiceRequest,
-  SendNotificationRequest,
-} from '@/entities/notification/api/notificationService';
+import type { SendNotificationRequest } from '@/entities/notification/api/notificationService';
+import type { CreateInvoiceRequest } from '@/entities/invoice/api/invoiceService';
 
 const AdminDashboard: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -72,9 +69,9 @@ const AdminDashboard: React.FC = () => {
     }
 
     if (activeTab === 'invoices') {
-      dispatch(fetchAllInvoices());
+      dispatch(fetchAllInvoices({}));
     } else if (activeTab === 'notifications') {
-      dispatch(fetchAllNotifications());
+      dispatch(fetchAllNotifications({}));
     }
   }, [activeTab, dispatch, user, status]); // Добавляем user и status в зависимости
 
@@ -94,9 +91,7 @@ const AdminDashboard: React.FC = () => {
   });
 
   // Мемоизируем проверку прав доступа
-  const isAdmin = useMemo(() => {
-    return user && status === 'logged' && user.user?.admin;
-  }, [user, status]);
+  const isAdmin = useMemo(() => user && status === 'logged' && user.user?.admin, [user, status]);
 
   const handleCreateInvoice = useCallback(
     async (e: React.FormEvent) => {
@@ -105,7 +100,7 @@ const AdminDashboard: React.FC = () => {
         await dispatch(createInvoice(invoiceForm)).unwrap();
         setInvoiceForm({ userId: 0, amount: 0, description: '', dueDate: '' });
         setActiveTab('invoices');
-        dispatch(fetchAllInvoices());
+        void dispatch(fetchAllInvoices({}));
       } catch (error) {
         console.error('Ошибка создания счета:', error);
       }
@@ -120,7 +115,7 @@ const AdminDashboard: React.FC = () => {
         await dispatch(sendBroadcastNotification(notificationForm)).unwrap();
         setNotificationForm({ title: '', message: '', sendEmail: false, userType: 'all' });
         setActiveTab('notifications');
-        dispatch(fetchAllNotifications());
+        void dispatch(fetchAllNotifications({}));
       } catch (error) {
         console.error('Ошибка отправки уведомления:', error);
       }
@@ -132,7 +127,7 @@ const AdminDashboard: React.FC = () => {
     async (invoiceId: number) => {
       try {
         await dispatch(cancelInvoice(invoiceId)).unwrap();
-        dispatch(fetchAllInvoices());
+        void dispatch(fetchAllInvoices({}));
       } catch (error) {
         console.error('Ошибка отмены счета:', error);
       }
@@ -140,20 +135,24 @@ const AdminDashboard: React.FC = () => {
     [dispatch],
   );
 
-  const formatDate = useCallback((dateString: string) => {
-    return new Date(dateString).toLocaleDateString('ru-RU', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
-  }, []);
+  const formatDate = useCallback(
+    (dateString: string) =>
+      new Date(dateString).toLocaleDateString('ru-RU', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      }),
+    [],
+  );
 
-  const formatCurrency = useCallback((amount: number) => {
-    return new Intl.NumberFormat('ru-RU', {
-      style: 'currency',
-      currency: 'RUB',
-    }).format(amount);
-  }, []);
+  const formatCurrency = useCallback(
+    (amount: number) =>
+      new Intl.NumberFormat('ru-RU', {
+        style: 'currency',
+        currency: 'RUB',
+      }).format(amount),
+    [],
+  );
 
   const getStatusColor = useCallback((status: string) => {
     switch (status) {

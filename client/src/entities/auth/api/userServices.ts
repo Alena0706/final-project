@@ -1,5 +1,5 @@
 import { AuthResponseSchema } from '../model/schemas';
-import type { AuthResponseT, UserLoginT, UserRegisterT, UserUpdateT } from '../model/types';
+import type { AuthResponseT, EmailVerificationT, ResendVerificationT, UserLoginT, UserRegisterT, UserUpdateT } from '../model/types';
 import axiosInstance from '@/shared/api/axiosInstance';
 
 // eslint-disable-next-line @typescript-eslint/no-extraneous-class
@@ -16,13 +16,13 @@ class UserServices {
     return AuthResponseSchema.parse(updateUser.data);
   }
 
-  static async uploadAvatar(formData: FormData): Promise<unknown> {
+  static async uploadAvatar(formData: FormData): Promise<{ user: { avatar: string } }> {
     const response = await axiosInstance.post('/auth/upload', formData, {
       headers: {
         'Content-Type': 'multipart/form-data', // Указываем, что отправляем файл
       },
     });
-    return response.data;
+    return response.data as { user: { avatar: string } };
   }
 
   static async login(user: UserLoginT): Promise<AuthResponseT> {
@@ -68,6 +68,16 @@ class UserServices {
   static async disable2FA(token: string): Promise<{ message: string }> {
     const response = await axiosInstance.post('/auth/2fa/disable', { token });
     return response.data as { message: string };
+
+  static async verifyEmail(data: EmailVerificationT): Promise<{ message: string }> {
+    const response = await axiosInstance.post('/auth/verify-email', data);
+    return response.data;
+  }
+
+  static async resendVerificationEmail(data: ResendVerificationT): Promise<{ message: string }> {
+    const response = await axiosInstance.post('/auth/resend-verification', data);
+    return response.data;
+
   }
 }
 

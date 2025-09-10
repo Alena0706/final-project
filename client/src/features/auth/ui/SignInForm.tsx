@@ -1,10 +1,15 @@
 import { userLoginSchema } from '@/entities/auth/model/schemas';
 import { loginUser } from '@/entities/auth/model/thunks';
+import { clearError } from '@/entities/auth/model/slice';
 import { useAppDispatch, useAppSelector } from '@/shared/hooks/hooks';
+
 import { TwoFactorVerification } from '@/entities/2fa/ui';
+
+import Spinner from '@/widgets/components/ui/Spinner';
+
 import type { FormEventHandler } from 'react';
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate, Link } from 'react-router';
 
 export default function SignInForm(): React.JSX.Element {
   const dispatch = useAppDispatch();
@@ -26,44 +31,38 @@ export default function SignInForm(): React.JSX.Element {
     }
   }, [status, user, navigate]);
 
-  // Отладочная информация о статусе
+  // Очищаем ошибки при загрузке компонента
   useEffect(() => {
-    console.log('SignInForm - status changed to:', status);
-  }, [status]);
+    setValidationError('');
+    dispatch(clearError());
+  }, [dispatch]);
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = (e) => {
-    console.log('Form submit triggered');
     e.preventDefault();
     setValidationError('');
 
     void (async () => {
       try {
-        console.log('Starting login process...');
         const data = Object.fromEntries(new FormData(e.currentTarget));
-        console.log('Form data:', data);
-        console.log('Form data keys:', Object.keys(data));
-        console.log('Form data values:', Object.values(data));
 
         // Проверяем, что поля заполнены
         if (!data.email || !data.password) {
-          console.error('Missing required fields:', { email: data.email, password: data.password });
           setValidationError('Пожалуйста, заполните все поля');
           return;
         }
 
         const dataValidate = userLoginSchema.parse(data);
+
         console.log('Validated data:', dataValidate);
 
         // Сохраняем email для 2FA
         setUserEmail(dataValidate.email);
 
         console.log('Dispatching loginUser...');
+
         await dispatch(loginUser(dataValidate)).unwrap();
-        console.log('Login successful!');
         // Редирект теперь происходит в useEffect
       } catch (loginError: unknown) {
-        console.error('Login failed:', loginError);
-
         if (loginError instanceof Error && loginError.name === 'ZodError') {
           setValidationError('Пожалуйста, заполните все поля корректно');
         } else if (loginError && typeof loginError === 'object') {
@@ -147,55 +146,35 @@ export default function SignInForm(): React.JSX.Element {
 
             <div className="flex items-center justify-between">
               <label className="flex items-center">
-                <input
-                  type="checkbox"
-                  className="w-4 h-4 text-primary bg-input border-border rounded focus:ring-primary focus:ring-2"
-                />
-                <span className="ml-2 text-sm text-muted-foreground">Запомнить меня</span>
+      
               </label>
-              <a href="#" className="text-sm text-primary hover:text-accent">
+              <a href="#" className="text-sm text-primary hover:text-accent transition-colors duration-200">
                 Забыли пароль?
               </a>
             </div>
 
-            <button
-              type="submit"
-              className="btn-primary w-full"
-              disabled={status === 'loading'}
-              onClick={() => {
-                console.log('Button clicked, status:', status);
-                if (status === 'loading') {
-                  console.log('Button is disabled due to loading status');
-                }
-              }}
-            >
-              {status === 'loading' ? 'Вход...' : 'Войти'}
+            <button type="submit" className="btn-primary w-full" disabled={status === 'loading'}>
+              {status === 'loading' ? (
+                <div className="flex items-center justify-center gap-2">
+                  <Spinner size="sm" />
+                  <span>Вход...</span>
+                </div>
+              ) : (
+                'Войти'
+              )}
             </button>
 
             <div className="text-center">
               <p className="text-sm text-muted-foreground">
                 Нет аккаунта?{' '}
-                <a href="/signup" className="font-medium text-primary hover:text-accent">
+                <Link to="/signup" className="font-medium text-primary hover:text-accent transition-colors duration-200">
                   Зарегистрироваться
-                </a>
+                </Link>
               </p>
             </div>
           </form>
         </div>
-
-        {/* Дополнительная информация */}
-        <div className="text-center">
-          <p className="text-xs text-muted-foreground">
-            Входя в систему, вы соглашаетесь с нашими{' '}
-            <a href="#" className="text-primary hover:text-accent">
-              Условиями использования
-            </a>{' '}
-            и{' '}
-            <a href="#" className="text-primary hover:text-accent">
-              Политикой конфиденциальности
-            </a>
-          </p>
-        </div>
+        
       </div>
 
       {/* Модальное окно 2FA */}

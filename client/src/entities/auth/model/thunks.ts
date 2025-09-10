@@ -1,5 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import type { UserLoginT, UserRegisterT, UserUpdateT } from './types';
+import type { EmailVerificationT, ResendVerificationT, UserLoginT, UserRegisterT, UserUpdateT } from './types';
 import UserServices from '../api/userServices';
 import { setAccessToken, removeAccessToken } from '@/shared/api/axiosInstance';
 
@@ -19,10 +19,13 @@ export const registerUser = createAsyncThunk('user/register', async (user: UserR
   return response;
 });
 
-export const uploadAvatar = createAsyncThunk('user/uploadAvatar', async (formData: FormData) => {
-  const result: unknown = await UserServices.uploadAvatar(formData);
-  return result;
-});
+export const uploadAvatar = createAsyncThunk<{ user: { avatar: string } }, FormData>(
+  'user/uploadAvatar',
+  async (formData: FormData) => {
+    const result = await UserServices.uploadAvatar(formData);
+    return result as { user: { avatar: string } };
+  },
+);
 
 export const loginUser = createAsyncThunk('user/login', async (user: UserLoginT) => {
   const response = await UserServices.login(user);
@@ -50,6 +53,7 @@ export const verify2FA = createAsyncThunk(
   },
 );
 
+
 export const generate2FASecret = createAsyncThunk('user/generate2FASecret', async () => {
   const response = await UserServices.generate2FASecret();
   return response;
@@ -64,3 +68,20 @@ export const disable2FA = createAsyncThunk('user/disable2FA', async (token: stri
   const response = await UserServices.disable2FA(token);
   return response;
 });
+
+export const verifyEmail = createAsyncThunk(
+  'user/verifyEmail',
+  async (data: EmailVerificationT) => {
+    const response = await UserServices.verifyEmail(data);
+    return response;
+  },
+);
+
+export const resendVerificationEmail = createAsyncThunk(
+  'user/resendVerificationEmail',
+  async (data: ResendVerificationT) => {
+    const response = await UserServices.resendVerificationEmail(data);
+    return response;
+  },
+);
+
