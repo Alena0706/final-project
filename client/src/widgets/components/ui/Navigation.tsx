@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, User, LogOut, Shield } from 'lucide-react';
 import { Link, useNavigate, useLocation } from 'react-router';
 import { useAppDispatch, useAppSelector } from '@/shared/hooks/hooks';
 import { logoutUser } from '@/entities/auth/model/thunks';
@@ -209,13 +209,88 @@ const Navigation = (): React.JSX.Element => {
               ))}
               <div className="flex flex-col space-y-2 pt-4 border-t border-border">
                 {user ? (
-                  <div className="flex items-center space-x-3 px-4 py-2">
-                    <UserAvatar />
-                    <div>
-                      <p className="text-sm font-medium text-foreground">{user?.user?.name || 'Пользователь'}</p>
-                      <p className="text-xs text-muted-foreground">{user?.user?.email}</p>
+                  <>
+                    {/* Информация о пользователе */}
+                    <div className="flex items-center space-x-3 px-4 py-2">
+                      <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-r from-[hsl(200_75%_55%)] to-[hsl(210_75%_35%)] text-white font-semibold text-sm">
+                        {user?.user?.avatar ? (
+                          <img
+                            src={
+                              user.user.avatar.startsWith('http')
+                                ? user.user.avatar
+                                : `http://localhost:5173/${user.user.avatar}`
+                            }
+                            alt={user?.user?.name || 'Пользователь'}
+                            className="w-full h-full rounded-full object-cover"
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement;
+                              target.style.display = 'none';
+                              const parent = target.parentElement;
+                              if (parent) {
+                                const name = user?.user?.name || 'Пользователь';
+                                const initials = name
+                                  .split(' ')
+                                  .map((word) => word.charAt(0))
+                                  .join('')
+                                  .toUpperCase()
+                                  .slice(0, 2);
+                                parent.innerHTML = initials;
+                              }
+                            }}
+                          />
+                        ) : (
+                          (user?.user?.name || 'Пользователь')
+                            .split(' ')
+                            .map((word) => word.charAt(0))
+                            .join('')
+                            .toUpperCase()
+                            .slice(0, 2)
+                        )}
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-foreground">
+                          {user?.user?.name || 'Пользователь'}
+                        </p>
+                        <p className="text-xs text-muted-foreground">{user?.user?.email}</p>
+                      </div>
                     </div>
-                  </div>
+
+                    {/* Кнопки для авторизованного пользователя */}
+                    <button
+                      onClick={() => {
+                        navigate('/profile');
+                        setIsMobileMenuOpen(false);
+                      }}
+                      className="flex items-center px-4 py-2 text-sm text-muted-foreground hover:text-[hsl(200_80%_70%)] hover:bg-[hsl(200_80%_70%)]/5 transition-all duration-300 text-left rounded-lg mx-1"
+                    >
+                      <User className="w-4 h-4 mr-3" />
+                      Профиль
+                    </button>
+
+                    {user?.user?.admin && (
+                      <button
+                        onClick={() => {
+                          navigate('/admin');
+                          setIsMobileMenuOpen(false);
+                        }}
+                        className="flex items-center px-4 py-2 text-sm text-muted-foreground hover:text-[hsl(200_80%_70%)] hover:bg-[hsl(200_80%_70%)]/5 transition-all duration-300 text-left rounded-lg mx-1"
+                      >
+                        <Shield className="w-4 h-4 mr-3" />
+                        Админ панель
+                      </button>
+                    )}
+
+                    <button
+                      onClick={() => {
+                        void dispatch(logoutUser());
+                        setIsMobileMenuOpen(false);
+                      }}
+                      className="flex items-center px-4 py-2 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-all duration-300 text-left rounded-lg mx-1"
+                    >
+                      <LogOut className="w-4 h-4 mr-3" />
+                      Выход
+                    </button>
+                  </>
                 ) : (
                   <>
                     <Link
