@@ -3,6 +3,7 @@ import { Menu, X } from 'lucide-react';
 import { Link, useNavigate, useLocation } from 'react-router';
 import { useAppDispatch, useAppSelector } from '@/shared/hooks/hooks';
 import { logoutUser } from '@/entities/auth/model/thunks';
+import UserAvatar from './UserAvatar';
 
 const Navigation = (): React.JSX.Element => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -134,7 +135,7 @@ const Navigation = (): React.JSX.Element => {
           {/* Пустое место для логотипа */}
           <div>
             <Link to="/">
-              <img src="/Logo3.png" alt="Логотип" width={60} />
+              <img src="/Logo3.png" alt="Логотип" width={40} height={40} />
             </Link>
           </div>
 
@@ -158,30 +159,7 @@ const Navigation = (): React.JSX.Element => {
           {/* Кнопки авторизации */}
           <div className="hidden md:flex items-center space-x-4">
             {user ? (
-              <>
-                <Link
-                  to="/profile"
-                  className="px-4 py-2 text-foreground hover:text-[hsl(200_80%_70%)] font-medium transition-colors duration-300"
-                >
-                  Профиль
-                </Link>
-                {/* Отладочная информация и ссылка на админку */}
-                {console.log('Navigation - user data:', { user, status, admin: user?.user?.admin })}
-                {user?.user?.admin && (
-                  <Link
-                    to="/admin"
-                    className="px-4 py-2 text-foreground hover:text-[hsl(200_80%_70%)] font-medium transition-colors duration-300"
-                  >
-                    Админка
-                  </Link>
-                )}
-                <button
-                  onClick={() => void dispatch(logoutUser())}
-                  className="px-5 py-2 bg-gradient-to-r from-[hsl(200_75%_55%)] to-[hsl(210_75%_35%)] text-white hover:from-[hsl(200_80%_60%)] hover:to-[hsl(210_80%_40%)] transition-all duration-300 shadow-lg hover:shadow-[hsl(200_80%_70%)]/30 rounded-lg font-medium"
-                >
-                  Выход
-                </button>
-              </>
+              <UserAvatar />
             ) : (
               <>
                 <Link
@@ -231,33 +209,13 @@ const Navigation = (): React.JSX.Element => {
               ))}
               <div className="flex flex-col space-y-2 pt-4 border-t border-border">
                 {user ? (
-                  <>
-                    <Link
-                      to="/profile"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      className="px-4 py-2 text-foreground hover:text-[hsl(200_80%_70%)] font-medium transition-colors duration-300 text-left"
-                    >
-                      Профиль
-                    </Link>
-                    {user?.user?.admin && (
-                      <Link
-                        to="/admin"
-                        onClick={() => setIsMobileMenuOpen(false)}
-                        className="px-4 py-2 text-foreground hover:text-[hsl(200_80%_70%)] font-medium transition-colors duration-300 text-left"
-                      >
-                        Админка
-                      </Link>
-                    )}
-                    <button
-                      onClick={() => {
-                        void dispatch(logoutUser());
-                        setIsMobileMenuOpen(false);
-                      }}
-                      className="px-4 py-2 bg-gradient-to-r from-[hsl(200_75%_55%)] to-[hsl(210_75%_35%)] text-white hover:from-[hsl(200_80%_60%)] hover:to-[hsl(210_80%_40%)] transition-all duration-300 rounded-lg font-medium text-center"
-                    >
-                      Выход
-                    </button>
-                  </>
+                  <div className="flex items-center space-x-3 px-4 py-2">
+                    <UserAvatar />
+                    <div>
+                      <p className="text-sm font-medium text-foreground">{user?.user?.name || 'Пользователь'}</p>
+                      <p className="text-xs text-muted-foreground">{user?.user?.email}</p>
+                    </div>
+                  </div>
                 ) : (
                   <>
                     <Link

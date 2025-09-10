@@ -1,6 +1,8 @@
 import type z from 'zod';
 import type {
   AuthResponseSchema,
+  emailVerificationSchema,
+  resendVerificationSchema,
   userLoginSchema,
   userRegisterSchema,
   userSchema,
@@ -15,6 +17,8 @@ export type UserLoginT = z.infer<typeof userLoginSchema>;
 export type AuthResponseT = z.infer<typeof AuthResponseSchema>;
 export type UserUpdateT = z.infer<typeof userUpdateSchema>;
 export type UserUpdateResponseT = z.infer<typeof userUpdateResponseSchema>;
+export type EmailVerificationT = z.infer<typeof emailVerificationSchema>;
+export type ResendVerificationT = z.infer<typeof resendVerificationSchema>;
 
 export type UserStateT = {
   user: AuthResponseT | null;

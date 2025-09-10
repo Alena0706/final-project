@@ -1,18 +1,18 @@
 import React from 'react';
-import { Navigate, Outlet } from 'react-router';
+import { Navigate } from 'react-router';
 import PageLoader from '@/widgets/components/ui/PageLoader';
 
 type Props = {
-  children?: React.JSX.Element;
-  isAllowed: boolean;
+  children: React.JSX.Element;
+  isAuthenticated: boolean;
   redirectTo?: string;
   isLoading?: boolean;
 };
 
-export default function ProtectedRoute({
+export default function AuthRoute({
   children,
-  isAllowed,
-  redirectTo = '/',
+  isAuthenticated,
+  redirectTo = '/profile',
   isLoading = false,
 }: Props): React.JSX.Element {
   // Показываем загрузку если идет проверка авторизации
@@ -20,11 +20,11 @@ export default function ProtectedRoute({
     return <PageLoader message="Проверка авторизации..." />;
   }
 
-  // Если не авторизован - редирект
-  if (!isAllowed) {
+  // Если авторизован - редирект на профиль
+  if (isAuthenticated) {
     return <Navigate to={redirectTo} replace />;
   }
 
-  // Если авторизован - показываем контент
-  return children ?? <Outlet />;
+  // Если не авторизован - показываем страницы входа/регистрации
+  return children;
 }

@@ -1,5 +1,5 @@
 import { AuthResponseSchema } from '../model/schemas';
-import type { AuthResponseT, UserLoginT, UserRegisterT, UserUpdateT } from '../model/types';
+import type { AuthResponseT, EmailVerificationT, ResendVerificationT, UserLoginT, UserRegisterT, UserUpdateT } from '../model/types';
 import axiosInstance from '@/shared/api/axiosInstance';
 
 // eslint-disable-next-line @typescript-eslint/no-extraneous-class
@@ -53,6 +53,16 @@ class UserServices {
   static async verify2FA(token: string, email: string): Promise<AuthResponseT> {
     const response = await axiosInstance.post('/auth/verify2FA', { token, email });
     return AuthResponseSchema.parse(response.data);
+  }
+
+  static async verifyEmail(data: EmailVerificationT): Promise<{ message: string }> {
+    const response = await axiosInstance.post('/auth/verify-email', data);
+    return response.data;
+  }
+
+  static async resendVerificationEmail(data: ResendVerificationT): Promise<{ message: string }> {
+    const response = await axiosInstance.post('/auth/resend-verification', data);
+    return response.data;
   }
 }
 

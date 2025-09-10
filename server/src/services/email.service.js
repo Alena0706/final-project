@@ -13,7 +13,7 @@ class EmailService {
   }
 
   // Отправка приветственного email при регистрации
-  async sendWelcomeEmail(userEmail, userName) {
+  async sendWelcomeEmail(userEmail, userName, verificationToken) {
     const mailOptions = {
       from: {
         name: 'Твой взгляд', // Имя отправителя
@@ -31,15 +31,23 @@ class EmailService {
           <div style="padding: 30px; background: #f8f9fa;">
             <h2 style="color: #333; margin-top: 0;">Ваш аккаунт успешно создан!</h2>
             <p style="color: #666; line-height: 1.6;">
-              Теперь вы можете пользоваться всеми возможностями нашего сервиса. 
-              Если у вас есть вопросы, не стесняйтесь обращаться к нам.
+              Для завершения регистрации и доступа ко всем функциям сервиса, 
+              пожалуйста, подтвердите ваш email адрес, перейдя по ссылке ниже.
             </p>
             
             <div style="margin: 30px 0;">
-              <a href="${process.env.CLIENT_URL || 'http://localhost:5173'}/login" 
+              <a href="${process.env.CLIENT_URL || 'http://localhost:5173'}/verify-email?token=${verificationToken}" 
                  style="background: #667eea; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block; font-weight: bold;">
-                Войти в аккаунт
+                Подтвердить email
               </a>
+            </div>
+            
+            <div style="background: #fff3cd; border: 1px solid #ffeaa7; padding: 15px; border-radius: 5px; margin: 20px 0;">
+              <p style="margin: 0; color: #856404; font-size: 14px;">
+                <strong>Важно:</strong> До подтверждения email кошелек будет недоступен. 
+                Если ссылка не работает, скопируйте и вставьте в браузер: 
+                <br><code style="background: #f8f9fa; padding: 2px 4px; border-radius: 3px;">${process.env.CLIENT_URL || 'http://localhost:5173'}/verify-email?token=${verificationToken}</code>
+              </p>
             </div>
           </div>
           
@@ -191,6 +199,65 @@ class EmailService {
       return result;
     } catch (error) {
       console.error('❌ Error sending notification email:', error);
+      throw error;
+    }
+  }
+
+  // Отправка письма подтверждения email
+  async sendVerificationEmail(userEmail, userName, verificationToken) {
+    const mailOptions = {
+      from: {
+        name: 'Твой взгляд',
+        address: process.env.EMAIL_USER,
+      },
+      to: userEmail,
+      subject: '📧 Подтвердите ваш email адрес',
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; text-align: center; color: white;">
+            <h1 style="margin: 0; font-size: 28px;">Подтвердите email</h1>
+            <p style="margin: 10px 0 0 0; font-size: 16px; opacity: 0.9;">Привет, ${userName}!</p>
+          </div>
+          
+          <div style="padding: 30px; background: #f8f9fa;">
+            <h2 style="color: #333; margin-top: 0;">Подтвердите ваш email адрес</h2>
+            <p style="color: #666; line-height: 1.6;">
+              Для доступа ко всем функциям сервиса, включая кошелек, 
+              необходимо подтвердить ваш email адрес.
+            </p>
+            
+            <div style="margin: 30px 0;">
+              <a href="${process.env.CLIENT_URL || 'http://localhost:5173'}/verify-email?token=${verificationToken}" 
+                 style="background: #667eea; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block; font-weight: bold;">
+                Подтвердить email
+              </a>
+            </div>
+            
+            <div style="background: #fff3cd; border: 1px solid #ffeaa7; padding: 15px; border-radius: 5px; margin: 20px 0;">
+              <p style="margin: 0; color: #856404; font-size: 14px;">
+                <strong>Важно:</strong> До подтверждения email кошелек будет недоступен. 
+                Если ссылка не работает, скопируйте и вставьте в браузер: 
+                <br><code style="background: #f8f9fa; padding: 2px 4px; border-radius: 3px;">${process.env.CLIENT_URL || 'http://localhost:5173'}/verify-email?token=${verificationToken}</code>
+              </p>
+            </div>
+          </div>
+          
+          <div style="padding: 20px; background: #e9ecef; text-align: center; color: #666; font-size: 14px;">
+            <p style="margin: 0;">С уважением,<br><strong>Команда "Твой взгляд"</strong></p>
+            <p style="margin: 10px 0 0 0; font-size: 12px;">
+              Это автоматическое сообщение, пожалуйста, не отвечайте на него.
+            </p>
+          </div>
+        </div>
+      `,
+    };
+
+    try {
+      await this.transporter.sendMail(mailOptions);
+      console.log('✅ Verification email sent to:', userEmail);
+      return true;
+    } catch (error) {
+      console.error('❌ Failed to send verification email:', error);
       throw error;
     }
   }

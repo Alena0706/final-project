@@ -60,9 +60,10 @@ axiosInstance.interceptors.response.use(
         return await axiosInstance(prev);
       } catch (refreshError) {
         console.error('Token refresh failed:', refreshError);
-        // Если refresh не удался, удаляем токен и перенаправляем на логин
+        // Если refresh не удался, удаляем токен
         removeAccessToken();
-        window.location.href = '/signin';
+        // Используем replace для избежания добавления в историю браузера
+        window.location.replace('/signin');
         return Promise.reject(
           refreshError instanceof Error ? refreshError : new Error(String(refreshError)),
         );

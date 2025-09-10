@@ -59,6 +59,14 @@ module.exports = {
         type: Sequelize.DECIMAL(10,2),
         defaultValue: 0.00,
       },
+      emailVerified: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false,
+      },
+      emailVerificationToken: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
