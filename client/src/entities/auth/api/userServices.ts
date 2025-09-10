@@ -68,7 +68,8 @@ class UserServices {
   static async disable2FA(token: string): Promise<{ message: string }> {
     const response = await axiosInstance.post('/auth/2fa/disable', { token });
     return response.data as { message: string };
-
+  }
+  
   static async verifyEmail(data: EmailVerificationT): Promise<{ message: string }> {
     const response = await axiosInstance.post('/auth/verify-email', data);
     return response.data;
