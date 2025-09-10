@@ -59,6 +59,14 @@ class FranchiseService {
     });
   }
 
+  static async getUserFranchises(userId) {
+    const franchises = await Franchise.findAll({
+      where: { userId },
+      order: [['createdAt', 'DESC']]
+    });
+    return franchises;
+  }
+
   static async uploadImage(image, franchiseId) {
     try {
       const uploadDir = path.join(__dirname, '../../public/imageFranchise');

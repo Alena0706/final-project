@@ -109,6 +109,124 @@ class FranchiseController {
       res.status(500).json({ message: error.message });
     }
   }
+
+  // Получить франшизы пользователя
+  static async getUserFranchises(req, res) {
+    try {
+      const userId = res.locals.user.id;
+      const franchises = await FranchiseService.getUserFranchises(userId);
+      res.status(200).json(franchises);
+    } catch (error) {
+      console.error('Error getting user franchises:', error);
+      res.status(500).json({ message: error.message });
+    }
+  }
+
+  // Создать франшизу пользователем
+  static async createUserFranchise(req, res) {
+    try {
+      const userId = res.locals.user.id;
+      const franchiseData = {
+        ...req.body,
+        userId
+      };
+
+      const franchise = await FranchiseService.createFranchise(franchiseData);
+      res.status(201).json(franchise);
+    } catch (error) {
+      console.error('Error creating user franchise:', error);
+      res.status(500).json({ message: error.message });
+    }
+  }
+
+  // Обновить франшизу пользователя
+  static async updateUserFranchise(req, res) {
+    try {
+      const userId = res.locals.user.id;
+      const franchiseId = parseInt(req.params.id);
+
+      if (isNaN(franchiseId)) {
+        return res.status(400).json({ message: 'Некорректный ID франшизы' });
+      }
+
+      // Проверяем, что франшиза принадлежит пользователю
+      const franchise = await Franchise.findOne({
+        where: { id: franchiseId, userId }
+      });
+
+      if (!franchise) {
+        return res.status(404).json({ message: 'Франшиза не найдена' });
+      }
+
+      const updatedFranchise = await FranchiseService.updateFranchise({
+        ...req.body,
+        id: franchiseId
+      });
+
+      res.status(200).json(updatedFranchise);
+    } catch (error) {
+      console.error('Error updating user franchise:', error);
+      res.status(500).json({ message: error.message });
+    }
+  }
+
+  // Удалить франшизу пользователя
+  static async deleteUserFranchise(req, res) {
+    try {
+      const userId = res.locals.user.id;
+      const franchiseId = parseInt(req.params.id);
+
+      if (isNaN(franchiseId)) {
+        return res.status(400).json({ message: 'Некорректный ID франшизы' });
+      }
+
+      // Проверяем, что франшиза принадлежит пользователю
+      const franchise = await Franchise.findOne({
+        where: { id: franchiseId, userId }
+      });
+
+      if (!franchise) {
+        return res.status(404).json({ message: 'Франшиза не найдена' });
+      }
+
+      await FranchiseService.deleteFranchise(franchiseId);
+      res.status(204).send();
+    } catch (error) {
+      console.error('Error deleting user franchise:', error);
+      res.status(500).json({ message: error.message });
+    }
+  }
+
+  // Загрузить изображение франшизы пользователем
+  static async uploadUserFranchiseImage(req, res) {
+    try {
+      const userId = res.locals.user.id;
+      const franchiseId = parseInt(req.params.id);
+
+      if (isNaN(franchiseId)) {
+        return res.status(400).json({ message: 'Некорректный ID франшизы' });
+      }
+
+      if (!req.file) {
+        return res.status(400).json({ message: 'Файл изображения не найден' });
+      }
+
+      // Проверяем, что франшиза принадлежит пользователю
+      const franchise = await Franchise.findOne({
+        where: { id: franchiseId, userId }
+      });
+
+      if (!franchise) {
+        return res.status(404).json({ message: 'Франшиза не найдена' });
+      }
+
+      const updatedFranchise = await FranchiseService.uploadImage(req.file, franchiseId);
+      res.status(200).json(updatedFranchise);
+    } catch (error) {
+      console.error('Error uploading user franchise image:', error);
+      res.status(500).json({ message: error.message });
+    }
+  }
 }
 
 module.exports = FranchiseController;

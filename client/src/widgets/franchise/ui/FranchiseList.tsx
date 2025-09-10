@@ -117,7 +117,11 @@ export default function FranchiseList(): React.JSX.Element {
         <>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {franchises.map((f) => (
-              <FranchiseCard key={f.id} franchise={f} setIsOpen={() => openEditModal(f)} />
+              <FranchiseCard 
+                key={f.id} 
+                franchise={f} 
+                setIsOpen={() => openEditModal(f)} 
+              />
             ))}
           </div>
 

@@ -21,9 +21,8 @@ class FranchiseService {
   }): Promise<FranchiseT> {
     const formData = new FormData();
     formData.append('image', image);
-    formData.append('franchiseId', franchiseId.toString());
 
-    const response = await axiosInstance.post('/franchise/upload', formData, {
+    const response = await axiosInstance.post(`/franchise/my/${franchiseId}/image`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
@@ -34,7 +33,7 @@ class FranchiseService {
   }
 
   static async updateFranchise(franchise: FranchiseUpdateT): Promise<FranchiseT> {
-    const response = await axiosInstance.patch('/franchise', franchise);
+    const response = await axiosInstance.put(`/franchise/my/${franchise.id}`, franchise);
     const validatedResponse = FranchiseSchema.parse(response.data);
     return validatedResponse;
   }

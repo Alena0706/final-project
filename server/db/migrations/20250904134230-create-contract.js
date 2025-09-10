@@ -3,15 +3,22 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Contracts', {
+    await queryInterface.createTable('Documents', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      scan: {
+      contract: {
         type: Sequelize.STRING,
+        allowNull: true,
+        comment: 'Путь к файлу договора',
+      },
+      receipt: {
+        type: Sequelize.STRING,
+        allowNull: true,
+        comment: 'Путь к файлу платежных документов/чеков',
       },
       userId: {
         type: Sequelize.INTEGER,
@@ -34,6 +41,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Contracts');
+    await queryInterface.dropTable('Documents');
   },
 };

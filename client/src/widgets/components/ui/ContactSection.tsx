@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Phone, MessageCircle, MapPin, Clock, Send } from 'lucide-react';
+import { Phone, MapPin, Clock, Send } from 'lucide-react';
 import type { JSX } from 'react';
 
 type CardProps = React.HTMLAttributes<HTMLDivElement> & { children: React.ReactNode };
@@ -107,7 +107,7 @@ const contactInfo = [
   },
   {
     id: 'contact-telegram',
-    icon: MessageCircle,
+    icon: Send,
     title: 'Telegram',
     details: ['@tvooyvzglyad'],
     subtitle: 'Подписываетесь на наш телеграмм',
@@ -218,7 +218,6 @@ const ContactSection = (): JSX.Element => (
               />
             </div>
             <button className="btn-primary w-full py-3 text-base flex items-center justify-center gap-2">
-              <Send className="h-5 w-5" />
               Отправить заявку
             </button>
             <p className="text-xs text-muted-foreground text-center mt-2">

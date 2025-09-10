@@ -1,60 +1,89 @@
-import React from 'react';
+import React, { memo, useMemo } from 'react';
 import { Link, Outlet, useLocation } from 'react-router';
 import ContentTransition from '@/widgets/components/ui/ContentTransition';
 import EmailVerificationBanner from '@/widgets/components/ui/EmailVerificationBanner';
+import { useAppSelector } from '@/shared/hooks/hooks';
 
-const tabs = [
-  { id: 'wallet', label: 'Пополнение кошелька' },
-  { id: 'invoices', label: 'Мои счета' },
-  { id: 'notifications', label: 'Уведомления' },
+const userTabs = [
   { id: 'personal', label: 'Персональные данные' },
-  { id: 'password', label: 'Изменение пароля' },
+  { id: 'password', label: 'Безопасность' },
+  { id: 'notifications', label: 'Уведомления' },
+  { id: 'franchise', label: 'Франшиза' },
+  { id: 'wallet', label: 'Кошелёк' },
+  { id: 'invoices', label: 'Счета' },
 ];
 
-const ProfilePage = (): React.JSX.Element => {
+const adminTabs = [
+  { id: 'personal', label: 'Персональные данные' },
+  { id: 'password', label: 'Безопасность' },
+];
+
+const ProfilePage = memo((): React.JSX.Element => {
   const location = useLocation();
+  const user = useAppSelector((state) => state.user.user);
+  
+  // Определяем, является ли пользователь админом
+  const isAdmin = user?.user?.role === 'admin' || user?.user?.admin === true;
+  const tabs = isAdmin ? adminTabs : userTabs;
+
+  // Мемоизируем заголовок профиля
+  const headerSection = useMemo(() => (
+    <div className="text-center mb-12 animate-fade-in">
+      <div className="mb-4">
+        <h1 className="heading-2 text-gradient-primary">
+          {isAdmin ? 'Профиль админа' : 'Профиль партнера'}
+        </h1>
+      </div>
+      <p className="text-muted-foreground">
+        {isAdmin 
+          ? 'Управляйте своим аккаунтом и настройками администратора' 
+          : 'Управляйте своим аккаунтом и настройками'
+        }
+      </p>
+    </div>
+  ), [isAdmin]);
+
+  // Мемоизируем навигацию
+  const navigationSection = useMemo(() => (
+    <nav className="lg:col-span-1">
+      <div className="card animate-slide-up">
+        <h2 className="text-lg font-semibold text-foreground mb-4">Навигация</h2>
+        <ul className="space-y-2">
+          {tabs.map(({ id, label }) => {
+            const isActive = location.pathname === `/profile/${id}`;
+            return (
+              <li key={id}>
+                <Link
+                  to={`/profile/${id}`}
+                  className={`block w-full px-4 py-3 rounded-lg font-medium transition-all duration-300 ${
+                    isActive
+                      ? 'bg-gradient-primary text-white shadow-iris'
+                      : 'text-foreground hover:bg-muted hover:text-primary'
+                  }`}
+                  aria-current={isActive ? 'page' : undefined}
+                >
+                  {label}
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    </nav>
+  ), [location.pathname, isAdmin]);
 
   return (
     <div className="min-h-screen py-8">
       <div className="container mx-auto px-4">
         {/* Заголовок профиля */}
-        <div className="text-center mb-12 animate-fade-in">
-          <div className="mb-4">
-            <h1 className="heading-2 text-gradient-primary">Профиль партнера</h1>
-          </div>
-          <p className="text-muted-foreground">Управляйте своим аккаунтом и настройками</p>
-        </div>
+        {headerSection}
 
-        {/* Баннер подтверждения email */}
-        <EmailVerificationBanner />
+        {/* Баннер подтверждения email - только для обычных пользователей */}
+        {!isAdmin && <EmailVerificationBanner />}
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Левая колонка - меню */}
-          <nav className="lg:col-span-1">
-            <div className="card animate-slide-up">
-              <h2 className="text-lg font-semibold text-foreground mb-4">Навигация</h2>
-              <ul className="space-y-2">
-                {tabs.map(({ id, label }) => {
-                  const isActive = location.pathname === `/profile/${id}`;
-                  return (
-                    <li key={id}>
-                      <Link
-                        to={`/profile/${id}`}
-                        className={`block w-full px-4 py-3 rounded-lg font-medium transition-all duration-300 ${
-                          isActive
-                            ? 'bg-gradient-primary text-white shadow-iris'
-                            : 'text-foreground hover:bg-muted hover:text-primary'
-                        }`}
-                        aria-current={isActive ? 'page' : undefined}
-                      >
-                        {label}
-                      </Link>
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
-          </nav>
+          {navigationSection}
 
           {/* Правая колонка - контент */}
           <main className="lg:col-span-3">
@@ -68,6 +97,6 @@ const ProfilePage = (): React.JSX.Element => {
       </div>
     </div>
   );
-};
+});
 
 export default ProfilePage;

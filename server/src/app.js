@@ -8,6 +8,7 @@ const franchiseRouter = require('./routes/franchise.router');
 const walletRouter = require('./routes/wallet.router');
 const invoiceRouter = require('./routes/invoice.router');
 const notificationRouter = require('./routes/notification.router');
+const documentRouter = require('./routes/document.router');
 const app = express();
 
 app.use(morgan('dev'));
@@ -21,6 +22,7 @@ app.use('/api/franchise', franchiseRouter);
 app.use('/api/wallet', walletRouter);
 app.use('/api/invoices', invoiceRouter);
 app.use('/api/notifications', notificationRouter);
+app.use('/api/documents', documentRouter);
 app.use('/api/uploads', express.static(path.join(__dirname, '../public')));
 
 // Проверяем, существует ли папка dist (для продакшена)

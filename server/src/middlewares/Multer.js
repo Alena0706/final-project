@@ -19,15 +19,18 @@ const storage = multer.memoryStorage();
 const upload = multer({
   storage,
   fileFilter: (req, file, cb) => {
-    const imageFileTypes = /jpeg|jpg|png/;
+    const imageFileTypes = /jpeg|jpg|png|webp/;
     const videoFileTypes = /mp4|x-m4v|quicktime|ogg|mpeg/;
+    const documentFileTypes = /pdf/;
 
     if (imageFileTypes.test(file.mimetype)) {
       cb(null, true);
     } else if (videoFileTypes.test(file.mimetype)) {
       cb(null, true);
+    } else if (documentFileTypes.test(file.mimetype)) {
+      cb(null, true);
     } else {
-      cb(new Error('Ошибка: разрешены только изображения (jpeg, jpg, png) и видео (mp4 и др.)!'), false);
+      cb(new Error('Ошибка: разрешены только изображения (jpeg, jpg, png, webp), видео (mp4 и др.) и документы (pdf)!'), false);
     }
   },
   limits: {
