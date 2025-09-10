@@ -3,7 +3,7 @@ import { useAppDispatch, useAppSelector } from '@/shared/hooks/hooks';
 import React, { useEffect, useRef, useState } from 'react';
 import { io } from 'socket.io-client';
 
-const socket = io('/', { autoConnect: true });
+const socket = io('http://localhost:3000', { autoConnect: true });
 
 export default function SupportChat(): React.JSX.Element {
   const dispatch = useAppDispatch();
@@ -15,6 +15,7 @@ export default function SupportChat(): React.JSX.Element {
   const rooms = useAppSelector((store) => store.chat.rooms);
   const [isOpen, setIsOpen] = useState(false);
   const [inputValue, setInputValue] = useState<string>('');
+  const [aiActive, setAiActive] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -34,7 +35,18 @@ export default function SupportChat(): React.JSX.Element {
 
     socket.on('chatMessage', (msg: unknown) => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
-      dispatch(addMessage(msg as any));
+      const message = msg as any;
+      dispatch(addMessage(message));
+      
+      // Проверяем, если это системное сообщение об отключении AI
+      if (message.sender === 'system' && message.message.includes('AI-помощник временно отключен')) {
+        setAiActive(false);
+      }
+      
+      // Проверяем, если это системное сообщение о возобновлении AI
+      if (message.sender === 'system' && message.message.includes('AI-помощник возобновлен')) {
+        setAiActive(true);
+      }
     });
 
     socket.on('chatHistory', (history: unknown) => {
@@ -111,6 +123,13 @@ export default function SupportChat(): React.JSX.Element {
     if (selectedRoomId) {
       dispatch(joinRoom(selectedRoomId));
       socket.emit('joinRoom', selectedRoomId);
+    }
+  };
+
+  const handleResumeAI = (): void => {
+    if (roomId) {
+      socket.emit('resumeAI', roomId);
+      setAiActive(true);
     }
   };
 
@@ -229,32 +248,96 @@ export default function SupportChat(): React.JSX.Element {
                 Пока нет сообщений
               </p>
             )}
-            {messages.map((msg) => (
-              <div
-                key={msg.id}
-                style={{
-                  margin: '8px 0',
-                  padding: '8px 12px',
-                  background:
-                    msg.sender === 'user'
-                      ? 'linear-gradient(135deg, hsl(200, 75%, 55%), hsl(210, 75%, 35%))'
-                      : 'rgba(255, 255, 255, 0.1)',
-                  borderRadius: 12,
-                  textAlign: msg.sender === 'user' ? 'right' : 'left',
-                  color: 'white',
-                  fontSize: 14,
-                  lineHeight: 1.4,
-                  maxWidth: '80%',
-                  marginLeft: msg.sender === 'user' ? 'auto' : 0,
-                  marginRight: msg.sender === 'user' ? 0 : 'auto',
-                  wordWrap: 'break-word',
-                }}
-              >
-                {msg.message}
-              </div>
-            ))}
+            {messages.map((msg) => {
+              // Базовые стили
+              const baseStyle: React.CSSProperties = {
+                margin: '8px 0',
+                padding: '8px 12px',
+                borderRadius: 12,
+                color: 'white',
+                fontSize: 14,
+                lineHeight: 1.4,
+                maxWidth: '80%',
+                wordWrap: 'break-word',
+                textAlign: 'left',
+                marginLeft: 0,
+                marginRight: 'auto',
+              };
+
+              // Стили для разных типов сообщений
+              let messageStyle: React.CSSProperties = { ...baseStyle };
+
+              if (msg.sender === 'user') {
+                messageStyle = {
+                  ...baseStyle,
+                  background: 'linear-gradient(135deg, hsl(200, 75%, 55%), hsl(210, 75%, 35%))',
+                  textAlign: 'right',
+                  marginLeft: 'auto',
+                  marginRight: 0,
+                };
+              } else if (msg.sender === 'assistant') {
+                messageStyle = {
+                  ...baseStyle,
+                  background: 'linear-gradient(135deg, hsl(120, 50%, 40%), hsl(140, 50%, 30%))',
+                };
+              } else if (msg.sender === 'admin') {
+                messageStyle = {
+                  ...baseStyle,
+                  background: 'linear-gradient(135deg, hsl(280, 60%, 50%), hsl(300, 60%, 40%))',
+                };
+              } else if (msg.sender === 'system') {
+                messageStyle = {
+                  ...baseStyle,
+                  background: 'rgba(255, 193, 7, 0.2)',
+                  border: '1px solid rgba(255, 193, 7, 0.5)',
+                  textAlign: 'center',
+                  marginLeft: 'auto',
+                  marginRight: 'auto',
+                };
+              } else {
+                messageStyle = {
+                  ...baseStyle,
+                  background: 'rgba(255, 255, 255, 0.1)',
+                };
+              }
+
+              // Определяем, нужно ли показывать подпись
+              const showLabel = msg.sender !== 'user' && msg.sender !== 'system';
+              const getLabelText = () => {
+                if (msg.sender === 'assistant') return 'AI-помощник';
+                if (msg.sender === 'admin') return 'Администратор';
+                return msg.sender;
+              };
+
+              return (
+                <div key={msg.id} style={messageStyle}>
+                  {showLabel && (
+                    <div style={{ fontSize: 12, opacity: 0.7, marginBottom: 4 }}>
+                      {getLabelText()}
+                    </div>
+                  )}
+                  {msg.message}
+                </div>
+              );
+            })}
             <div ref={messagesEndRef} />
           </div>
+          {/* Статус AI */}
+         {/* // {!aiActive && ( */}
+          {/* //   <div style={{  */}
+          {/* //     marginBottom: 8, 
+          //     padding: '8px 12px', 
+          //     background: 'rgba(255, 193, 7, 0.1)', 
+          //     border: '1px solid rgba(255, 193, 7, 0.3)',
+          //     borderRadius: 8,
+          //     textAlign: 'center',
+          //     fontSize: 12,
+          //     color: 'hsl(45, 100%, 70%)'
+          //   }}>
+          //     AI-помощник отключен. Администратор уведомлен.
+          //   </div>
+          // )} */}
+          
           <div style={{ display: 'flex', gap: 8 }}>
             <input
               type="text"
@@ -286,12 +369,12 @@ export default function SupportChat(): React.JSX.Element {
             <button
               onClick={handleSendMessage}
               style={{
-                padding: '8px 16px',
+                padding: '8px 10px',
                 background: 'linear-gradient(135deg, hsl(200, 75%, 55%), hsl(210, 75%, 35%))',
                 color: 'white',
                 borderRadius: 8,
                 border: 'none',
-                fontSize: 14,
+                fontSize: 10,
                 fontWeight: 500,
                 cursor: 'pointer',
                 transition: 'all 0.3s ease',
@@ -311,6 +394,36 @@ export default function SupportChat(): React.JSX.Element {
               Отправить
             </button>
           </div>
+          
+          {/* Кнопка возобновления AI для админа */}
+          {admin && !aiActive && (
+            <div style={{ marginTop: 8, textAlign: 'center' }}>
+              <button
+                onClick={handleResumeAI}
+                style={{
+                  padding: '6px 12px',
+                  background: 'linear-gradient(135deg, hsl(120, 50%, 40%), hsl(140, 50%, 30%))',
+                  color: 'white',
+                  borderRadius: 6,
+                  border: 'none',
+                  fontSize: 12,
+                  fontWeight: 500,
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background =
+                    'linear-gradient(135deg, hsl(120, 60%, 50%), hsl(140, 60%, 40%))';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background =
+                    'linear-gradient(135deg, hsl(120, 50%, 40%), hsl(140, 50%, 30%))';
+                }}
+              >
+                Включить AI
+              </button>
+            </div>
+          )}
         </div>
       )}
     </>

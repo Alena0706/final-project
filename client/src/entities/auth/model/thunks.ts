@@ -53,6 +53,22 @@ export const verify2FA = createAsyncThunk(
   },
 );
 
+
+export const generate2FASecret = createAsyncThunk('user/generate2FASecret', async () => {
+  const response = await UserServices.generate2FASecret();
+  return response;
+});
+
+export const verify2FAToken = createAsyncThunk('user/verify2FAToken', async (token: string) => {
+  const response = await UserServices.verify2FAToken(token);
+  return response;
+});
+
+export const disable2FA = createAsyncThunk('user/disable2FA', async (token: string) => {
+  const response = await UserServices.disable2FA(token);
+  return response;
+});
+
 export const verifyEmail = createAsyncThunk(
   'user/verifyEmail',
   async (data: EmailVerificationT) => {
@@ -68,3 +84,4 @@ export const resendVerificationEmail = createAsyncThunk(
     return response;
   },
 );
+
