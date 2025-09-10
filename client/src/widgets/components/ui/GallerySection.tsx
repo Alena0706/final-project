@@ -52,7 +52,7 @@ type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement>;
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const Button = ({ children, className = '', ...props }: ButtonProps) => (
   <button
-    className={`inline-flex items-center justify-center rounded-xl px-6 py-3 font-medium shadow-iris text-white bg-gradient-iris hover:shadow-gold hover:scale-105 transition-all duration-300 ${className}`}
+    className={`inline-flex items-center justify-center rounded-xl px-6 py-3 font-medium shadow-iris text-white bg-gradient-iris hover:shadow-gold transition-all duration-300 ${className}`}
     {...props}
   >
     {children}
@@ -157,65 +157,15 @@ const GallerySection = (): React.JSX.Element => {
             Посмотрите, как выглядит наш бизнес в разных городах России
           </p>
         </div>
-        {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {galleryItems.map((item, index) => (
-            <div
-              key={item.id}
-              className="card group animate-slide-up"
-              style={{ animationDelay: `${(index * 0.1).toString()}s` }}
-            >
-              <div className="relative">
-                <img
-                  src={item.image}
-                  alt={`${item.city} - ${item.location}`}
-                  className="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-110"
-                />
-                {item.type === 'video' && (
-                  <div className="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <div className="p-3 glass-effect rounded-full animate-pulse-glow">
-                      <Play className="h-8 w-8 text-white" fill="currentColor" />
-                    </div>
-                  </div>
-                )}
-                <div className="absolute top-3 right-3">
-                  <div className="glass-effect rounded-full px-3 py-1 text-xs font-medium text-white">
-                    {item.type === 'video' ? (
-                      <>
-                        <Play className="h-3 w-3 mr-1 inline" />
-                        Видео
-                      </>
-                    ) : (
-                      <>
-                        <ImageIcon className="h-3 w-3 mr-1 inline" />
-                        Фото
-                      </>
-                    )}
-                  </div>
-                </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
-                  <div className="flex items-center space-x-2 mb-2">
-                    <MapPin className="h-4 w-4" />
-                    <span className="font-semibold">{item.city}</span>
-                  </div>
-                  <p className="text-sm opacity-90">{item.location}</p>
-                </div>
-              </div>
-              <div className="p-4">
-                <p className="text-sm text-muted-foreground">{item.description}</p>
-              </div>
-            </div>
-          ))}
-        </div> */}
         <FranchiseList />
         <div className="text-center mt-16 animate-slide-up" style={{ animationDelay: '0.6s' }}>
-          <div className="card inline-block">
+          {/* <div className="card inline-block">
             <h3 className="text-2xl font-bold mb-4 text-foreground">Хотите увидеть больше?</h3>
             <p className="text-muted-foreground mb-6 max-w-md">
               Получите полную презентацию с фото и видео всех наших точек
             </p>
             <button className="btn-primary">Запросить полную галерею</button>
-          </div>
+          </div> */}
         </div>
       </div>
     </section>

@@ -1,4 +1,3 @@
-// import { Link } from 'react-router';
 import heroImage from '@/assets/глаз.jpg';
 import PartnerFormModal from '@/widgets/modalMain/ui/PartnerFormModal';
 import { useState } from 'react';
@@ -6,9 +5,6 @@ import { useAppSelector } from '@/shared/hooks/hooks';
 import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router';
 
-// Удален неиспользуемый компонент ArrowRightIcon
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const HeroSection = (): React.JSX.Element => {
   const user = useAppSelector((store) => store.user.user?.user);
   const [isModalOpen, setModalOpen] = useState(false);
@@ -61,7 +57,7 @@ const HeroSection = (): React.JSX.Element => {
             <div className="flex justify-center mb-16">
               <Link
                 to="/signup"
-                className="bg-gradient-to-r from-[hsl(200_75%_55%)] to-[hsl(210_75%_35%)] text-primary-foreground text-lg px-8 py-4 rounded-xl shadow-iris hover:shadow-gold transition-all duration-300 hover:scale-105 flex items-center group hover:bg-gradient-to-r hover:from-[hsl(200_80%_60%)] hover:to-[hsl(210_80%_40%)]"
+                className="bg-gradient-to-r from-[hsl(200_75%_55%)] to-[hsl(210_75%_35%)] text-primary-foreground text-lg px-8 py-4 rounded-xl shadow-iris hover:shadow-gold transition-all duration-300 flex items-center group hover:bg-gradient-to-r hover:from-[hsl(200_80%_60%)] hover:to-[hsl(210_80%_40%)]"
               >
                 Стать партнером
                 <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
@@ -98,25 +94,6 @@ const HeroSection = (): React.JSX.Element => {
             </div>
           </div>
         </div>
-
-        {/* Стрелка прокрутки */}
-        {/* <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-          <div className="gradient-card p-3 rounded-full border border-border">
-            <svg
-              className="h-6 w-6 text-foreground"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M19 14l-7 7m0 0l-7-7m7 7V3"
-              />
-            </svg>
-          </div>
-        </div> */}
 
         <PartnerFormModal isOpen={isModalOpen} onClose={closeModal} user={user} />
       </section>

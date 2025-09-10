@@ -110,7 +110,7 @@ const FranchisePage = (): React.JSX.Element => {
         {/* Заголовок страницы */}
         <div className="text-center mb-12 animate-fade-in">
           <div className="mb-4">
-            <h1 className="heading-2 text-gradient-primary">Франшиза "Ирис-Арт"</h1>
+            <h1 className="heading-2 text-gradient-primary">Франшиза "Твой взгляд"</h1>
           </div>
           <p className="text-muted-foreground text-xl">
             Уникальная возможность стать частью инновационного бизнеса
@@ -120,9 +120,9 @@ const FranchisePage = (): React.JSX.Element => {
         {/* Преимущества франшизы */}
         <section className="mb-16">
           <div className="text-center mb-12">
-            <h2 className="heading-2 bg-gradient-to-r from-[hsl(200_80%_70%)] to-[hsl(210_90%_30%)] bg-clip-text text-transparent mb-6">
+            <h3 className="heading-3 bg-gradient-to-r from-[hsl(200_80%_70%)] to-[hsl(210_90%_30%)] bg-clip-text text-transparent mb-6">
               Преимущества франшизы
-            </h2>
+            </h3>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
               Станьте частью успешной сети и получите все необходимые инструменты для быстрого
               старта
@@ -366,14 +366,14 @@ const FranchisePage = (): React.JSX.Element => {
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Link
               to="/signup"
-              className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-[hsl(200_75%_55%)] to-[hsl(210_75%_35%)] text-white text-lg font-semibold rounded-xl shadow-iris hover:shadow-gold transition-all duration-300 hover:scale-105 group"
+              className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-[hsl(200_75%_55%)] to-[hsl(210_75%_35%)] text-white text-lg font-semibold rounded-xl shadow-iris hover:shadow-gold transition-all duration-300 group"
             >
               Стать партнером
               <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
             </Link>
 
             <button
-              className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-[hsl(200_75%_55%)] to-[hsl(210_75%_35%)] text-white text-lg font-semibold rounded-xl shadow-iris hover:shadow-gold transition-all duration-300 hover:scale-105"
+              className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-[hsl(200_75%_55%)] to-[hsl(210_75%_35%)] text-white text-lg font-semibold rounded-xl shadow-iris hover:shadow-gold transition-all duration-300"
               onClick={() => setModalOpen(true)}
             >
               Обратная связь
