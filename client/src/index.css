@@ -123,6 +123,22 @@ a[href^="#"] {
     border: 1px solid rgba(255, 255, 255, 0.1);
   }
 
+  .glass-effect-strong {
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(40px);
+    -webkit-backdrop-filter: blur(40px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+  }
+
+  .dark-glass {
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  }
+
   .card-dark {
     background: var(--card);
     border: 1px solid var(--border);
@@ -397,6 +413,7 @@ textarea:disabled::placeholder {
   color: white;
   padding: 0.75rem 1.5rem;
   box-shadow: var(--shadow-iris);
+  border-radius: calc(var(--radius) - 2px);
 }
 
 .btn-primary:hover {
@@ -409,6 +426,7 @@ textarea:disabled::placeholder {
   color: var(--secondary-foreground);
   border: 1px solid var(--border);
   padding: 0.75rem 1.5rem;
+  border-radius: calc(var(--radius) - 2px);
 }
 
 .btn-secondary:hover {
@@ -545,6 +563,67 @@ input[data-editable-placeholder]:not([value]):not(:focus)::before {
   font-style: italic;
   pointer-events: none;
   z-index: 1;
+}
+
+/* Плавные переходы для страниц */
+.page-transition {
+  will-change: opacity;
+}
+
+/* Анимации для выпадающих меню */
+@keyframes slideInFromTop {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-in {
+  animation: slideInFromTop 0.2s ease-out;
+}
+
+.slide-in-from-top-2 {
+  animation: slideInFromTop 0.2s ease-out;
+}
+
+/* Эффект мутного стекла для выпадающих меню */
+.glass-dropdown {
+  background: rgba(22, 22, 29, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.glass-dropdown-item {
+  transition: all 0.2s ease;
+}
+
+.glass-dropdown-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* Оптимизация анимаций */
+@media (prefers-reduced-motion: no-preference) {
+  .page-transition {
+    transition: opacity 0.3s ease-in-out;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-transition {
+    transition: none;
+  }
+  
+  .animate-in {
+    animation: none;
+  }
 }
 
 @media (max-width: 768px) {

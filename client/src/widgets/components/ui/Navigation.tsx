@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, User, LogOut, Shield } from 'lucide-react';
 import { Link, useNavigate, useLocation } from 'react-router';
 import { useAppDispatch, useAppSelector } from '@/shared/hooks/hooks';
 import { logoutUser } from '@/entities/auth/model/thunks';
+import UserAvatar from './UserAvatar';
 
 const Navigation = (): React.JSX.Element => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -134,7 +135,7 @@ const Navigation = (): React.JSX.Element => {
           {/* Пустое место для логотипа */}
           <div>
             <Link to="/">
-              <img src="/Logo3.png" alt="Логотип" width={60} />
+              <img src="/Logo3.png" alt="Логотип" width={40} height={40} />
             </Link>
           </div>
 
@@ -158,30 +159,7 @@ const Navigation = (): React.JSX.Element => {
           {/* Кнопки авторизации */}
           <div className="hidden md:flex items-center space-x-4">
             {user ? (
-              <>
-                <Link
-                  to="/profile"
-                  className="px-4 py-2 text-foreground hover:text-[hsl(200_80%_70%)] font-medium transition-colors duration-300"
-                >
-                  Профиль
-                </Link>
-                {/* Отладочная информация и ссылка на админку */}
-                {console.log('Navigation - user data:', { user, status, admin: user?.user?.admin })}
-                {user?.user?.admin && (
-                  <Link
-                    to="/admin"
-                    className="px-4 py-2 text-foreground hover:text-[hsl(200_80%_70%)] font-medium transition-colors duration-300"
-                  >
-                    Админка
-                  </Link>
-                )}
-                <button
-                  onClick={() => void dispatch(logoutUser())}
-                  className="px-5 py-2 bg-gradient-to-r from-[hsl(200_75%_55%)] to-[hsl(210_75%_35%)] text-white hover:from-[hsl(200_80%_60%)] hover:to-[hsl(210_80%_40%)] transition-all duration-300 shadow-lg hover:shadow-[hsl(200_80%_70%)]/30 rounded-lg font-medium"
-                >
-                  Выход
-                </button>
-              </>
+              <UserAvatar />
             ) : (
               <>
                 <Link
@@ -232,29 +210,84 @@ const Navigation = (): React.JSX.Element => {
               <div className="flex flex-col space-y-2 pt-4 border-t border-border">
                 {user ? (
                   <>
-                    <Link
-                      to="/profile"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      className="px-4 py-2 text-foreground hover:text-[hsl(200_80%_70%)] font-medium transition-colors duration-300 text-left"
+                    {/* Информация о пользователе */}
+                    <div className="flex items-center space-x-3 px-4 py-2">
+                      <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-r from-[hsl(200_75%_55%)] to-[hsl(210_75%_35%)] text-white font-semibold text-sm">
+                        {user?.user?.avatar ? (
+                          <img
+                            src={
+                              user.user.avatar.startsWith('http')
+                                ? user.user.avatar
+                                : `http://localhost:5173/${user.user.avatar}`
+                            }
+                            alt={user?.user?.name || 'Пользователь'}
+                            className="w-full h-full rounded-full object-cover"
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement;
+                              target.style.display = 'none';
+                              const parent = target.parentElement;
+                              if (parent) {
+                                const name = user?.user?.name || 'Пользователь';
+                                const initials = name
+                                  .split(' ')
+                                  .map((word) => word.charAt(0))
+                                  .join('')
+                                  .toUpperCase()
+                                  .slice(0, 2);
+                                parent.innerHTML = initials;
+                              }
+                            }}
+                          />
+                        ) : (
+                          (user?.user?.name || 'Пользователь')
+                            .split(' ')
+                            .map((word) => word.charAt(0))
+                            .join('')
+                            .toUpperCase()
+                            .slice(0, 2)
+                        )}
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-foreground">
+                          {user?.user?.name || 'Пользователь'}
+                        </p>
+                        <p className="text-xs text-muted-foreground">{user?.user?.email}</p>
+                      </div>
+                    </div>
+
+                    {/* Кнопки для авторизованного пользователя */}
+                    <button
+                      onClick={() => {
+                        navigate('/profile');
+                        setIsMobileMenuOpen(false);
+                      }}
+                      className="flex items-center px-4 py-2 text-sm text-muted-foreground hover:text-[hsl(200_80%_70%)] hover:bg-[hsl(200_80%_70%)]/5 transition-all duration-300 text-left rounded-lg mx-1"
                     >
+                      <User className="w-4 h-4 mr-3" />
                       Профиль
-                    </Link>
+                    </button>
+
                     {user?.user?.admin && (
-                      <Link
-                        to="/admin"
-                        onClick={() => setIsMobileMenuOpen(false)}
-                        className="px-4 py-2 text-foreground hover:text-[hsl(200_80%_70%)] font-medium transition-colors duration-300 text-left"
+                      <button
+                        onClick={() => {
+                          navigate('/admin');
+                          setIsMobileMenuOpen(false);
+                        }}
+                        className="flex items-center px-4 py-2 text-sm text-muted-foreground hover:text-[hsl(200_80%_70%)] hover:bg-[hsl(200_80%_70%)]/5 transition-all duration-300 text-left rounded-lg mx-1"
                       >
-                        Админка
-                      </Link>
+                        <Shield className="w-4 h-4 mr-3" />
+                        Админ панель
+                      </button>
                     )}
+
                     <button
                       onClick={() => {
                         void dispatch(logoutUser());
                         setIsMobileMenuOpen(false);
                       }}
-                      className="px-4 py-2 bg-gradient-to-r from-[hsl(200_75%_55%)] to-[hsl(210_75%_35%)] text-white hover:from-[hsl(200_80%_60%)] hover:to-[hsl(210_80%_40%)] transition-all duration-300 rounded-lg font-medium text-center"
+                      className="flex items-center px-4 py-2 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-all duration-300 text-left rounded-lg mx-1"
                     >
+                      <LogOut className="w-4 h-4 mr-3" />
                       Выход
                     </button>
                   </>

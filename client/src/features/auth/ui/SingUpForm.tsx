@@ -1,12 +1,15 @@
 import { userRegisterSchema } from '@/entities/auth/model/schemas';
 import { registerUser } from '@/entities/auth/model/thunks';
-import { useAppDispatch } from '@/shared/hooks/hooks';
+import { useAppDispatch, useAppSelector } from '@/shared/hooks/hooks';
+import Spinner from '@/widgets/components/ui/Spinner';
+import { ArrowLeft, Home } from 'lucide-react';
 import type { ChangeEventHandler, FormEventHandler } from 'react';
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate, Link } from 'react-router';
 
 export default function SignUpForm(): React.JSX.Element {
   const dispatch = useAppDispatch();
+  const { status } = useAppSelector((state) => state.user);
   const [phone, setPhone] = useState('+7');
   const navigate = useNavigate();
 
@@ -56,7 +59,17 @@ export default function SignUpForm(): React.JSX.Element {
   return (
     <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-lg w-full space-y-8">
-    
+        {/* Кнопка возврата на главную */}
+        <div className="flex justify-start">
+          <Link
+            to="/"
+            className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors duration-200 hover:bg-muted/50 rounded-lg group"
+          >
+            <ArrowLeft className="h-4 w-4 group-hover:-translate-x-1 transition-transform duration-200" />
+            <span className="hidden sm:inline">Вернуться на главную</span>
+            <span className="sm:hidden">На главную</span>
+          </Link>
+        </div>
 
         {/* Форма */}
         <div className="card">
@@ -168,38 +181,26 @@ export default function SignUpForm(): React.JSX.Element {
 
             <div className="flex items-start">
               <div className="flex items-center h-5">
-                <input
-                  id="terms"
-                  name="terms"
-                  type="checkbox"
-                  required
-                  className="w-4 h-4 text-primary bg-input border-border rounded focus:ring-primary focus:ring-2"
-                />
-              </div>
-              <div className="ml-3 text-sm">
-                <label htmlFor="terms" className="text-muted-foreground">
-                  Я соглашаюсь с{' '}
-                  <a href="#" className="text-primary hover:text-accent">
-                    условиями использования
-                  </a>{' '}
-                  и{' '}
-                  <a href="#" className="text-primary hover:text-accent">
-                    политикой конфиденциальности
-                  </a>
-                </label>
               </div>
             </div>
 
-            <button type="submit" className="btn-primary w-full">
-              Зарегистрироваться
+            <button type="submit" className="btn-primary w-full" disabled={status === 'loading'}>
+              {status === 'loading' ? (
+                <div className="flex items-center justify-center gap-2">
+                  <Spinner size="sm" />
+                  <span>Регистрация...</span>
+                </div>
+              ) : (
+                'Зарегистрироваться'
+              )}
             </button>
 
-            <div className="text-center">
+            <div className="text-center space-y-2">
               <p className="text-sm text-muted-foreground">
                 Уже есть аккаунт?{' '}
-                <a href="/signin" className="font-medium text-primary hover:text-accent">
+                <Link to="/signin" className="font-medium text-primary hover:text-accent transition-colors duration-200">
                   Войти
-                </a>
+                </Link>
               </p>
             </div>
           </form>

@@ -2,22 +2,34 @@ import { userLoginSchema } from '@/entities/auth/model/schemas';
 import { loginUser } from '@/entities/auth/model/thunks';
 import { clearError } from '@/entities/auth/model/slice';
 import { useAppDispatch, useAppSelector } from '@/shared/hooks/hooks';
+
+import { TwoFactorVerification } from '@/entities/2fa/ui';
+
+import Spinner from '@/widgets/components/ui/Spinner';
+
 import type { FormEventHandler } from 'react';
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate, Link } from 'react-router';
 
 export default function SignInForm(): React.JSX.Element {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { error, status } = useAppSelector((state) => state.user);
+  const { error, status, user } = useAppSelector((state) => state.user);
   const [validationError, setValidationError] = useState<string>('');
+  const [show2FA, setShow2FA] = useState<boolean>(false);
+  const [userEmail, setUserEmail] = useState<string>('');
 
   // Редирект после успешного входа
   useEffect(() => {
-    if (status === 'logged') {
-      void navigate('/');
+    if (status === 'logged' && user?.user) {
+      // Проверяем, требуется ли 2FA
+      if (user.user.secret) {
+        setShow2FA(true);
+      } else {
+        void navigate('/');
+      }
     }
-  }, [status, navigate]);
+  }, [status, user, navigate]);
 
   // Очищаем ошибки при загрузке компонента
   useEffect(() => {
@@ -40,6 +52,14 @@ export default function SignInForm(): React.JSX.Element {
         }
 
         const dataValidate = userLoginSchema.parse(data);
+
+        console.log('Validated data:', dataValidate);
+
+        // Сохраняем email для 2FA
+        setUserEmail(dataValidate.email);
+
+        console.log('Dispatching loginUser...');
+
         await dispatch(loginUser(dataValidate)).unwrap();
         // Редирект теперь происходит в useEffect
       } catch (loginError: unknown) {
@@ -59,6 +79,16 @@ export default function SignInForm(): React.JSX.Element {
         }
       }
     })();
+  };
+
+  const handle2FASuccess = (): void => {
+    setShow2FA(false);
+    void navigate('/');
+  };
+
+  const handle2FACancel = (): void => {
+    setShow2FA(false);
+    setUserEmail('');
   };
 
   return (
@@ -116,46 +146,45 @@ export default function SignInForm(): React.JSX.Element {
 
             <div className="flex items-center justify-between">
               <label className="flex items-center">
-                <input
-                  type="checkbox"
-                  className="w-4 h-4 text-primary bg-input border-border rounded focus:ring-primary focus:ring-2"
-                />
-                <span className="ml-2 text-sm text-muted-foreground">Запомнить меня</span>
+      
               </label>
-              <a href="#" className="text-sm text-primary hover:text-accent">
+              <a href="#" className="text-sm text-primary hover:text-accent transition-colors duration-200">
                 Забыли пароль?
               </a>
             </div>
 
             <button type="submit" className="btn-primary w-full" disabled={status === 'loading'}>
-              {status === 'loading' ? 'Вход...' : 'Войти'}
+              {status === 'loading' ? (
+                <div className="flex items-center justify-center gap-2">
+                  <Spinner size="sm" />
+                  <span>Вход...</span>
+                </div>
+              ) : (
+                'Войти'
+              )}
             </button>
 
             <div className="text-center">
               <p className="text-sm text-muted-foreground">
                 Нет аккаунта?{' '}
-                <a href="/signup" className="font-medium text-primary hover:text-accent">
+                <Link to="/signup" className="font-medium text-primary hover:text-accent transition-colors duration-200">
                   Зарегистрироваться
-                </a>
+                </Link>
               </p>
             </div>
           </form>
         </div>
-
-        {/* Дополнительная информация */}
-        <div className="text-center">
-          <p className="text-xs text-muted-foreground">
-            Входя в систему, вы соглашаетесь с нашими{' '}
-            <a href="#" className="text-primary hover:text-accent">
-              Условиями использования
-            </a>{' '}
-            и{' '}
-            <a href="#" className="text-primary hover:text-accent">
-              Политикой конфиденциальности
-            </a>
-          </p>
-        </div>
+        
       </div>
+
+      {/* Модальное окно 2FA */}
+      {show2FA && (
+        <TwoFactorVerification
+          email={userEmail}
+          onSuccess={handle2FASuccess}
+          onCancel={handle2FACancel}
+        />
+      )}
     </div>
   );
 }

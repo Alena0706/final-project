@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Phone, Mail, MapPin, Clock, Send } from 'lucide-react';
+import { Phone, MessageCircle, MapPin, Clock, Send } from 'lucide-react';
 import type {JSX} from 'react';
 
 
@@ -108,9 +108,9 @@ const contactInfo = [
     animationDelay: '0s',
   },
   {
-    id: 'contact-email',
-    icon: Mail,
-    title: 'Email',
+    id: 'contact-telegram',
+    icon: MessageCircle,
+    title: 'Telegram',
     details: ['@tvooyvzglyad'],
     subtitle: 'Подписываетесь на наш телеграмм',
     animationDelay: '0.1s',

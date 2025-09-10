@@ -1,5 +1,5 @@
 import { AuthResponseSchema } from '../model/schemas';
-import type { AuthResponseT, UserLoginT, UserRegisterT, UserUpdateT } from '../model/types';
+import type { AuthResponseT, EmailVerificationT, ResendVerificationT, UserLoginT, UserRegisterT, UserUpdateT } from '../model/types';
 import axiosInstance from '@/shared/api/axiosInstance';
 
 // eslint-disable-next-line @typescript-eslint/no-extraneous-class
@@ -50,9 +50,35 @@ class UserServices {
     await axiosInstance.delete('/auth/logout');
   }
 
-  static async verify2FA(token: string, email: string): Promise<AuthResponseT> {
-    const response = await axiosInstance.post('/auth/verify2FA', { token, email });
+  static async verify2FA(token: string, email: string | undefined): Promise<AuthResponseT> {
+    const response = await axiosInstance.post('/auth/2fa/verify-login', { token, email });
     return AuthResponseSchema.parse(response.data);
+  }
+
+  static async generate2FASecret(): Promise<{ secret: string; qrCodeUrl: string }> {
+    const response = await axiosInstance.post('/auth/2fa/generate');
+    return response.data as { secret: string; qrCodeUrl: string };
+  }
+
+  static async verify2FAToken(token: string): Promise<{ verified: boolean; message: string }> {
+    const response = await axiosInstance.post('/auth/2fa/verify', { token });
+    return response.data as { verified: boolean; message: string };
+  }
+
+  static async disable2FA(token: string): Promise<{ message: string }> {
+    const response = await axiosInstance.post('/auth/2fa/disable', { token });
+    return response.data as { message: string };
+  }
+
+  static async verifyEmail(data: EmailVerificationT): Promise<{ message: string }> {
+    const response = await axiosInstance.post('/auth/verify-email', data);
+    return response.data;
+  }
+
+  static async resendVerificationEmail(data: ResendVerificationT): Promise<{ message: string }> {
+    const response = await axiosInstance.post('/auth/resend-verification', data);
+    return response.data;
+
   }
 }
 
