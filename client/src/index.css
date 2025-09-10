@@ -52,7 +52,8 @@
   --shadow-elegant: 0 10px 25px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -4px rgba(0, 0, 0, 0.2);
   --shadow-iris: 0 20px 25px -5px hsla(200, 75%, 55%, 0.3),
     0 10px 10px -5px hsla(200, 75%, 55%, 0.1); /* Голубые тени в стиле HeroSection */
-  --shadow-gold: 0 20px 25px -5px rgba(251, 191, 36, 0.3), 0 10px 10px -5px rgba(251, 191, 36, 0.1);
+  --shadow-gold: 0 20px 25px -5px rgba(248, 250, 252, 0.4),
+    0 10px 10px -5px rgba(248, 250, 252, 0.2);
 
   /* Радиусы */
   --radius: 0.75rem;
@@ -69,7 +70,7 @@ body {
 }
 
 /* Скрыть якорные ссылки */
-a[href^="#"] {
+a[href^='#'] {
   position: absolute;
   left: -9999px;
   width: 1px;
@@ -620,7 +621,7 @@ input[data-editable-placeholder]:not([value]):not(:focus)::before {
   .page-transition {
     transition: none;
   }
-  
+
   .animate-in {
     animation: none;
   }

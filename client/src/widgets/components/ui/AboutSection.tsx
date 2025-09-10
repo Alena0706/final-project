@@ -1,6 +1,6 @@
 import React from 'react';
 
-const EyeIcon = ({ className }: { className?: string }) : React.JSX.Element => (
+const EyeIcon = ({ className }: { className?: string }): React.JSX.Element => (
   <svg
     className={className}
     xmlns="http://www.w3.org/2000/svg"
@@ -65,8 +65,7 @@ const AwardIcon = ({ className }: { className?: string }): React.JSX.Element => 
   </svg>
 );
 
-
-const AboutSection = ():React.JSX.Element => {
+const AboutSection = (): React.JSX.Element => {
   const features = [
     {
       id: 'feature-unique-tech',
@@ -118,15 +117,16 @@ const AboutSection = ():React.JSX.Element => {
             произведение искусства
           </p>
         </div>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-16">
-          <div className="animate-slide-up">
-            <h3 className="heading-3 text-foreground mb-6">Наша история и миссия</h3>
-            <div className="space-y-4 text-muted-foreground">
-              <p>
+        {/* Наша миссия */}
+        <div className="mb-12">
+          <div className="max-w-4xl mx-auto text-center animate-slide-up">
+            {/* <h3 className="heading-3 text-foreground mb-8">Наша история и миссия</h3> */}
+            <div className="space-y-4 text-muted-foreground text-lg leading-relaxed">
+              {/* <p>
                 Основанная в 2023 году, наша франшиза стала пионером в области профессиональной
                 фотографии радужки глаза в России. Мы объединили передовые технологии,
                 художественное видение и предпринимательский дух.
-              </p>
+              </p> */}
               <p>
                 Наша миссия - сделать уникальное искусство фотографии радужки доступным в каждом
                 городе, предоставляя партнерам все необходимые инструменты для успешного бизнеса.
@@ -137,22 +137,35 @@ const AboutSection = ():React.JSX.Element => {
               </p>
             </div>
           </div>
-          <div className="relative animate-slide-up" style={{ animationDelay: '0.2s' }}>
-            <div className="absolute inset-0 bg-[hsl(200_80%_70%)]/10 rounded-3xl blur-3xl opacity-50"></div>
-            <div className="card relative">
-              <div className="text-center">
-                <div className="inline-flex p-4 bg-gradient-to-r from-[hsl(200_75%_55%)] to-[hsl(210_75%_35%)] rounded-2xl mb-4 shadow-iris">
-                  <EyeIcon className="h-8 w-8 text-white" />
+        </div>
+
+        {/* Почему радужка? */}
+        <div className="mb-16">
+          <div className="max-w-3xl mx-auto">
+            <div className="relative animate-slide-up">
+              <div className="absolute inset-0 bg-[hsl(200_80%_70%)]/10 rounded-3xl blur-3xl opacity-50"></div>
+              <div className="card relative">
+                <div className="text-center">
+                  <div className="inline-flex p-4 bg-gradient-to-r from-[hsl(200_75%_55%)] to-[hsl(210_75%_35%)] rounded-2xl mb-6 shadow-iris">
+                    <EyeIcon className="h-8 w-8 text-white" />
+                  </div>
+                  <h4 className="text-2xl font-bold text-foreground mb-6">Почему радужка?</h4>
+                  <p className="text-muted-foreground text-lg leading-relaxed">
+                    Радужка глаза содержит более 250 уникальных характеристик, что делает её в 5 раз
+                    более уникальной, чем отпечаток пальца. Это настоящее произведение природного
+                    искусства.
+                  </p>
                 </div>
-                <h4 className="text-xl font-bold text-foreground mb-4">Почему радужка?</h4>
-                <p className="text-muted-foreground">
-                  Радужка глаза содержит более 250 уникальных характеристик, что делает её в 5 раз
-                  более уникальной, чем отпечаток пальца. Это настоящее произведение природного
-                  искусства.
-                </p>
               </div>
             </div>
           </div>
+        </div>
+        {/* Наши особенности */}
+        <div className="text-center mb-12">
+          <h3 className="heading-3 text-foreground mb-4">Наши особенности</h3>
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            Что делает нас уникальными в сфере фотографии радужки глаза
+          </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {features.map((feature) => {
