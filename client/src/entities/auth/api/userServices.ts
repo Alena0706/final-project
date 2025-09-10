@@ -50,7 +50,7 @@ class UserServices {
     await axiosInstance.delete('/auth/logout');
   }
 
-  static async verify2FA(token: string, email: string): Promise<AuthResponseT> {
+  static async verify2FA(token: string, email: string | undefined): Promise<AuthResponseT> {
     const response = await axiosInstance.post('/auth/2fa/verify-login', { token, email });
     return AuthResponseSchema.parse(response.data);
   }
@@ -68,6 +68,7 @@ class UserServices {
   static async disable2FA(token: string): Promise<{ message: string }> {
     const response = await axiosInstance.post('/auth/2fa/disable', { token });
     return response.data as { message: string };
+  }
 
   static async verifyEmail(data: EmailVerificationT): Promise<{ message: string }> {
     const response = await axiosInstance.post('/auth/verify-email', data);
