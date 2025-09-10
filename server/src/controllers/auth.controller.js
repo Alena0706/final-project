@@ -4,6 +4,7 @@ const generateTokens = require('../utils/generateTokens');
 const validateEmail = require('../utils/validateEmail');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+const speakeasy = require('speakeasy');
 require('dotenv').config();
 
 class AuthController {
@@ -121,6 +122,147 @@ class AuthController {
 
   static async logout(req, res) {
     res.clearCookie('refreshToken').sendStatus(204);
+  }
+
+  // 2FA methods
+  static async generate2FASecret(req, res) {
+    try {
+      const userId = res.locals.user.id;
+      const user = await AuthService.getUser(userId);
+
+      if (!user) {
+        return res.status(404).json({ message: 'Пользователь не найден' });
+      }
+
+      // Генерируем новый секрет
+      const secret = speakeasy.generateSecret({
+        name: `FranchiseApp (${user.email})`,
+        issuer: 'FranchiseApp',
+        length: 32,
+      });
+
+      // Сохраняем секрет в базу данных
+      await AuthService.updateUser(userId, { secret: secret.base32 });
+
+      res.json({
+        secret: secret.base32,
+        qrCodeUrl: secret.otpauth_url,
+      });
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({ message: err.message });
+    }
+  }
+
+  static async verify2FA(req, res) {
+    try {
+      const userId = res.locals.user.id;
+      const { token } = req.body;
+
+      if (!token) {
+        return res.status(400).json({ message: 'Токен не предоставлен' });
+      }
+
+      const user = await AuthService.getUser(userId);
+
+      if (!user || !user.secret) {
+        return res
+          .status(400)
+          .json({ message: '2FA не настроен для этого пользователя' });
+      }
+
+      const verified = speakeasy.totp.verify({
+        secret: user.secret,
+        encoding: 'base32',
+        token,
+        window: 2,
+      });
+
+      if (verified) {
+        res.json({ verified: true, message: '2FA токен подтвержден' });
+      } else {
+        res.status(400).json({ verified: false, message: 'Неверный 2FA токен' });
+      }
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({ message: err.message });
+    }
+  }
+
+  static async disable2FA(req, res) {
+    try {
+      const userId = res.locals.user.id;
+      const { token } = req.body;
+
+      if (!token) {
+        return res.status(400).json({ message: 'Токен не предоставлен' });
+      }
+
+      const user = await AuthService.getUser(userId);
+
+      if (!user || !user.secret) {
+        return res
+          .status(400)
+          .json({ message: '2FA не настроен для этого пользователя' });
+      }
+
+      // Проверяем токен перед отключением
+      const verified = speakeasy.totp.verify({
+        secret: user.secret,
+        encoding: 'base32',
+        token,
+        window: 2,
+      });
+
+      if (!verified) {
+        return res.status(400).json({ message: 'Неверный 2FA токен' });
+      }
+
+      // Удаляем секрет из базы данных
+      await AuthService.updateUser(userId, { secret: null });
+
+      res.json({ message: '2FA успешно отключен' });
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({ message: err.message });
+    }
+  }
+
+  static async verify2FALogin(req, res) {
+    try {
+      const { email, token } = req.body;
+
+      if (!email || !token) {
+        return res.status(400).json({ message: 'Email и токен обязательны' });
+      }
+
+      const user = await AuthService.getUserByEmail(email);
+
+      if (!user || !user.secret) {
+        return res
+          .status(400)
+          .json({ message: '2FA не настроен для этого пользователя' });
+      }
+
+      const verified = speakeasy.totp.verify({
+        secret: user.secret,
+        encoding: 'base32',
+        token,
+        window: 2,
+      });
+
+      if (verified) {
+        const { refreshToken, accessToken } = generateTokens({ user });
+        res
+          .cookie('refreshToken', refreshToken, cookieConfig.refresh)
+          .json({ user, accessToken });
+      } else {
+        res.status(400).json({ message: 'Неверный 2FA токен' });
+      }
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({ message: err.message });
+    }
   }
 }
 

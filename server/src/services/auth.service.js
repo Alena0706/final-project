@@ -28,6 +28,16 @@ class AuthService {
     return plainUser;
   }
 
+  static async getUserByEmail(email) {
+    const user = await User.findOne({ where: { email } });
+    if (!user) {
+      throw new Error(`Пользователь с email ${email} не найден`);
+    }
+    const plainUser = user.get();
+    delete plainUser.hashpass;
+    return plainUser;
+  }
+
   static async updateUser(userId, updateData) {
     await User.update(updateData, { where: { id: userId } });
     const updatedUser = await User.findByPk(userId);

@@ -10,8 +10,19 @@ authRouter.post('/signup', AuthController.signup);
 authRouter.post('/signin', AuthController.signin);
 authRouter.get('/refresh', AuthController.refresh);
 authRouter.delete('/logout', AuthController.logout);
-authRouter.post('/upload', verifyAccessToken, upload.single('avatar'), AuthController.uploadAvatar);
+authRouter.post(
+  '/upload',
+  verifyAccessToken,
+  upload.single('avatar'),
+  AuthController.uploadAvatar,
+);
 authRouter.patch('/update', verifyAccessToken, AuthController.updateUser);
 authRouter.get('/users', verifyAccessToken, requireAdmin, UserController.getAllUsers);
+
+// 2FA routes
+authRouter.post('/2fa/generate', verifyAccessToken, AuthController.generate2FASecret);
+authRouter.post('/2fa/verify', verifyAccessToken, AuthController.verify2FA);
+authRouter.post('/2fa/disable', verifyAccessToken, AuthController.disable2FA);
+authRouter.post('/2fa/verify-login', AuthController.verify2FALogin);
 
 module.exports = authRouter;
