@@ -18,26 +18,25 @@ const PartnerFormModal: React.FC<PartnerFormModalProps> = ({ isOpen, onClose, us
 
   // Функция форматирования телефона
   const formatPhone = (value: string): string => {
-    // Удаляем все нецифровые символы
     const numbers = value.replace(/\D/g, '');
 
-    // Если номер начинается с 8, заменяем на 7
+    if (!numbers) return ''; // Если строка пустая после удаления нецифр, возвращаем пустую
+
     let formattedNumbers = numbers;
     if (formattedNumbers.startsWith('8')) {
       formattedNumbers = '7' + formattedNumbers.slice(1);
     }
 
-    // Если номер начинается с 7, добавляем +7
     if (formattedNumbers.startsWith('7')) {
       formattedNumbers = '+' + formattedNumbers;
     }
 
-    // Форматируем в стиле +7 (___) ___-__-__
-    if (formattedNumbers.length <= 1) return formattedNumbers;
-    if (formattedNumbers.length <= 4) return `+7 (${formattedNumbers.slice(2)}`;
-    if (formattedNumbers.length <= 7)
+    // Корректная проверка длины и срезы с защитой от выхода за границы
+    if (formattedNumbers.length <= 2) return formattedNumbers;
+    if (formattedNumbers.length <= 5) return `+7 (${formattedNumbers.slice(2)}`;
+    if (formattedNumbers.length <= 8)
       return `+7 (${formattedNumbers.slice(2, 5)}) ${formattedNumbers.slice(5)}`;
-    if (formattedNumbers.length <= 9)
+    if (formattedNumbers.length <= 10)
       return `+7 (${formattedNumbers.slice(2, 5)}) ${formattedNumbers.slice(
         5,
         8,
@@ -54,13 +53,19 @@ const PartnerFormModal: React.FC<PartnerFormModalProps> = ({ isOpen, onClose, us
     return numbers.length === 11 && numbers.startsWith('7');
   };
 
-  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    const {value} = e.target;
     const formatted = formatPhone(value);
     setPhone(formatted);
 
-    // Валидация
-    if (value.length > 0 && !validatePhone(formatted)) {
+    // Если поле пустое, сбрасываем ошибку
+    if (formatted === '') {
+      setPhoneError('');
+      return;
+    }
+
+    // Валидация телефона
+    if (!validatePhone(formatted)) {
       setPhoneError('Введите корректный номер телефона');
     } else {
       setPhoneError('');
@@ -69,15 +74,15 @@ const PartnerFormModal: React.FC<PartnerFormModalProps> = ({ isOpen, onClose, us
 
   useEffect(() => {
     if (user) {
-      setPhone(user.phone || '');
-      setName(user.name || '');
-      setCity(user.city || '');
+      setPhone(user.phone ?? '');
+      setName(user.name ?? '');
+      setCity(user.city ?? '');
     }
   }, [user]);
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent): void => {
     e.preventDefault();
 
     // Проверяем валидность телефона перед отправкой

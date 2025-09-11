@@ -290,7 +290,7 @@ class AuthController {
 
       // Удаляем секрет из базы данных
       await AuthService.updateUser(userId, { secret: null });
-
+      console.log('удаляем секрет');
       res.json({ message: '2FA успешно отключен' });
     } catch (err) {
       console.log(err);
