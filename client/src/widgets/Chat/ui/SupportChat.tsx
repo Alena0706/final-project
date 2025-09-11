@@ -2,6 +2,7 @@ import { addMessage, joinRoom, setHistory, setRooms } from '@/entities/chat/mode
 import { useAppDispatch, useAppSelector } from '@/shared/hooks/hooks';
 import React, { useEffect, useRef, useState } from 'react';
 import { io } from 'socket.io-client';
+import { useNavigate } from 'react-router';
 
 const socket = io('/', { autoConnect: true, transports: ['websocket'] });
 
@@ -21,10 +22,13 @@ socket.on('connect_error', (error) => {
 
 export default function SupportChat(): React.JSX.Element {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   const messages = useAppSelector((store) => store.chat.messages);
   const userId = useAppSelector((store) => store.user.user?.user.id);
+  const userName = useAppSelector((store) => store.user.user?.user.name);
   const admin = useAppSelector((store) => store.user.user?.user.admin);
+  const userStatus = useAppSelector((store) => store.user.status);
   const roomId = useAppSelector((store) => store.chat.roomId);
   const rooms = useAppSelector((store) => store.chat.rooms);
   const [isOpen, setIsOpen] = useState(false);
@@ -60,13 +64,13 @@ export default function SupportChat(): React.JSX.Element {
       // Проверяем, если это системное сообщение об отключении AI
       if (
         message.sender === 'system' &&
-        message.message.includes('AI-помощник временно отключен')
+        message.message?.includes('AI-помощник временно отключен')
       ) {
         setAiActive(false);
       }
 
       // Проверяем, если это системное сообщение о возобновлении AI
-      if (message.sender === 'system' && message.message.includes('AI-помощник возобновлен')) {
+      if (message.sender === 'system' && message.message?.includes('AI-помощник возобновлен')) {
         setAiActive(true);
       }
     });
@@ -160,6 +164,95 @@ export default function SupportChat(): React.JSX.Element {
       socket.emit('resumeAI', roomId);
       setAiActive(true);
     }
+  };
+
+  // Функция обработки клика по кнопке
+  const handleButtonClick = (link: string): void => {
+    // Проверяем права доступа
+    if (link.startsWith('/admin') && !admin) {
+      // eslint-disable-next-line no-alert
+      alert('У вас нет прав доступа к админ-панели');
+      return;
+    }
+    
+    if (link.startsWith('/profile') && userStatus === 'guest') {
+      void navigate('/signin');
+      return;
+    }
+    
+    if (link.startsWith('/')) {
+      // Внутренняя ссылка - используем роутер
+      void navigate(link);
+    } else {
+      // Внешняя ссылка
+      window.open(link, '_blank');
+    }
+  };
+
+  // Функция для рендеринга сообщений с кнопками
+  const renderMessageWithButtons = (message: string): React.ReactNode[] => {
+    const buttonRegex = /\[КНОПКА:([^:]+):([^\]]+)\]/g;
+    const parts: React.ReactNode[] = [];
+    let lastIndex = 0;
+    let match: RegExpExecArray | null;
+
+    // eslint-disable-next-line no-cond-assign
+    while ((match = buttonRegex.exec(message)) !== null) {
+      // Добавляем текст до кнопки
+      if (match.index > lastIndex) {
+        parts.push(
+          <span key={`text-${String(lastIndex)}`}>
+            {message.slice(lastIndex, match.index)}
+          </span>
+        );
+      }
+
+      // Добавляем кнопку
+      const buttonText = match[1];
+      const buttonLink = match[2];
+      parts.push(
+        <button
+          key={`button-${String(match.index)}`}
+          onClick={() => handleButtonClick(buttonLink)}
+          style={{
+            display: 'inline-block',
+            background: 'linear-gradient(135deg, hsl(200, 75%, 55%), hsl(210, 75%, 35%))',
+            color: 'white',
+            padding: '4px 12px',
+            borderRadius: '6px',
+            fontSize: '12px',
+            fontWeight: '500',
+            margin: '0 4px',
+            border: 'none',
+            cursor: 'pointer',
+            transition: 'all 0.2s ease',
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = 'linear-gradient(135deg, hsl(200, 80%, 60%), hsl(210, 80%, 40%))';
+            e.currentTarget.style.transform = 'translateY(-1px)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = 'linear-gradient(135deg, hsl(200, 75%, 55%), hsl(210, 75%, 35%))';
+            e.currentTarget.style.transform = 'translateY(0)';
+          }}
+        >
+          {buttonText}
+        </button>
+      );
+
+      lastIndex = match.index + match[0].length;
+    }
+
+    // Добавляем оставшийся текст
+    if (lastIndex < message.length) {
+      parts.push(
+        <span key={`text-${String(lastIndex)}`}>
+          {message.slice(lastIndex)}
+        </span>
+      );
+    }
+
+    return parts;
   };
 
   return (
@@ -331,8 +424,9 @@ export default function SupportChat(): React.JSX.Element {
               }
 
               // Определяем, нужно ли показывать подпись
-              const showLabel = msg.sender !== 'user' && msg.sender !== 'system';
-              const getLabelText = () => {
+              const showLabel = msg.sender !== 'system';
+              const getLabelText = (): string => {
+                if (msg.sender === 'user') return userName ?? 'Пользователь';
                 if (msg.sender === 'assistant') return 'AI-помощник';
                 if (msg.sender === 'admin') return 'Администратор';
                 return msg.sender;
@@ -345,7 +439,7 @@ export default function SupportChat(): React.JSX.Element {
                       {getLabelText()}
                     </div>
                   )}
-                  {msg.message}
+                  {renderMessageWithButtons(msg.message)}
                 </div>
               );
             })}
@@ -384,7 +478,9 @@ export default function SupportChat(): React.JSX.Element {
                 outline: 'none',
               }}
               onKeyDown={(e) => {
-                if (e.key === 'Enter') handleSendMessage();
+                if (e.key === 'Enter') {
+                  handleSendMessage();
+                }
               }}
               onFocus={(e) => {
                 e.currentTarget.style.borderColor = 'hsl(200, 80%, 70%)';

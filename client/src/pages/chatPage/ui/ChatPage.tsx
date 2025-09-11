@@ -22,6 +22,7 @@ export default function ChatPage(): React.JSX.Element {
   const dispatch = useAppDispatch();
   const messages = useAppSelector((store) => store.chat.messages);
   const roomId = useAppSelector((store) => store.chat.roomId);
+  const userName = useAppSelector((store) => store.user.user?.user.name);
   const [input, setInput] = useState('');
   const [roomInput, setRoomInput] = useState('');
   const [sender, setSender] = useState<'user' | 'admin'>('user');
@@ -29,11 +30,11 @@ export default function ChatPage(): React.JSX.Element {
   useEffect(() => {
     console.log('🔧 ChatPage: Настройка Socket.IO слушателей');
 
-    socket.on('chatMessage', (msg) => {
+    socket.on('chatMessage', (msg: any) => {
       console.log('💬 ChatPage: Получено сообщение:', msg);
       dispatch(addMessage(msg));
     });
-    socket.on('chatHistory', (history) => {
+    socket.on('chatHistory', (history: any) => {
       console.log('📜 ChatPage: Получена история чата:', history);
       dispatch(setHistory(history));
     });
@@ -72,18 +73,28 @@ export default function ChatPage(): React.JSX.Element {
           value={roomInput}
           onChange={(e) => setRoomInput(e.target.value)}
         />
-        <select value={sender} onChange={(e) => setSender(e.target.value as any)}>
+        <select value={sender} onChange={(e) => setSender(e.target.value as 'user' | 'admin')}>
           <option value="user">User</option>
           <option value="admin">Admin</option>
         </select>
         <button onClick={handleJoinRoom}>Войти в чат</button>
       </div>
       <div style={{ border: '1px solid gray', height: '300px', overflowY: 'scroll' }}>
-        {messages.map((m) => (
-          <div key={m.id} style={{ textAlign: m.sender === 'user' ? 'right' : 'left' }}>
-            <b>{m.sender}: </b> {m.message}
-          </div>
-        ))}
+        {messages.map((m) => {
+          const getSenderName = () => {
+            if (m.sender === 'user') return userName || 'Пользователь';
+            if (m.sender === 'assistant') return 'AI-помощник';
+            if (m.sender === 'admin') return 'Администратор';
+            if (m.sender === 'system') return 'Система';
+            return m.sender;
+          };
+
+          return (
+            <div key={m.id} style={{ textAlign: m.sender === 'user' ? 'right' : 'left' }}>
+              <b>{getSenderName()}: </b> {m.message}
+            </div>
+          );
+        })}
       </div>
       <div>
         <input
