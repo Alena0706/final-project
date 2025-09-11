@@ -22,7 +22,7 @@ export type ResendVerificationT = z.infer<typeof resendVerificationSchema>;
 
 export type UserStateT = {
   user: AuthResponseT | null;
-  status: 'guest' | 'logged' | 'loading';
+  status: 'guest' | 'logged' | 'loading' | 'pending2FA';
   error: string | null;
   secret: userRegister2faSchemaT | null;
 };

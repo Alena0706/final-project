@@ -2,9 +2,7 @@ import { userLoginSchema } from '@/entities/auth/model/schemas';
 import { loginUser } from '@/entities/auth/model/thunks';
 import { clearError } from '@/entities/auth/model/slice';
 import { useAppDispatch, useAppSelector } from '@/shared/hooks/hooks';
-
-import { TwoFactorVerification } from '@/entities/2fa/ui';
-
+import TwoFactorLogin from '@/features/2fa/ui/TwoFactorLogin';
 import Spinner from '@/widgets/components/ui/Spinner';
 
 import type { FormEventHandler } from 'react';
@@ -22,13 +20,12 @@ export default function SignInForm(): React.JSX.Element {
 
   // Редирект после успешного входа
   useEffect(() => {
-    if (status === 'logged' && user?.user) {
-      // Проверяем, требуется ли 2FA
-      if (user.user.secret) {
-        setShow2FA(true);
-      } else {
-        void navigate('/');
-      }
+    if (status === 'pending2FA') {
+      // Показываем модалку 2FA
+      setShow2FA(true);
+    } else if (status === 'logged' && user?.user) {
+      // Обычный вход без 2FA
+      void navigate('/');
     }
   }, [status, user, navigate]);
 
@@ -84,18 +81,27 @@ export default function SignInForm(): React.JSX.Element {
 
   const handle2FASuccess = (): void => {
     setShow2FA(false);
-    void navigate('/');
+    // Статус пользователя будет обновлен в auth slice после успешной верификации
+    // useEffect автоматически перенаправит на главную страницу
   };
 
   const handle2FACancel = (): void => {
     setShow2FA(false);
     setUserEmail('');
+    // Очищаем состояние пользователя при отмене
+    dispatch(clearError());
   };
+
+  // Показываем компонент 2FA если требуется
+  if (show2FA) {
+    const email = userEmail || user?.user?.email || '';
+    return <TwoFactorLogin email={email} onSuccess={handle2FASuccess} onCancel={handle2FACancel} />;
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
-             <div className="flex justify-start">
+        <div className="flex justify-start">
           <Link
             to="/"
             className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors duration-200 hover:bg-muted/50 rounded-lg group"
@@ -156,10 +162,11 @@ export default function SignInForm(): React.JSX.Element {
             </div>
 
             <div className="flex items-center justify-between">
-              <label className="flex items-center">
-      
-              </label>
-              <a href="#" className="text-sm text-primary hover:text-accent transition-colors duration-200">
+              <label className="flex items-center"></label>
+              <a
+                href="#"
+                className="text-sm text-primary hover:text-accent transition-colors duration-200"
+              >
                 Забыли пароль?
               </a>
             </div>
@@ -178,24 +185,17 @@ export default function SignInForm(): React.JSX.Element {
             <div className="text-center">
               <p className="text-sm text-muted-foreground">
                 Нет аккаунта?{' '}
-                <Link to="/signup" className="font-medium text-primary hover:text-accent transition-colors duration-200">
+                <Link
+                  to="/signup"
+                  className="font-medium text-primary hover:text-accent transition-colors duration-200"
+                >
                   Зарегистрироваться
                 </Link>
               </p>
             </div>
           </form>
         </div>
-        
       </div>
-
-      {/* Модальное окно 2FA */}
-      {show2FA && (
-        <TwoFactorVerification
-          email={userEmail}
-          onSuccess={handle2FASuccess}
-          onCancel={handle2FACancel}
-        />
-      )}
     </div>
   );
 }

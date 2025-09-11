@@ -29,11 +29,7 @@ class UserServices {
     console.log('Attempting login for:', user.email);
     try {
       const response = await axiosInstance.post('/auth/signin', user);
-      console.log('Login successful:', response.status);
-      console.log('Raw response data:', response.data);
       const parsedData = AuthResponseSchema.parse(response.data);
-      console.log('Parsed data:', parsedData);
-      console.log('Parsed user admin:', parsedData.user.admin);
       return parsedData;
     } catch (error) {
       console.error('Login failed:', error);
@@ -55,10 +51,6 @@ class UserServices {
     return AuthResponseSchema.parse(response.data);
   }
 
-  static async generate2FASecret(): Promise<{ secret: string; qrCodeUrl: string }> {
-    const response = await axiosInstance.post('/auth/2fa/generate');
-    return response.data as { secret: string; qrCodeUrl: string };
-  }
 
   static async verify2FAToken(token: string): Promise<{ verified: boolean; message: string }> {
     const response = await axiosInstance.post('/auth/2fa/verify', { token });
