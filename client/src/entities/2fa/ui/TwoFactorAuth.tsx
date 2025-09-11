@@ -25,7 +25,7 @@ export default function TwoFactorAuth(): React.JSX.Element {
   const generateQR = async (url: string): Promise<void> => {
     try {
       const qr = await QRCode.toDataURL(url, {
-        width: 256,
+        width: 192,
         margin: 2,
         color: {
           dark: '#000000',
@@ -88,7 +88,7 @@ export default function TwoFactorAuth(): React.JSX.Element {
   }
 
   return (
-    <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-lg">
+    <div>
       <h2 className="text-2xl font-semibold mb-4 text-foreground">Двухфакторная аутентификация</h2>
 
       <p className="mb-6 text-muted-foreground">
@@ -148,7 +148,7 @@ export default function TwoFactorAuth(): React.JSX.Element {
 
           <div className="flex justify-center">
             <div className="p-4 bg-white border-2 border-gray-200 rounded-lg">
-              <img src={qrCode} alt="QR Code for 2FA" className="w-64 h-64" />
+              <img src={qrCode} alt="QR Code for 2FA" className="w-48 h-48" />
             </div>
           </div>
 
