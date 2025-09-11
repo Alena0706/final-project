@@ -130,7 +130,7 @@ const BrandSection = (): React.JSX.Element => {
         <div className="mb-20">
           <div className="text-center mb-12 animate-fade-in">
             <h3 className="heading-3 bg-gradient-to-r from-[hsl(200_80%_70%)] to-[hsl(210_90%_30%)] bg-clip-text text-transparent mb-6">
-              Ключевые вехи
+              Ключевые моменты
             </h3>
           </div>
           <div className="max-w-6xl mx-auto">
