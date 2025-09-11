@@ -3,7 +3,8 @@ import { useAppDispatch, useAppSelector } from '@/shared/hooks/hooks';
 import React, { useEffect, useRef, useState } from 'react';
 import { io } from 'socket.io-client';
 
-const socket = io(import.meta.env.DEV ? 'http://localhost:3000' : '/', { autoConnect: true, transports: ['websocket'] });
+const socket = io('/', { autoConnect: true, transports: ['websocket'] });
+
 // Добавляем логирование для диагностики
 
 socket.on('connect', () => {

@@ -11,6 +11,7 @@ const FranchiseProfile = (): React.JSX.Element => {
   const { open, close, isOpen } = useModal();
   const [currentView, setCurrentView] = useState<'list' | 'detail'>('list');
   const [selectedFranchise, setSelectedFranchise] = useState<FranchiseT | null>(null);
+
   // Состояние для создания франшизы
   const [franchiseForm, setFranchiseForm] = useState({
     name: '',
@@ -30,7 +31,7 @@ const FranchiseProfile = (): React.JSX.Element => {
   };
 
   // Обработчик возврата к списку
-  const handleBackToList = () => {
+  const handleBackToList = (): void => {
     setCurrentView('list');
     setSelectedFranchise(null);
   };
@@ -60,6 +61,7 @@ const FranchiseProfile = (): React.JSX.Element => {
       });
 
       close();
+
       setFranchiseForm({
         name: '',
         address: '',
@@ -70,6 +72,7 @@ const FranchiseProfile = (): React.JSX.Element => {
       setImage(null);
       setVideo(null);
       // Обновляем список франшиз (компонент FranchiseListView сам перезагрузит данные)
+
     } catch (error) {
       console.error('Ошибка создания франшизы:', error);
     } finally {
@@ -97,7 +100,8 @@ const FranchiseProfile = (): React.JSX.Element => {
   };
 
   // Обработчик обновления франшизы
-  const handleFranchiseUpdate = (updatedFranchise: FranchiseT) => {
+
+  const handleFranchiseUpdate = (updatedFranchise: FranchiseT): void => {
     setSelectedFranchise(updatedFranchise);
   };
 

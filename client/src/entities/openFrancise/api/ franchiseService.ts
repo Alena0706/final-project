@@ -38,6 +38,7 @@ class FranchiseService {
   }
 
   static async updateFranchise(franchise: FranchiseUpdateT): Promise<FranchiseT> {
+
     console.log('🔍 updateFranchise - franchise:', franchise);
     console.log('🔍 Using universal route: PATCH /franchise/');
 
@@ -45,6 +46,7 @@ class FranchiseService {
     const response = await axiosInstance.patch('/franchise/', franchise);
 
     console.log('🔍 updateFranchise response:', response.status, response.data);
+
     const validatedResponse = FranchiseSchema.parse(response.data);
     return validatedResponse;
   }

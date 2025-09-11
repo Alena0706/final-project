@@ -20,22 +20,24 @@ import {
   uploadImage,
 } from '@/entities/openFrancise/model/thunks';
 import { formatDate } from '@/shared/lib/dateUtils';
-import { FranchiseT } from '@/entities/openFrancise/model/types';
+import type { FranchiseT } from '@/entities/openFrancise/model/types';
 
-interface Document {
+
+type Document = {
   id: number;
   contract?: string;
   receipt?: string;
   userId: number;
   createdAt: string;
   updatedAt: string;
-}
 
-interface FranchiseDetailViewProps {
+};
+
+type FranchiseDetailViewProps = {
   franchise: FranchiseT;
   onBack: () => void;
   onFranchiseUpdate: (updatedFranchise: FranchiseT) => void;
-}
+};
 
 const FranchiseDetailView: React.FC<FranchiseDetailViewProps> = ({
   franchise,
@@ -57,7 +59,7 @@ const FranchiseDetailView: React.FC<FranchiseDetailViewProps> = ({
 
   // Загрузка документов франшизы
   useEffect(() => {
-    const loadDocuments = async () => {
+    const loadDocuments = async (): Promise<void> => {
       try {
         setIsLoading(true);
         const response = await axiosInstance.get('/documents');
