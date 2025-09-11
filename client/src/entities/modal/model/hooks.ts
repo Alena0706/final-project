@@ -1,5 +1,6 @@
 import { useAppDispatch, useAppSelector } from '@/shared/hooks/hooks';
-import { openModal, closeModal, ModalType } from './slice';
+import type { ModalType } from './slice';
+import { openModal, closeModal } from './slice';
 
 export const useModal = () => {
   const dispatch = useAppDispatch();
@@ -13,9 +14,7 @@ export const useModal = () => {
     dispatch(closeModal());
   };
 
-  const isOpen = (type: ModalType) => {
-    return modal.isOpen && modal.type === type;
-  };
+  const isOpen = (type: ModalType) => modal.isOpen && modal.type === type;
 
   return {
     modal,

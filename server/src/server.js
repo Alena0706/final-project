@@ -12,11 +12,11 @@ const PORT = process.env.PORT || 3000;
 
 const server = http.createServer(app);
 const io = new Server(server, {
-  cors: {
-    origin: '/', // адрес вашего React клиента
-    methods: ['GET', 'POST'],
-    credentials: true, // если используете куки или авторизацию
-  },
+  // cors: {
+  //   origin: 'http://localhost:5173', // адрес вашего React клиента
+  //   methods: ['GET', 'POST'],
+  //   credentials: true, // если используете куки или авторизацию
+  // },
 });
 
 io.on('connection', (socket) => {
@@ -26,7 +26,6 @@ io.on('connection', (socket) => {
     socket.join(roomId);
     rooms.add(roomId);
     io.emit('roomList', Array.from(rooms)); // уведомить всех клиентов
-
 
     // Инициализируем состояние комнаты, если его нет
     if (!roomStates.has(roomId)) {
