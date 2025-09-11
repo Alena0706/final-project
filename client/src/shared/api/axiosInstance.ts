@@ -43,7 +43,14 @@ axiosInstance.interceptors.response.use(
 
     const prev = err.config;
 
-    if (prev && err.response?.status === 403 && !prev.sent) {
+    if (prev && (err.response?.status === 401 || err.response?.status === 403) && !prev.sent) {
+      // Проверяем, есть ли токен - если нет, то пользователь гость и не нужно пытаться обновить токен
+      const currentToken = getAccessToken();
+      if (!currentToken) {
+        console.log('No token found, user is guest - not attempting refresh');
+        return Promise.reject(err);
+      }
+
       console.log('Attempting token refresh...');
       prev.sent = true;
       try {

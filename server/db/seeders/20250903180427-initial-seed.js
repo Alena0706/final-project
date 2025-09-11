@@ -2,7 +2,7 @@
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
-  async up(queryInterface) {
+  async up(queryInterface, Sequelize) {
     await queryInterface.bulkInsert(
       'Users',
       [
@@ -49,15 +49,21 @@ module.exports = {
       {},
     );
     await queryInterface.bulkInsert(
-      'Contracts',
+      'Documents',
       [
         {
-          scan: 'scan1.pdf',
+          contract: 'documents/1/contract_1.pdf',
+          receipt: 'documents/1/receipt_1.pdf',
           userId: 1,
+          createdAt: new Date(),
+          updatedAt: new Date(),
         },
         {
-          scan: 'scan2.pdf',
+          contract: 'documents/2/contract_2.pdf',
+          receipt: 'documents/2/receipt_2.pdf',
           userId: 2,
+          createdAt: new Date(),
+          updatedAt: new Date(),
         },
       ],
       {},
@@ -71,6 +77,10 @@ module.exports = {
           address: 'Красная площадь, 1',
           workPhone: '88001234567',
           userId: 1,
+          image: 'imageFranchise/1757509329677-3.webp',
+          video: 'videoFranchise/1757509379593.mp4',
+          description: 'Описание франшизы в Москве',
+          city: 'Москва',
           createdAt: new Date(),
           updatedAt: new Date(),
         },
@@ -79,6 +89,10 @@ module.exports = {
           address: 'Невский проспект, 98',
           workPhone: '88007654321',
           userId: 2,
+          image: 'imageFranchise/1757509329677-3.webp',
+          video: 'videoFranchise/1757509379593.mp4',
+          description: 'Описание франшизы в Санкт-Петербурге',
+          city: 'Санкт-Петербург',
           createdAt: new Date(),
           updatedAt: new Date(),
         },
@@ -92,19 +106,19 @@ module.exports = {
       [
         {
           userId: 1,
-          balance: 5000.0,
+          balance: 5000.00,
           createdAt: new Date(),
           updatedAt: new Date(),
         },
         {
           userId: 2,
-          balance: 2500.0,
+          balance: 2500.00,
           createdAt: new Date(),
           updatedAt: new Date(),
         },
         {
           userId: 3,
-          balance: 1000.0,
+          balance: 1000.00,
           createdAt: new Date(),
           updatedAt: new Date(),
         },
@@ -118,7 +132,7 @@ module.exports = {
       [
         {
           walletId: 1,
-          amount: 5000.0,
+          amount: 5000.00,
           type: 'deposit',
           status: 'completed',
           description: 'Начальный баланс администратора',
@@ -128,7 +142,7 @@ module.exports = {
         },
         {
           walletId: 2,
-          amount: 2500.0,
+          amount: 2500.00,
           type: 'deposit',
           status: 'completed',
           description: 'Начальный баланс пользователя',
@@ -138,7 +152,7 @@ module.exports = {
         },
         {
           walletId: 3,
-          amount: 1000.0,
+          amount: 1000.00,
           type: 'deposit',
           status: 'completed',
           description: 'Начальный баланс пользователя',
@@ -156,7 +170,7 @@ module.exports = {
       [
         {
           userId: 2,
-          amount: 1500.0,
+          amount: 1500.00,
           description: 'Ежемесячная плата за франшизу',
           status: 'pending',
           dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // через неделю
@@ -168,7 +182,7 @@ module.exports = {
         },
         {
           userId: 3,
-          amount: 2000.0,
+          amount: 2000.00,
           description: 'Регистрационный взнос',
           status: 'paid',
           dueDate: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000), // 3 дня назад
@@ -180,7 +194,7 @@ module.exports = {
         },
         {
           userId: 2,
-          amount: 800.0,
+          amount: 800.00,
           description: 'Дополнительные услуги',
           status: 'overdue',
           dueDate: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000), // 5 дней назад
@@ -201,7 +215,7 @@ module.exports = {
         {
           invoiceId: 2,
           walletId: 3,
-          amount: 2000.0,
+          amount: 2000.00,
           status: 'completed',
           createdAt: new Date(),
           updatedAt: new Date(),
@@ -218,9 +232,7 @@ module.exports = {
           userId: 2,
           type: 'invoice_generated',
           title: 'Новый счет',
-          message: `Вам выставлен новый счет на сумму 1500.00 ₽. Срок оплаты: ${new Date(
-            Date.now() + 7 * 24 * 60 * 60 * 1000,
-          ).toLocaleDateString('ru-RU')}`,
+          message: 'Вам выставлен новый счет на сумму 1500.00 ₽. Срок оплаты: ' + new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString('ru-RU'),
           isRead: false,
           sentAt: new Date(),
           createdAt: new Date(),
@@ -240,8 +252,7 @@ module.exports = {
           userId: 2,
           type: 'invoice_reminder',
           title: 'Напоминание о счете',
-          message:
-            'У вас есть просроченный счет #3 на сумму 800.00 ₽. Пожалуйста, оплатите его как можно скорее.',
+          message: 'У вас есть просроченный счет #3 на сумму 800.00 ₽. Пожалуйста, оплатите его как можно скорее.',
           isRead: false,
           sentAt: new Date(),
           createdAt: new Date(),
@@ -251,8 +262,7 @@ module.exports = {
           userId: 1,
           type: 'manual',
           title: 'Добро пожаловать в админку',
-          message:
-            'Вы успешно вошли в систему как администратор. Теперь вы можете управлять счетами и уведомлениями.',
+          message: 'Вы успешно вошли в систему как администратор. Теперь вы можете управлять счетами и уведомлениями.',
           isRead: true,
           sentAt: new Date(),
           createdAt: new Date(),
@@ -263,14 +273,14 @@ module.exports = {
     );
   },
 
-  async down(queryInterface) {
+  async down(queryInterface, Sequelize) {
     await queryInterface.bulkDelete('Notifications', null, {});
     await queryInterface.bulkDelete('Payments', null, {});
     await queryInterface.bulkDelete('Invoices', null, {});
     await queryInterface.bulkDelete('Transactions', null, {});
     await queryInterface.bulkDelete('Wallets', null, {});
     await queryInterface.bulkDelete('Franchises', null, {});
-    await queryInterface.bulkDelete('Contracts', null, {});
+    await queryInterface.bulkDelete('Documents', null, {});
     await queryInterface.bulkDelete('Users', null, {});
   },
 };

@@ -10,7 +10,8 @@ export const FranchiseSchema = z.object({
   video: z.string().nullable(),
   description: z.string().nullable(),
   city: z.string().nullable(),
-
+  createdAt: z.string().optional(),
+  updatedAt: z.string().optional(),
 });
 
 export const createFranchiseSchema = z.object({

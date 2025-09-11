@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { memo } from 'react';
 
 interface ContentTransitionProps {
   children: React.ReactNode;
   className?: string;
 }
 
-export default function ContentTransition({ 
+const ContentTransition = memo(function ContentTransition({ 
   children, 
   className = '' 
 }: ContentTransitionProps): React.JSX.Element {
@@ -14,4 +14,6 @@ export default function ContentTransition({
       {children}
     </div>
   );
-}
+});
+
+export default ContentTransition;
