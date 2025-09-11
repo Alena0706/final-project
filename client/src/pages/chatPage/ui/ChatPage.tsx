@@ -3,7 +3,7 @@ import { io } from 'socket.io-client';
 import { addMessage, joinRoom, setHistory } from '@/entities/chat/model/slice';
 import { useAppDispatch, useAppSelector } from '@/shared/hooks/hooks';
 
-const socket = io('http://localhost:3000', { autoConnect: true });
+const socket = io(import.meta.env.DEV ? 'http://localhost:3000' : '/', { autoConnect: true });
 
 // Добавляем логирование для диагностики
 socket.on('connect', () => {

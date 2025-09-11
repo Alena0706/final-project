@@ -7,6 +7,7 @@ import franchiseReducer from '@/entities/openFrancise/model/slice';
 import adminReducer from '@/entities/admin/model/slice';
 import invoiceReducer from '@/entities/invoice/model/slice';
 import notificationReducer from '@/entities/notification/model/slice';
+import modalReducer from '@/entities/modal/model/slice';
 
 export const store = configureStore({
   reducer: {
@@ -18,6 +19,7 @@ export const store = configureStore({
     admin: adminReducer,
     invoice: invoiceReducer,
     notification: notificationReducer,
+    modal: modalReducer,
   },
 });
 

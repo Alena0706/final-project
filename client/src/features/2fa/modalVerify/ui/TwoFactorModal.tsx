@@ -1,5 +1,6 @@
 import { verify2FA } from '@/entities/auth/model/thunks';
 import { useAppDispatch } from '@/shared/hooks/hooks';
+import { BaseModal } from '@/shared/ui/BaseModal';
 import React, { useState } from 'react';
 
 type Props = {
@@ -21,36 +22,32 @@ export default function TwoFactorModal({ open, email }: Props): React.JSX.Elemen
     console.log(isValid);
   };
 
-  if (!open) return null;
-
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60">
-      <div
-        className="bg-white rounded-lg shadow-lg p-6 w-72 max-w-full"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="2fa-modal-title"
-        aria-describedby="2fa-modal-description"
-      >
-        <h2 id="2fa-modal-title" className="text-lg font-semibold mb-4">
-          Введите код двухфакторной аутентификации
-        </h2>
+    <BaseModal
+      isOpen={open}
+      onClose={() => {}} // TwoFactorModal не должен закрываться по клику
+      title="Введите код двухфакторной аутентификации"
+      size="sm"
+      showCloseButton={false}
+      closeOnBackdropClick={false}
+    >
+      <div className="space-y-4">
         <input
           type="text"
           value={code}
           onChange={handleChange}
           autoFocus
           placeholder="Код 2FA"
-          className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600 mb-4"
+          className="w-full rounded-lg border border-border bg-input px-4 py-3 text-foreground focus:ring-2 focus:ring-primary focus:border-transparent"
         />
         <button
           type="button"
           onClick={handleSubmit}
-          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
+          className="w-full bg-primary text-primary-foreground py-3 rounded-lg hover:bg-primary/90 font-medium transition-colors"
         >
           Подтвердить
         </button>
       </div>
-    </div>
+    </BaseModal>
   );
 }

@@ -1,24 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useAppSelector } from '@/shared/hooks/hooks';
 import { Building2, Plus, Eye } from 'lucide-react';
+import { FranchiseT } from '@/entities/openFrancise/model/types';
 import axiosInstance from '@/shared/api/axiosInstance';
 
-interface Franchise {
-  id: number;
-  name: string;
-  address: string;
-  workPhone: string;
-  city: string;
-  description: string;
-  image?: string;
-  video?: string;
-  userId: number;
-  createdAt: string;
-  updatedAt: string;
-}
-
 interface FranchiseListViewProps {
-  onFranchiseSelect: (franchise: Franchise) => void;
+  onFranchiseSelect: (franchise: FranchiseT) => void;
   onCreateFranchise: () => void;
 }
 
@@ -27,7 +14,7 @@ const FranchiseListView: React.FC<FranchiseListViewProps> = ({
   onCreateFranchise,
 }) => {
   const user = useAppSelector((store) => store.user.user?.user);
-  const [franchises, setFranchises] = useState<Franchise[]>([]);
+  const [franchises, setFranchises] = useState<FranchiseT[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   // Загрузка франшиз пользователя
@@ -49,7 +36,6 @@ const FranchiseListView: React.FC<FranchiseListViewProps> = ({
     }
   }, [user?.id]);
 
-
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
@@ -68,7 +54,7 @@ const FranchiseListView: React.FC<FranchiseListViewProps> = ({
         </div>
         <button
           onClick={onCreateFranchise}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 text-primary border border-primary/20 rounded-lg hover:bg-primary/20 hover:border-primary/40 focus:ring-2 focus:ring-primary/20 transition-all duration-200 shadow-sm hover:shadow-md hover:scale-105 group"
         >
           <Plus className="h-4 w-4" />
           Создать франшизу
@@ -107,7 +93,7 @@ const FranchiseListView: React.FC<FranchiseListViewProps> = ({
                 <div className="flex justify-center">
                   <button
                     onClick={() => onFranchiseSelect(franchise)}
-                    className="inline-flex items-center justify-center gap-2 px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors text-sm"
+                    className="inline-flex items-center justify-center gap-2 px-6 py-2 bg-primary/10 text-primary border border-primary/20 rounded-lg hover:bg-primary/20 hover:border-primary/40 focus:ring-2 focus:ring-primary/20 transition-all duration-200 shadow-sm hover:shadow-md hover:scale-105 text-sm group"
                   >
                     <Eye className="h-4 w-4" />
                     Детали
@@ -123,7 +109,7 @@ const FranchiseListView: React.FC<FranchiseListViewProps> = ({
           <p className="text-muted-foreground mb-4">У вас пока нет франшиз</p>
           <button
             onClick={onCreateFranchise}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 text-primary border border-primary/20 rounded-lg hover:bg-primary/20 hover:border-primary/40 focus:ring-2 focus:ring-primary/20 transition-all duration-200 shadow-sm hover:shadow-md hover:scale-105 group"
           >
             <Plus className="h-4 w-4" />
             Создать первую франшизу
