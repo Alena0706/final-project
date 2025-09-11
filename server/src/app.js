@@ -41,15 +41,5 @@ if (fs.existsSync(distPath)) {
     res.sendFile(path.join(distPath, 'index.html'));
   });
 }
-//  else {
-//   // В режиме разработки просто возвращаем сообщение
-//   app.use((req, res) => {
-//     res.json({
-//       message:
-//         'API Server is running. Frontend should be served from development server.',
-//       status: 'development',
-//     });
-//   });
-// }
 
 module.exports = app;
