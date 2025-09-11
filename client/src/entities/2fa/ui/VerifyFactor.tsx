@@ -49,7 +49,7 @@ export default function VerifyFactor({
   };
 
   return (
-    <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-lg">
+    <div className="max-w-md mx-auto p-6 bg-card rounded-lg shadow-lg border border-border">
       <h3 className="text-xl font-semibold mb-4 text-foreground">
         {mode === 'verify' ? 'Подтверждение 2FA' : 'Отключение 2FA'}
       </h3>
@@ -71,18 +71,20 @@ export default function VerifyFactor({
             value={token}
             onChange={(e) => setToken(e.target.value.replace(/\D/g, '').slice(0, 6))}
             placeholder="000000"
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-center text-lg tracking-widest"
+            className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-center text-lg tracking-widest bg-input text-foreground placeholder:text-muted-foreground"
             maxLength={6}
             disabled={isLoading}
           />
         </div>
 
         {error && (
-          <div className="p-3 bg-red-100 border border-red-400 text-red-700 rounded">{error}</div>
+          <div className="p-3 bg-destructive/10 border border-destructive/20 text-destructive rounded">
+            {error}
+          </div>
         )}
 
         {successMessage && (
-          <div className="p-3 bg-green-100 border border-green-400 text-green-700 rounded">
+          <div className="p-3 bg-green-500/10 border border-green-500/20 text-green-600 dark:text-green-400 rounded">
             {successMessage}
           </div>
         )}
@@ -100,7 +102,7 @@ export default function VerifyFactor({
             type="button"
             onClick={handleCancel}
             disabled={isLoading}
-            className="px-4 py-2 border border-gray-300 text-gray-700 rounded hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-4 py-2 border border-border text-muted-foreground rounded hover:bg-muted transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Отмена
           </button>
