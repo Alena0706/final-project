@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Phone, MapPin, Clock, Send } from 'lucide-react';
-import type { JSX } from 'react';
+import type { ChangeEventHandler, JSX } from 'react';
 
 type CardProps = React.HTMLAttributes<HTMLDivElement> & { children: React.ReactNode };
 
@@ -131,115 +131,157 @@ const contactInfo = [
   },
 ];
 
-const ContactSection = (): JSX.Element => (
-  <section id="contact" className="section section-alt">
-    <div className="container mx-auto px-4">
-      {/* Заголовок */}
-      <div className="text-center mb-10">
-        <span className="inline-block glass-effect rounded-full px-5 py-1.5 text-xs font-medium uppercase mb-3">
-          Контакты
-        </span>
-        <h2 className="heading-3 bg-gradient-to-r from-[hsl(200_80%_70%)] to-[hsl(210_90%_30%)] bg-clip-text text-transparent mb-4">
-          Свяжитесь с нами
-        </h2>
-        <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-          Готовы ответить на все ваши вопросы и помочь начать успешный бизнес
-        </p>
-      </div>
+const ContactSection = (): JSX.Element => {
+  const [phone, setPhone] = useState('+7');
 
-      {/* Две колонки: контакты + форма */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
-        {/* Контакты: четверть grid */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Как с нами связаться</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {contactInfo.map((info) => {
-                const IconComponent = info.icon;
-                return (
-                  <div
-                    key={info.id}
-                    className="flex flex-col items-center text-center bg-[#18171b] rounded-lg p-6 h-full min-h-[160px] shadow-sm"
-                  >
-                    <div className="p-3 bg-gradient-to-r from-[hsl(200_75%_55%)] to-[hsl(210_75%_35%)] rounded-xl mb-3">
-                      <IconComponent className="h-6 w-6 text-white" />
+  function formatPhone(value: string): string {
+    const digits = value.replace(/\D/g, '');
+
+    let formatted = '+7';
+    if (digits.length > 1) {
+      formatted += '-';
+    }
+    if (digits.length >= 2) {
+      formatted += digits.substring(1, 4);
+    }
+    if (digits.length >= 5) {
+      formatted += `-${digits.substring(4, 7)}`;
+    }
+    if (digits.length >= 8) {
+      formatted += `-${digits.substring(7, 9)}`;
+    }
+    if (digits.length >= 10) {
+      formatted += `-${digits.substring(9, 11)}`;
+    }
+
+    return formatted;
+  }
+
+  const handlePhoneChange: ChangeEventHandler<HTMLInputElement> = (e) => {
+    const input = e.target.value;
+    if (input.length > 16) return;
+
+    const formatted = formatPhone(input);
+    setPhone(formatted);
+  };
+
+  return (
+    <section id="contact" className="section section-alt">
+      <div className="container mx-auto px-4">
+        {/* Заголовок */}
+        <div className="text-center mb-10">
+          <span className="inline-block glass-effect rounded-full px-5 py-1.5 text-xs font-medium uppercase mb-3">
+            Контакты
+          </span>
+          <h2 className="heading-3 bg-gradient-to-r from-[hsl(200_80%_70%)] to-[hsl(210_90%_30%)] bg-clip-text text-transparent mb-4">
+            Свяжитесь с нами
+          </h2>
+          <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
+            Готовы ответить на все ваши вопросы и помочь начать успешный бизнес
+          </p>
+        </div>
+
+        {/* Две колонки: контакты + форма */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+          {/* Контакты: четверть grid */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Как с нами связаться</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {contactInfo.map((info) => {
+                  const IconComponent = info.icon;
+                  return (
+                    <div
+                      key={info.id}
+                      className="flex flex-col items-center text-center bg-[#18171b] rounded-lg p-6 h-full min-h-[160px] shadow-sm"
+                    >
+                      <div className="p-3 bg-gradient-to-r from-[hsl(200_75%_55%)] to-[hsl(210_75%_35%)] rounded-xl mb-3">
+                        <IconComponent className="h-6 w-6 text-white" />
+                      </div>
+                      <h4 className="font-semibold text-foreground text-base mb-2">{info.title}</h4>
+                      {info.details.map((detail) => (
+                        <p key={detail} className="text-sm text-muted-foreground">
+                          {detail}
+                        </p>
+                      ))}
+                      <p className="text-xs text-muted-foreground/80 mt-2">{info.subtitle}</p>
                     </div>
-                    <h4 className="font-semibold text-foreground text-base mb-2">{info.title}</h4>
-                    {info.details.map((detail) => (
-                      <p key={detail} className="text-sm text-muted-foreground">
-                        {detail}
-                      </p>
-                    ))}
-                    <p className="text-xs text-muted-foreground/80 mt-2">{info.subtitle}</p>
-                  </div>
-                );
-              })}
-            </div>
-          </CardContent>
-        </Card>
+                  );
+                })}
+              </div>
+            </CardContent>
+          </Card>
 
-        {/* Форма заявки */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <Send className="h-4 w-4 text-primary" />
-              <span>Оставить заявку</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="text-sm font-medium text-foreground mb-2 block">Имя *</label>
-                <input placeholder="Ваше имя" className="form-input h-10 text-base" />
+          {/* Форма заявки */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center space-x-2">
+                <Send className="h-4 w-4 text-primary" />
+                <span>Оставить заявку</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="text-sm font-medium text-foreground mb-2 block">Имя *</label>
+                  <input placeholder="Ваше имя" className="form-input h-10 text-base" />
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-foreground mb-2 block">
+                    Телефон *
+                  </label>
+                  <input
+                    onChange={handlePhoneChange}
+                    value={phone}
+                    placeholder="+7 (___) ___-__-__"
+                    className="form-input h-10 text-base"
+                  />
+                </div>
               </div>
               <div>
-                <label className="text-sm font-medium text-foreground mb-2 block">Телефон *</label>
-                <input placeholder="+7 (___) ___-__-__" className="form-input h-10 text-base" />
+                <label className="text-sm font-medium text-foreground mb-2 block">Email *</label>
+                <input placeholder="your@email.com" className="form-input h-10 text-base" />
               </div>
-            </div>
-            <div>
-              <label className="text-sm font-medium text-foreground mb-2 block">Email *</label>
-              <input placeholder="your@email.com" className="form-input h-10 text-base" />
-            </div>
-            <div>
-              <label className="text-sm font-medium text-foreground mb-2 block">Город</label>
-              <input
-                placeholder="В каком городе планируете открытие?"
-                className="form-input h-10 text-base"
-              />
-            </div>
-            <div>
-              <label className="text-sm font-medium text-foreground mb-2 block">Сообщение</label>
-              <textarea
-                placeholder="Расскажите о ваших планах и вопросах..."
-                className="form-input min-h-[90px] resize-vertical text-base"
-              />
-            </div>
-            <button className="btn-primary w-full py-3 text-base flex items-center justify-center gap-2">
-              Отправить заявку
-            </button>
-            <p className="text-xs text-muted-foreground text-center mt-2">
-              Нажимая кнопку, вы соглашаетесь с обработкой персональных данных
-            </p>
-          </CardContent>
-        </Card>
-      </div>
+              <div>
+                <label className="text-sm font-medium text-foreground mb-2 block">Город</label>
+                <input
+                  placeholder="В каком городе планируете открытие?"
+                  className="form-input h-10 text-base"
+                />
+              </div>
+              <div>
+                <label className="text-sm font-medium text-foreground mb-2 block">Сообщение</label>
+                <textarea
+                  placeholder="Расскажите о ваших планах и вопросах..."
+                  className="form-input min-h-[90px] resize-vertical text-base"
+                />
+              </div>
+              <button className="btn-primary w-full py-3 text-base flex items-center justify-center gap-2">
+                Отправить заявку
+              </button>
+              <p className="text-xs text-muted-foreground text-center mt-2">
+                Нажимая кнопку, вы соглашаетесь с обработкой персональных данных
+              </p>
+            </CardContent>
+          </Card>
+        </div>
 
-      {/* FAQ Below All */}
-      <div className="mt-6">
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Часто задаваемые вопросы</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <FAQ />
-          </CardContent>
-        </Card>
+        {/* FAQ Below All */}
+        <div className="mt-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Часто задаваемые вопросы</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <FAQ />
+            </CardContent>
+          </Card>
+        </div>
       </div>
-    </div>
-  </section>
-);
+    </section>
+  );
+};
 
 export default ContactSection;
