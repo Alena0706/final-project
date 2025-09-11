@@ -22,6 +22,7 @@ import {
 import { formatDate } from '@/shared/lib/dateUtils';
 import type { FranchiseT } from '@/entities/openFrancise/model/types';
 
+
 type Document = {
   id: number;
   contract?: string;
@@ -29,6 +30,7 @@ type Document = {
   userId: number;
   createdAt: string;
   updatedAt: string;
+
 };
 
 type FranchiseDetailViewProps = {
@@ -199,11 +201,23 @@ const FranchiseDetailView: React.FC<FranchiseDetailViewProps> = ({
 
         setShowEditModal(false);
         onFranchiseUpdate(updatedFranchise as FranchiseT);
-      } catch (error) {
+      } catch (error: any) {
         console.error('Error saving franchise:', error);
-        setError(
-          'Ошибка при сохранении франшизы. Проверьте подключение к интернету и попробуйте еще раз.',
-        );
+
+        // Более детальная обработка ошибок
+        let errorMessage = 'Ошибка при сохранении франшизы. Попробуйте еще раз.';
+
+        if (error?.response?.status === 403) {
+          errorMessage = 'У вас нет прав для редактирования этой франшизы.';
+        } else if (error?.response?.status === 400) {
+          errorMessage = 'Некорректные данные франшизы.';
+        } else if (error?.response?.status === 500) {
+          errorMessage = 'Ошибка сервера. Попробуйте позже.';
+        } else if (error?.message) {
+          errorMessage = error.message;
+        }
+
+        setError(errorMessage);
         throw error; // Пробрасываем ошибку дальше для обработки в модальном окне
       }
     },
@@ -228,14 +242,14 @@ const FranchiseDetailView: React.FC<FranchiseDetailViewProps> = ({
         <div className="flex items-center gap-2">
           <button
             onClick={handleEditFranchise}
-            className="p-2 hover:bg-muted rounded-lg transition-colors"
+            className="p-2 bg-primary/10 text-primary border border-primary/20 rounded-lg hover:bg-primary/20 hover:border-primary/40 focus:ring-2 focus:ring-primary/20 transition-all duration-200 shadow-sm hover:shadow-md hover:scale-105 group"
             title="Редактировать франшизу"
           >
-            <Edit className="h-5 w-5 text-muted-foreground" />
+            <Edit className="h-5 w-5" />
           </button>
           <button
             onClick={handleDeleteFranchise}
-            className="p-2 hover:bg-muted rounded-lg transition-colors text-destructive"
+            className="p-2 bg-destructive/10 text-destructive border border-destructive/20 rounded-lg hover:bg-destructive/20 hover:border-destructive/40 focus:ring-2 focus:ring-destructive/20 transition-all duration-200 shadow-sm hover:shadow-md hover:scale-105 group"
             title="Удалить франшизу"
           >
             <Trash2 className="h-5 w-5" />

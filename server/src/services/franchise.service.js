@@ -18,19 +18,38 @@ class FranchiseService {
 
   static async updateFranchise(franchise) {
     try {
+      console.log('🔍 FranchiseService.updateFranchise - input:', franchise);
+
       if (!franchise.id) {
         throw new Error('ID франшизы обязателен для обновления');
+      }
+
+      // Сначала проверим, существует ли франшиза
+      const existingFranchise = await Franchise.findByPk(franchise.id);
+      console.log(
+        '🔍 FranchiseService.updateFranchise - existing franchise:',
+        existingFranchise,
+      );
+
+      if (!existingFranchise) {
+        throw new Error('Франшиза не найдена');
       }
 
       const [updatedRowsCount] = await Franchise.update(franchise, {
         where: { id: franchise.id },
       });
 
+      console.log(
+        '🔍 FranchiseService.updateFranchise - updated rows:',
+        updatedRowsCount,
+      );
+
       if (updatedRowsCount === 0) {
-        throw new Error('Франшиза не найдена или не была обновлена');
+        throw new Error('Франшиза не была обновлена');
       }
 
       const updatedFranchise = await Franchise.findByPk(franchise.id);
+      console.log('🔍 FranchiseService.updateFranchise - result:', updatedFranchise);
       return updatedFranchise;
     } catch (error) {
       console.error('Error updating franchise:', error);
@@ -62,7 +81,7 @@ class FranchiseService {
   static async getUserFranchises(userId) {
     const franchises = await Franchise.findAll({
       where: { userId },
-      order: [['createdAt', 'DESC']]
+      order: [['createdAt', 'DESC']],
     });
     return franchises;
   }
@@ -108,4 +127,3 @@ class FranchiseService {
 }
 
 module.exports = FranchiseService;
-

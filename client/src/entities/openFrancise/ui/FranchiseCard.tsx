@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { MapPin, Play, Image as ImageIcon } from 'lucide-react';
+import { MapPin, Play, Image as ImageIcon, Edit, Trash2 } from 'lucide-react';
 import type { FranchiseT } from '../model/types';
 import { useAppDispatch, useAppSelector } from '@/shared/hooks/hooks';
 import { deleteFranchise } from '../model/thunks';
@@ -23,7 +23,7 @@ export default function FranchiseCard({
     setIsVideoVisible(true);
     setIsPlaying(true);
     if (videoRef.current) {
-     await videoRef.current.play();
+      await videoRef.current.play();
     }
   };
 
@@ -39,7 +39,7 @@ export default function FranchiseCard({
   return (
     <div
       key={franchise.id}
-      className="card group animate-slide-up relative"
+      className="card group animate-slide-up relative w-full min-w-0"
       style={{ animationDelay: `${(franchise.id * 0.1).toString()}s` }}
     >
       <div className="relative">
@@ -102,7 +102,7 @@ export default function FranchiseCard({
           </div>
         </div>
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-        
+
         {/* Кнопка Детали по центру */}
         {onDetailsClick && (
           <div className="absolute inset-0 flex items-center justify-center">
@@ -114,7 +114,7 @@ export default function FranchiseCard({
             </button>
           </div>
         )}
-        
+
         <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
           <div className="flex items-center space-x-2 mb-2">
             <MapPin className="h-4 w-4" />
@@ -130,17 +130,17 @@ export default function FranchiseCard({
         <div className="flex space-x-2 px-4 pb-4">
           <button
             onClick={setIsOpen}
-            className="flex-1 px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200 font-medium text-sm shadow-md hover:shadow-lg flex items-center justify-center space-x-1"
+            className="flex-1 px-3 py-2 bg-primary/10 text-primary border border-primary/20 rounded-lg hover:bg-primary/20 hover:border-primary/40 focus:ring-2 focus:ring-primary/20 transition-all duration-200 font-medium text-sm shadow-sm hover:shadow-md flex items-center justify-center space-x-1 min-w-0 group hover:scale-105"
           >
-            <span>✏️</span>
-            <span>Редактировать</span>
+            <Edit className="h-4 w-4 flex-shrink-0" />
+            <span className="truncate">Редактировать</span>
           </button>
           <button
             onClick={() => dispatch(deleteFranchise(franchise.id))}
-            className="flex-1 px-4 py-2 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-lg hover:from-red-700 hover:to-red-800 transition-all duration-200 font-medium text-sm shadow-md hover:shadow-lg flex items-center justify-center space-x-1"
+            className="flex-1 px-3 py-2 bg-destructive/10 text-destructive border border-destructive/20 rounded-lg hover:bg-destructive/20 hover:border-destructive/40 focus:ring-2 focus:ring-destructive/20 transition-all duration-200 font-medium text-sm shadow-sm hover:shadow-md flex items-center justify-center space-x-1 min-w-0 group hover:scale-105"
           >
-            <span>🗑️</span>
-            <span>Удалить</span>
+            <Trash2 className="h-4 w-4 flex-shrink-0" />
+            <span className="truncate">Удалить</span>
           </button>
         </div>
       )}
