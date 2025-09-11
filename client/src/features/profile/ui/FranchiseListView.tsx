@@ -2,32 +2,19 @@ import React, { useState, useEffect } from 'react';
 import { useAppSelector } from '@/shared/hooks/hooks';
 import { Building2, Plus, Eye } from 'lucide-react';
 import axiosInstance from '@/shared/api/axiosInstance';
+import type { FranchiseT } from '@/entities/openFrancise/model/types';
 
-interface Franchise {
-  id: number;
-  name: string;
-  address: string;
-  workPhone: string;
-  city: string;
-  description: string;
-  image?: string;
-  video?: string;
-  userId: number;
-  createdAt: string;
-  updatedAt: string;
-}
-
-interface FranchiseListViewProps {
-  onFranchiseSelect: (franchise: Franchise) => void;
+type FranchiseListViewProps = {
+  onFranchiseSelect: (franchise: FranchiseT) => void;
   onCreateFranchise: () => void;
-}
+};
 
 const FranchiseListView: React.FC<FranchiseListViewProps> = ({
   onFranchiseSelect,
   onCreateFranchise,
 }) => {
   const user = useAppSelector((store) => store.user.user?.user);
-  const [franchises, setFranchises] = useState<Franchise[]>([]);
+  const [franchises, setFranchises] = useState<FranchiseT[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   // Загрузка франшиз пользователя
@@ -48,7 +35,6 @@ const FranchiseListView: React.FC<FranchiseListViewProps> = ({
       loadFranchises();
     }
   }, [user?.id]);
-
 
   if (isLoading) {
     return (
