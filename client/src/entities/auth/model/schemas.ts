@@ -6,7 +6,7 @@ export const userSchema = z.object({
   name: z.string(),
   phone: z.string().nullable().optional(),
   city: z.string().nullable().optional(),
-  secret: z.string().nullable(),
+  secret: z.string().nullable().optional(),
   admin: z.boolean(),
   avatar: z.string().nullable(),
   balance: z.string(), // Сервер возвращает balance как строку
@@ -73,7 +73,9 @@ export const userLoginSchema = z.object({
 
 export const AuthResponseSchema = z.object({
   user: userSchema,
-  accessToken: z.string(),
+  accessToken: z.string().optional(),
+  message: z.string().optional(),
+  twoFactorEnabled: z.boolean().optional(),
 });
 
 export const emailVerificationSchema = z.object({
@@ -81,5 +83,5 @@ export const emailVerificationSchema = z.object({
 });
 
 export const resendVerificationSchema = z.object({
-  email: z.string().email(),
+  email: z.email(),
 });

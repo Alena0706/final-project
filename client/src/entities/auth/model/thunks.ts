@@ -1,5 +1,11 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import type { EmailVerificationT, ResendVerificationT, UserLoginT, UserRegisterT, UserUpdateT } from './types';
+import type {
+  EmailVerificationT,
+  ResendVerificationT,
+  UserLoginT,
+  UserRegisterT,
+  UserUpdateT,
+} from './types';
 import UserServices from '../api/userServices';
 import { setAccessToken, removeAccessToken } from '@/shared/api/axiosInstance';
 
@@ -15,7 +21,9 @@ export const updateUser = createAsyncThunk('user/updateUser', async (user: UserU
 
 export const registerUser = createAsyncThunk('user/register', async (user: UserRegisterT) => {
   const response = await UserServices.register(user);
-  setAccessToken(response.accessToken);
+  if (response.accessToken) {
+    setAccessToken(response.accessToken);
+  }
   return response;
 });
 
@@ -29,13 +37,17 @@ export const uploadAvatar = createAsyncThunk<{ user: { avatar: string } }, FormD
 
 export const loginUser = createAsyncThunk('user/login', async (user: UserLoginT) => {
   const response = await UserServices.login(user);
-  setAccessToken(response.accessToken);
+  if (response.accessToken) {
+    setAccessToken(response.accessToken);
+  }
   return response;
 });
 
 export const refreshUser = createAsyncThunk('user/refresh', async () => {
   const response = await UserServices.refresh();
-  setAccessToken(response.accessToken);
+  if (response.accessToken) {
+    setAccessToken(response.accessToken);
+  }
   return response;
 });
 
@@ -48,16 +60,12 @@ export const verify2FA = createAsyncThunk(
   'user/verify2FA',
   async ({ token, email }: verify2FAT) => {
     const response = await UserServices.verify2FA(token, email);
-    setAccessToken(response.accessToken);
+    if (response.accessToken) {
+      setAccessToken(response.accessToken);
+    }
     return response;
   },
 );
-
-
-export const generate2FASecret = createAsyncThunk('user/generate2FASecret', async () => {
-  const response = await UserServices.generate2FASecret();
-  return response;
-});
 
 export const verify2FAToken = createAsyncThunk('user/verify2FAToken', async (token: string) => {
   const response = await UserServices.verify2FAToken(token);
@@ -84,4 +92,3 @@ export const resendVerificationEmail = createAsyncThunk(
     return response;
   },
 );
-

@@ -1,7 +1,8 @@
+
+import TwoFactorAuth from '@/entities/2fa/ui/TwoFactorAuth';
 import { updateUser } from '@/entities/auth/model/thunks';
 import { userUpdateSchema } from '@/entities/auth/model/schemas';
 import { useAppDispatch } from '@/shared/hooks/hooks';
-import { TwoFactorSetup } from '@/entities/2fa/ui';
 import React, { useState } from 'react';
 
 const ChangePassword = (): React.JSX.Element => {
@@ -110,7 +111,7 @@ const ChangePassword = (): React.JSX.Element => {
 
       {/* Двухфакторная аутентификация */}
       <div>
-        <TwoFactorSetup />
+        <TwoFactorAuth />
       </div>
     </div>
   );

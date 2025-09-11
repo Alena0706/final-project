@@ -111,13 +111,11 @@ class AuthController {
     try {
       const user = await AuthService.signin(req.body);
 
-            console.log(user)
-
       // Проверяем, включена ли 2FA у пользователя
       if (user.secret) {
         // Если 2FA включен, возвращаем пользователя без токенов
         // Клиент должен будет запросить верификацию 2FA
-        return res.status(428).json(user);
+        return res.json({ user, message: '2FA включена', twoFactorEnabled: true });
       }
 
       // Если 2FA не включен, возвращаем токены как обычно
@@ -158,19 +156,27 @@ class AuthController {
   static async verifyEmailGet(req, res) {
     try {
       const { token } = req.query;
-      
+
       if (!token) {
-        return res.redirect(`${process.env.CLIENT_URL || 'http://localhost:5173'}/?error=missing-token`);
+        return res.redirect(
+          `${process.env.CLIENT_URL || 'http://localhost:5173'}/?error=missing-token`,
+        );
       }
 
       const result = await AuthService.verifyEmail(token);
-      
+
       // Перенаправляем на фронтенд с успешным статусом
-      res.redirect(`${process.env.CLIENT_URL || 'http://localhost:5173'}/?email-verified=success`);
+      res.redirect(
+        `${process.env.CLIENT_URL || 'http://localhost:5173'}/?email-verified=success`,
+      );
     } catch (error) {
       console.error('Verify email error:', error);
       // Перенаправляем на фронтенд с ошибкой
-      res.redirect(`${process.env.CLIENT_URL || 'http://localhost:5173'}/?email-verified=error&message=${encodeURIComponent(error.message)}`);
+      res.redirect(
+        `${
+          process.env.CLIENT_URL || 'http://localhost:5173'
+        }/?email-verified=error&message=${encodeURIComponent(error.message)}`,
+      );
     }
   }
 
@@ -190,6 +196,7 @@ class AuthController {
   static async generate2FASecret(req, res) {
     try {
       const userId = res.locals.user.id;
+      console.log(userId);
       const user = await AuthService.getUser(userId);
 
       if (!user) {
@@ -202,13 +209,14 @@ class AuthController {
         issuer: 'FranchiseApp',
         length: 32,
       });
+      console.log(secret);
 
       // Сохраняем секрет в базу данных
       await AuthService.updateUser(userId, { secret: secret.base32 });
 
       res.json({
         secret: secret.base32,
-        qrCodeUrl: secret.otpauth_url,
+        otpauth_url: secret.otpauth_url,
       });
     } catch (err) {
       console.log(err);
