@@ -25,7 +25,12 @@ export const userSchema = z.object({
 export const userUpdateSchema = z.object({
   name: z.string().min(2, { message: 'Имя должно быть не короче 2 символов' }).optional(),
   email: z.email({ message: 'Некорректный email' }).optional(),
-  password: z.string().min(6, { message: 'Пароль должен быть не короче 6 символов' }).optional(),
+  password: z.string()
+    .min(8, { message: 'Пароль должен быть не короче 8 символов' })
+    .regex(/[A-Z]/, { message: 'Пароль должен содержать хотя бы одну заглавную букву' })
+    .regex(/[a-z]/, { message: 'Пароль должен содержать хотя бы одну строчную букву' })
+    .regex(/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/, { message: 'Пароль должен содержать хотя бы один специальный символ' })
+    .optional(),
   phone: z.string().optional(),
   city: z.string().optional(),
   balance: z.string().optional(), // Изменено на string для соответствия серверу
@@ -52,7 +57,11 @@ export const userUpdateResponseSchema = z.object({
 export const userRegisterSchema = z.object({
   email: z.string(),
   name: z.string(),
-  password: z.string(),
+  password: z.string()
+    .min(8, { message: 'Пароль должен быть не короче 8 символов' })
+    .regex(/[A-Z]/, { message: 'Пароль должен содержать хотя бы одну заглавную букву' })
+    .regex(/[a-z]/, { message: 'Пароль должен содержать хотя бы одну строчную букву' })
+    .regex(/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/, { message: 'Пароль должен содержать хотя бы один специальный символ' }),
   phone: z.string().optional(),
   city: z.string().optional(),
 });
