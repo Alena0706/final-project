@@ -24,6 +24,7 @@ export default function SupportChat(): React.JSX.Element {
 
   const messages = useAppSelector((store) => store.chat.messages);
   const userId = useAppSelector((store) => store.user.user?.user.id);
+  const userName = useAppSelector((store) => store.user.user?.user.name);
   const admin = useAppSelector((store) => store.user.user?.user.admin);
   const roomId = useAppSelector((store) => store.chat.roomId);
   const rooms = useAppSelector((store) => store.chat.rooms);
@@ -331,8 +332,9 @@ export default function SupportChat(): React.JSX.Element {
               }
 
               // Определяем, нужно ли показывать подпись
-              const showLabel = msg.sender !== 'user' && msg.sender !== 'system';
+              const showLabel = msg.sender !== 'system';
               const getLabelText = () => {
+                if (msg.sender === 'user') return userName || 'Пользователь';
                 if (msg.sender === 'assistant') return 'AI-помощник';
                 if (msg.sender === 'admin') return 'Администратор';
                 return msg.sender;
