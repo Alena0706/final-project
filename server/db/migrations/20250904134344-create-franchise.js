@@ -38,17 +38,7 @@ module.exports = {
       },
       city: {
         type: Sequelize.STRING,
-      },
-      // contractId: {
-      //   type: Sequelize.INTEGER,
-      //   references: {
-      //     model: 'Contracts',
-      //     key: 'id',
-      //   },
-      //   onDelete: 'SET NULL',
-      //   defaultValue: 1,
-      // },
-      
+      },   
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,

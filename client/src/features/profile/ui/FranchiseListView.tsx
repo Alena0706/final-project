@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useAppSelector } from '@/shared/hooks/hooks';
 import { Building2, Plus, Eye } from 'lucide-react';
-import { FranchiseT } from '@/entities/openFrancise/model/types';
-import axiosInstance from '@/shared/api/axiosInstance';
 import type { FranchiseT } from '@/entities/openFrancise/model/types';
+import axiosInstance from '@/shared/api/axiosInstance';
+
 
 type FranchiseListViewProps = {
   onFranchiseSelect: (franchise: FranchiseT) => void;
