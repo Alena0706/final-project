@@ -1,6 +1,6 @@
 export type ModalType = 'createFranchise' | 'editFranchise' | 'deleteFranchise' | null;
 
-export interface ModalState {
+export type ModalState = {
   isOpen: boolean;
   type: ModalType;
   data?: any; // Для передачи дополнительных данных в модальное окно

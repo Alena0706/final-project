@@ -9,10 +9,11 @@ export const userSchema = z.object({
   secret: z.string().nullable().optional(),
   admin: z.boolean(),
   avatar: z.string().nullable(),
-  balance: z.string(), // Сервер возвращает balance как строку
+  balance: z.union([z.string(), z.number(), z.null()]),
   transactions: z
     .array(z.object({ id: z.string(), amount: z.number().min(1), date: z.string() }))
-    .nullable(),
+    .nullable()
+    .optional(),
   role: z.string().optional(),
   registrationDate: z.string().nullable().optional(),
   monthlyAmount: z.string().optional(),
@@ -25,11 +26,14 @@ export const userSchema = z.object({
 export const userUpdateSchema = z.object({
   name: z.string().min(2, { message: 'Имя должно быть не короче 2 символов' }).optional(),
   email: z.email({ message: 'Некорректный email' }).optional(),
-  password: z.string()
+  password: z
+    .string()
     .min(8, { message: 'Пароль должен быть не короче 8 символов' })
     .regex(/[A-Z]/, { message: 'Пароль должен содержать хотя бы одну заглавную букву' })
     .regex(/[a-z]/, { message: 'Пароль должен содержать хотя бы одну строчную букву' })
-    .regex(/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/, { message: 'Пароль должен содержать хотя бы один специальный символ' })
+    .regex(/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/, {
+      message: 'Пароль должен содержать хотя бы один специальный символ',
+    })
     .optional(),
   phone: z.string().optional(),
   city: z.string().optional(),
@@ -57,11 +61,14 @@ export const userUpdateResponseSchema = z.object({
 export const userRegisterSchema = z.object({
   email: z.string(),
   name: z.string(),
-  password: z.string()
+  password: z
+    .string()
     .min(8, { message: 'Пароль должен быть не короче 8 символов' })
     .regex(/[A-Z]/, { message: 'Пароль должен содержать хотя бы одну заглавную букву' })
     .regex(/[a-z]/, { message: 'Пароль должен содержать хотя бы одну строчную букву' })
-    .regex(/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/, { message: 'Пароль должен содержать хотя бы один специальный символ' }),
+    .regex(/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/, {
+      message: 'Пароль должен содержать хотя бы один специальный символ',
+    }),
   phone: z.string().optional(),
   city: z.string().optional(),
 });
