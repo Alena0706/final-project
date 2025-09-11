@@ -3,7 +3,20 @@ import { io } from 'socket.io-client';
 import { addMessage, joinRoom, setHistory } from '@/entities/chat/model/slice';
 import { useAppDispatch, useAppSelector } from '@/shared/hooks/hooks';
 
-const socket = io();
+const socket = io('http://localhost:3000', { autoConnect: true });
+
+// Добавляем логирование для диагностики
+socket.on('connect', () => {
+  console.log('✅ ChatPage Socket.IO подключен:', socket.id);
+});
+
+socket.on('disconnect', () => {
+  console.log('❌ ChatPage Socket.IO отключен');
+});
+
+socket.on('connect_error', (error) => {
+  console.error('❌ ChatPage Ошибка подключения Socket.IO:', error);
+});
 
 export default function ChatPage(): React.JSX.Element {
   const dispatch = useAppDispatch();
@@ -14,29 +27,41 @@ export default function ChatPage(): React.JSX.Element {
   const [sender, setSender] = useState<'user' | 'admin'>('user');
 
   useEffect(() => {
+    console.log('🔧 ChatPage: Настройка Socket.IO слушателей');
+
     socket.on('chatMessage', (msg) => {
+      console.log('💬 ChatPage: Получено сообщение:', msg);
       dispatch(addMessage(msg));
     });
     socket.on('chatHistory', (history) => {
+      console.log('📜 ChatPage: Получена история чата:', history);
       dispatch(setHistory(history));
     });
     return () => {
+      console.log('🧹 ChatPage: Очистка Socket.IO слушателей');
       socket.off('chatMessage');
       socket.off('chatHistory');
     };
   }, [dispatch]);
 
   const handleJoinRoom = (): void => {
+    console.log('🏠 ChatPage: Попытка присоединиться к комнате:', roomInput);
     if (roomInput.trim() !== '') {
       dispatch(joinRoom(roomInput));
       socket.emit('joinRoom', roomInput);
+      console.log('✅ ChatPage: Присоединились к комнате:', roomInput);
     }
   };
 
   const handleSendMessage = (): void => {
-    if (!roomId || !input.trim()) return;
+    console.log('📤 ChatPage: Попытка отправить сообщение:', { roomId, sender, message: input });
+    if (!roomId || !input.trim()) {
+      console.log('❌ ChatPage: Не удается отправить: нет roomId или пустое сообщение');
+      return;
+    }
     socket.emit('chatMessage', { roomId, sender, message: input });
     setInput('');
+    console.log('✅ ChatPage: Сообщение отправлено');
   };
 
   return (
