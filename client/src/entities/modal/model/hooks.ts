@@ -1,5 +1,5 @@
 import { useAppDispatch, useAppSelector } from '@/shared/hooks/hooks';
-import type { ModalType } from './slice';
+import type { ModalType } from './types';
 import { openModal, closeModal } from './slice';
 
 export const useModal = () => {

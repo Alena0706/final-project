@@ -1,4 +1,3 @@
-
 import TwoFactorAuth from '@/entities/2fa/ui/TwoFactorAuth';
 import { updateUser } from '@/entities/auth/model/thunks';
 import { userUpdateSchema } from '@/entities/auth/model/schemas';
@@ -28,11 +27,11 @@ const ChangePassword = (): React.JSX.Element => {
 
     // Валидация нового пароля с помощью Zod
     const validationResult = userUpdateSchema.shape.password.safeParse(newPassword);
-    
+
     if (!validationResult.success) {
       const errors: Record<string, string> = {};
-      validationResult.error.errors.forEach((error) => {
-        errors.password = error.message;
+      validationResult.error.issues.forEach((issue) => {
+        errors.password = issue.message;
       });
       setValidationErrors(errors);
       return;
