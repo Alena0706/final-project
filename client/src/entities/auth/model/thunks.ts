@@ -8,6 +8,7 @@ import type {
 } from './types';
 import UserServices from '../api/userServices';
 import { setAccessToken, removeAccessToken } from '@/shared/api/axiosInstance';
+import { clearMessages, joinRoom } from '@/entities/chat/model/slice';
 
 type verify2FAT = {
   token: string;
@@ -51,9 +52,12 @@ export const refreshUser = createAsyncThunk('user/refresh', async () => {
   return response;
 });
 
-export const logoutUser = createAsyncThunk('user/logout', async () => {
+export const logoutUser = createAsyncThunk('user/logout', async (_, { dispatch }) => {
   await UserServices.logout();
   removeAccessToken();
+  // Очищаем чат при выходе из системы
+  dispatch(clearMessages());
+  dispatch(joinRoom(''));
 });
 
 export const verify2FA = createAsyncThunk(

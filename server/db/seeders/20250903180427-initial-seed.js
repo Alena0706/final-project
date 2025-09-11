@@ -1,3 +1,4 @@
+
 'use strict';
 
 /** @type {import('sequelize-cli').Migration} */
@@ -9,7 +10,7 @@ module.exports = {
         {
           name: 'Администратор',
           email: 'admin@test.com',
-          hashpass: '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
+          hashpass: '$2b$10$M5bEGOq9CwqcW5Rp4OaIX.FxoOiIQ5LII7yQxu8udnwuPeWvIl7U.', // Password1!
           phone: '79001234567',
           city: 'Москва',
           avatar: null,

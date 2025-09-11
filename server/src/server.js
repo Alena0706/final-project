@@ -45,6 +45,8 @@ io.on('connection', (socket) => {
   });
 
   socket.on('chatMessage', async ({ roomId, sender, message }) => {
+    console.log(`📨 Получено сообщение: roomId=${roomId}, sender=${sender}, message="${message}"`);
+    
     // Сохраняем сообщение пользователя в БД
     const newMessage = await Message.create({
       roomId,
@@ -52,6 +54,7 @@ io.on('connection', (socket) => {
       message,
     });
 
+    console.log(`📤 Отправляем сообщение в комнату ${roomId} всем участникам`);
     // Отправляем сообщение пользователя
     io.to(roomId).emit('chatMessage', newMessage);
 
@@ -97,6 +100,9 @@ io.on('connection', (socket) => {
         'возобновить ai',
         'ai включить',
         'ai возобновить',
+        'до свидания',
+        'до свидания!',
+        'до свидания.',
       ];
       const isResumeCommand = resumeKeywords.some((keyword) =>
         message.toLowerCase().includes(keyword.toLowerCase()),
@@ -149,12 +155,21 @@ io.on('connection', (socket) => {
   });
 
   // Обработчик для возобновления работы AI
-  socket.on('resumeAI', (roomId) => {
+  socket.on('resumeAI', async (roomId) => {
     const roomState = roomStates.get(roomId);
     if (roomState) {
       roomState.aiActive = true;
       roomState.adminCalled = false;
       roomStates.set(roomId, roomState);
+      
+      // Отправляем системное сообщение о возобновлении AI
+      const resumeMessage = await Message.create({
+        roomId,
+        sender: 'system',
+        message: 'AI-помощник возобновлен по команде администратора.',
+      });
+      io.to(roomId).emit('chatMessage', resumeMessage);
+      
       console.log(`AI возобновлен в комнате ${roomId}`);
     }
   });

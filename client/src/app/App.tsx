@@ -5,6 +5,7 @@ import { useAppDispatch, useAppSelector } from '@/shared/hooks/hooks';
 import { refreshUser } from '@/entities/auth/model/thunks';
 import { fetchWallet } from '@/entities/wallet/model/thunks';
 import { initialize2FAStatus } from '@/entities/2fa/model/thunks';
+import { clearMessages } from '@/entities/chat/model/slice';
 
 function App(): React.JSX.Element {
   const dispatch = useAppDispatch();
@@ -27,6 +28,9 @@ function App(): React.JSX.Element {
       if (userData?.user?.secret) {
         void dispatch(initialize2FAStatus({ secret: userData.user.secret }));
       }
+    } else if (userStatus === 'guest') {
+      // Очищаем чат при переходе в статус гостя
+      dispatch(clearMessages());
     }
   }, [userStatus, dispatch]);
 

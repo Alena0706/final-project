@@ -27,20 +27,43 @@ const chatSlice = createSlice({
   reducers: {
     joinRoom(state, action: PayloadAction<string>) {
       state.roomId = action.payload;
-      state.messages = [];
+      // Не очищаем сообщения при присоединении к комнате
+      // state.messages = [];
     },
     addMessage(state, action: PayloadAction<Message>) {
-      state.messages.push(action.payload);
+      // Проверяем, нет ли уже такого сообщения
+      const existingMessage = state.messages.find(msg => msg.id === action.payload.id);
+      if (!existingMessage) {
+        state.messages.push(action.payload);
+        // Сортируем сообщения по времени создания
+        state.messages.sort((a, b) => {
+          const timeA = new Date(a.createdAt || 0).getTime();
+          const timeB = new Date(b.createdAt || 0).getTime();
+          return timeA - timeB;
+        });
+      }
     },
     setHistory(state, action: PayloadAction<Message[]>) {
-      state.messages = action.payload;
+      // Объединяем существующие сообщения с историей, избегая дублирования
+      const existingIds = new Set(state.messages.map(msg => msg.id));
+      const newMessages = action.payload.filter(msg => !existingIds.has(msg.id));
+      state.messages = [...state.messages, ...newMessages];
+      // Сортируем сообщения по времени создания
+      state.messages.sort((a, b) => {
+        const timeA = new Date(a.createdAt || 0).getTime();
+        const timeB = new Date(b.createdAt || 0).getTime();
+        return timeA - timeB;
+      });
     },
     setRooms(state, action: PayloadAction<string[]>) {
       state.rooms = action.payload;
     },
+    clearMessages(state) {
+      state.messages = [];
+    },
   },
 });
 
-export const { joinRoom, addMessage, setHistory, setRooms } = chatSlice.actions;
+export const { joinRoom, addMessage, setHistory, setRooms, clearMessages } = chatSlice.actions;
 
 export default chatSlice.reducer;

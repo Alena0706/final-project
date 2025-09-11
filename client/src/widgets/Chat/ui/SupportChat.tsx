@@ -1,4 +1,4 @@
-import { addMessage, joinRoom, setHistory, setRooms } from '@/entities/chat/model/slice';
+import { addMessage, joinRoom, setHistory, setRooms, clearMessages } from '@/entities/chat/model/slice';
 import { useAppDispatch, useAppSelector } from '@/shared/hooks/hooks';
 import React, { useEffect, useRef, useState } from 'react';
 import { io } from 'socket.io-client';
@@ -34,6 +34,7 @@ export default function SupportChat(): React.JSX.Element {
   const [isOpen, setIsOpen] = useState(false);
   const [inputValue, setInputValue] = useState<string>('');
   const [aiActive, setAiActive] = useState(true);
+  const [welcomeShown, setWelcomeShown] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -41,6 +42,13 @@ export default function SupportChat(): React.JSX.Element {
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, [messages]);
+
+  // Сбрасываем флаг приветствия и очищаем чат при смене пользователя
+  useEffect(() => {
+    setWelcomeShown(false);
+    // Очищаем сообщения при смене пользователя
+    dispatch(clearMessages());
+  }, [userId, dispatch]);
 
   useEffect(() => {
     console.log('🔧 Настройка Socket.IO слушателей, admin:', admin);
@@ -59,6 +67,7 @@ export default function SupportChat(): React.JSX.Element {
       console.log('💬 Получено сообщение:', msg);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const message = msg as any;
+      console.log(`💬 Добавляем сообщение в Redux: sender=${message.sender}, message="${message.message}"`);
       dispatch(addMessage(message));
 
       // Проверяем, если это системное сообщение об отключении AI
@@ -95,6 +104,21 @@ export default function SupportChat(): React.JSX.Element {
     }
   }, [roomId]);
 
+  // Добавляем приветственное сообщение только если чат действительно пустой
+  useEffect(() => {
+    if (userId && messages.length === 0 && !welcomeShown && isOpen) {
+      const welcomeMessage = {
+        id: 'welcome-' + Date.now(),
+        roomId: userId.toString(),
+        sender: 'assistant',
+        message: 'Добрый день! На связи - ИИ-Ассистент. Готов рассказать о магии фотографии радужки глаза, ответить на все вопросы о франшизе и помочь найти нужную информацию на сайте.',
+        createdAt: new Date().toISOString(),
+      };
+      dispatch(addMessage(welcomeMessage));
+      setWelcomeShown(true);
+    }
+  }, [userId, messages.length, welcomeShown, isOpen, dispatch]);
+
   // Закрытие чата при клике вне его области
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent): void => {
@@ -124,6 +148,8 @@ export default function SupportChat(): React.JSX.Element {
     if (userId) {
       console.log('🏠 Присоединяемся к комнате:', userId.toString());
       dispatch(joinRoom(userId.toString()));
+      // Запрашиваем историю чата при открытии
+      socket.emit('joinRoom', userId.toString());
     } else {
       console.log('❌ Нет userId для присоединения к комнате');
     }
@@ -141,9 +167,21 @@ export default function SupportChat(): React.JSX.Element {
       return;
     }
 
+    // Определяем отправителя: если админ находится в комнате пользователя, то он отвечает как админ
+    // Если админ в своей комнате, то он пишет как пользователь
+    const isAdminRespondingToUser = admin && roomId !== userId?.toString();
+    
+    console.log('🔍 Отладка отправителя:', {
+      admin,
+      roomId,
+      userId: userId?.toString(),
+      isAdminRespondingToUser,
+      finalSender: isAdminRespondingToUser ? 'admin' : 'user'
+    });
+    
     const messageData = {
       roomId,
-      sender: admin ? 'admin' : 'user',
+      sender: isAdminRespondingToUser ? 'admin' : 'user',
       message: inputValue.trim(),
     };
 
@@ -254,6 +292,11 @@ export default function SupportChat(): React.JSX.Element {
 
     return parts;
   };
+
+  // Показываем кнопку чата только для авторизованных пользователей
+  if (userStatus !== 'logged') {
+    return null;
+  }
 
   return (
     <>
@@ -426,7 +469,25 @@ export default function SupportChat(): React.JSX.Element {
               // Определяем, нужно ли показывать подпись
               const showLabel = msg.sender !== 'system';
               const getLabelText = (): string => {
-                if (msg.sender === 'user') return userName ?? 'Пользователь';
+                console.log('🏷️ Определяем подпись для сообщения:', {
+                  sender: msg.sender,
+                  userName,
+                  admin,
+                  roomId,
+                  userId: userId?.toString()
+                });
+                
+                // Если админ находится в комнате пользователя, то сообщения от 'user' - это сообщения пользователя
+                // Если админ в своей комнате, то сообщения от 'user' - это его собственные сообщения
+                if (msg.sender === 'user') {
+                  // Если админ в чужой комнате, то 'user' = пользователь
+                  // Если админ в своей комнате, то 'user' = админ
+                  if (admin && roomId !== userId?.toString()) {
+                    return 'Пользователь';
+                  } else {
+                    return userName ?? 'Пользователь';
+                  }
+                }
                 if (msg.sender === 'assistant') return 'AI-помощник';
                 if (msg.sender === 'admin') return 'Администратор';
                 return msg.sender;
