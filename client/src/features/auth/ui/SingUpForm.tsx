@@ -2,6 +2,8 @@ import { userRegisterSchema } from '@/entities/auth/model/schemas';
 import { registerUser } from '@/entities/auth/model/thunks';
 import { useAppDispatch, useAppSelector } from '@/shared/hooks/hooks';
 import Spinner from '@/widgets/components/ui/Spinner';
+import PasswordRequirements from '@/widgets/components/ui/PasswordRequirements';
+import PasswordMatch from '@/widgets/components/ui/PasswordMatch';
 import { ArrowLeft } from 'lucide-react';
 import type { ChangeEventHandler, FormEventHandler } from 'react';
 import React, { useState } from 'react';
@@ -11,6 +13,10 @@ export default function SignUpForm(): React.JSX.Element {
   const dispatch = useAppDispatch();
   const { status } = useAppSelector((state) => state.user);
   const [phone, setPhone] = useState('+7');
+  const [password, setPassword] = useState('');
+  const [passwordConfirm, setPasswordConfirm] = useState('');
+  const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
+  const [showPasswordRequirements, setShowPasswordRequirements] = useState(false);
   const navigate = useNavigate();
 
   function formatPhone(value: string): string {
@@ -36,15 +42,43 @@ export default function SignUpForm(): React.JSX.Element {
     return formatted;
   }
 
-  const handleSubmit: FormEventHandler<HTMLFormElement> = async (e): Promise<void> => {
+  const handleSubmit: FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
+    setValidationErrors({});
+
     const data = Object.fromEntries(new FormData(e.currentTarget));
-    const dataValidate = userRegisterSchema.parse(data);
+
+    // Проверка совпадения паролей
+    if (data.password !== data.passwordConfirm) {
+      setValidationErrors({ passwordConfirm: 'Пароли не совпадают' });
+      return;
+    }
+
     try {
-      await dispatch(registerUser(dataValidate)).unwrap();
-      navigate('/');
+      const dataValidate = userRegisterSchema.parse(data);
+      void dispatch(registerUser(dataValidate))
+        .unwrap()
+        .then(() => {
+          void navigate('/');
+        })
+        .catch((error: unknown) => {
+          console.error('Registration failed:', error);
+        });
     } catch (error) {
-      console.error('Registration failed:', error);
+      console.error('Validation failed:', error);
+
+      // Обработка ошибок валидации Zod
+      if (error && typeof error === 'object' && 'issues' in error) {
+        const zodError = error as { issues: { path: string[]; message: string }[] };
+        const errors: Record<string, string> = {};
+
+        zodError.issues.forEach((issue) => {
+          const field = issue.path[0];
+          errors[field] = issue.message;
+        });
+
+        setValidationErrors(errors);
+      }
     }
   };
 
@@ -54,6 +88,35 @@ export default function SignUpForm(): React.JSX.Element {
 
     const formatted = formatPhone(input);
     setPhone(formatted);
+  };
+
+  const handlePasswordChange: ChangeEventHandler<HTMLInputElement> = (e) => {
+    const { value } = e.target;
+    setPassword(value);
+    setShowPasswordRequirements(value.length > 0);
+
+    // Очищаем ошибку валидации пароля при изменении
+    if (validationErrors.password) {
+      setValidationErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors.password;
+        return newErrors;
+      });
+    }
+  };
+
+  const handlePasswordConfirmChange: ChangeEventHandler<HTMLInputElement> = (e) => {
+    const { value } = e.target;
+    setPasswordConfirm(value);
+
+    // Очищаем ошибку валидации подтверждения пароля при изменении
+    if (validationErrors.passwordConfirm) {
+      setValidationErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors.passwordConfirm;
+        return newErrors;
+      });
+    }
   };
 
   return (
@@ -81,6 +144,20 @@ export default function SignUpForm(): React.JSX.Element {
           </div>
 
           <form className="space-y-6" noValidate onSubmit={handleSubmit}>
+            {/* Отображение ошибок */}
+            {Object.keys(validationErrors).length > 0 && (
+              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+                <div className="font-medium mb-2">Исправьте следующие ошибки:</div>
+                <ul className="space-y-1">
+                  {Object.entries(validationErrors).map(([field, message]) => (
+                    <li key={field} className="text-sm">
+                      • {message}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-foreground mb-2">
@@ -156,9 +233,19 @@ export default function SignUpForm(): React.JSX.Element {
                 type="password"
                 autoComplete="new-password"
                 required
-                className="form-input"
+                value={password}
+                onChange={handlePasswordChange}
+                className={`form-input ${
+                  validationErrors.password ? 'border-red-500 focus:border-red-500' : ''
+                }`}
                 placeholder="Минимум 8 символов"
               />
+              {validationErrors.password && (
+                <p className="mt-1 text-sm text-red-600">{validationErrors.password}</p>
+              )}
+              {showPasswordRequirements && (
+                <PasswordRequirements password={password} className="mt-3" />
+              )}
             </div>
 
             <div>
@@ -174,8 +261,20 @@ export default function SignUpForm(): React.JSX.Element {
                 type="password"
                 autoComplete="new-password"
                 required
-                className="form-input"
+                value={passwordConfirm}
+                onChange={handlePasswordConfirmChange}
+                className={`form-input ${
+                  validationErrors.passwordConfirm ? 'border-red-500 focus:border-red-500' : ''
+                }`}
                 placeholder="Повторите пароль"
+              />
+              {validationErrors.passwordConfirm && (
+                <p className="mt-1 text-sm text-red-600">{validationErrors.passwordConfirm}</p>
+              )}
+              <PasswordMatch
+                password={password}
+                passwordConfirm={passwordConfirm}
+                className="mt-2"
               />
             </div>
 
