@@ -1,7 +1,7 @@
 import { useAppSelector } from '@/shared/hooks/hooks';
 import PartnerFormModal from '@/widgets/modalMain/ui/PartnerFormModal';
 import FranchiseList from '@/widgets/franchise/ui/FranchiseList';
-import { ArrowRight, Calculator, TrendingUp, FileText, Users } from 'lucide-react';
+import { ArrowRight, Calculator, TrendingUp, Users } from 'lucide-react';
 import React, { useState } from 'react';
 import { Link } from 'react-router';
 import {
@@ -49,20 +49,6 @@ const FranchisePage = (): React.JSX.Element => {
   const annualProfit = netMonthlyProfit * 12;
   const roi = totalInvestment > 0 ? (annualProfit / totalInvestment) * 100 : 0;
 
-  // Для документов
-  const documents = [
-    { id: 1, name: 'Договор франшизы.pdf', url: '#' },
-    { id: 2, name: 'Прайс.xls', url: '#' },
-    { id: 3, name: 'Бизнес-план.pdf', url: '#' },
-  ];
-
-  // Для загрузки файлов
-  const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
-
-  const onFileChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    if (!e.target.files) return;
-    setUploadedFiles([...uploadedFiles, ...Array.from(e.target.files)]);
-  };
 
   // Пример данных отзывов
   const reviews = [
@@ -110,7 +96,7 @@ const FranchisePage = (): React.JSX.Element => {
         {/* Заголовок страницы */}
         <div className="text-center mb-12 animate-fade-in">
           <div className="mb-4">
-            <h1 className="heading-2 text-gradient-primary">Франшиза "Ирис-Арт"</h1>
+            <h1 className="heading-2 text-gradient-primary">Франшиза "Твой взгляд"</h1>
           </div>
           <p className="text-muted-foreground text-xl">
             Уникальная возможность стать частью инновационного бизнеса
@@ -120,9 +106,9 @@ const FranchisePage = (): React.JSX.Element => {
         {/* Преимущества франшизы */}
         <section className="mb-16">
           <div className="text-center mb-12">
-            <h2 className="heading-2 bg-gradient-to-r from-[hsl(200_80%_70%)] to-[hsl(210_90%_30%)] bg-clip-text text-transparent mb-6">
+            <h3 className="heading-3 bg-gradient-to-r from-[hsl(200_80%_70%)] to-[hsl(210_90%_30%)] bg-clip-text text-transparent mb-6">
               Преимущества франшизы
-            </h2>
+            </h3>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
               Станьте частью успешной сети и получите все необходимые инструменты для быстрого
               старта
@@ -366,14 +352,14 @@ const FranchisePage = (): React.JSX.Element => {
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Link
               to="/signup"
-              className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-[hsl(200_75%_55%)] to-[hsl(210_75%_35%)] text-white text-lg font-semibold rounded-xl shadow-iris hover:shadow-gold transition-all duration-300 hover:scale-105 group"
+              className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-[hsl(200_75%_55%)] to-[hsl(210_75%_35%)] text-white text-lg font-semibold rounded-xl shadow-iris hover:shadow-gold transition-all duration-300 group"
             >
               Стать партнером
               <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
             </Link>
 
             <button
-              className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-[hsl(200_75%_55%)] to-[hsl(210_75%_35%)] text-white text-lg font-semibold rounded-xl shadow-iris hover:shadow-gold transition-all duration-300 hover:scale-105"
+              className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-[hsl(200_75%_55%)] to-[hsl(210_75%_35%)] text-white text-lg font-semibold rounded-xl shadow-iris hover:shadow-gold transition-all duration-300"
               onClick={() => setModalOpen(true)}
             >
               Обратная связь
@@ -381,79 +367,6 @@ const FranchisePage = (): React.JSX.Element => {
           </div>
         </section>
 
-        {/* Документы и загрузка */}
-        <section className="mb-16">
-          <div className="text-center mb-12">
-            <h2 className="heading-2 bg-gradient-to-r from-[hsl(200_80%_70%)] to-[hsl(210_90%_30%)] bg-clip-text text-transparent mb-6">
-              Документы и договоры
-            </h2>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Все необходимые документы для начала работы с франшизой
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
-            <div className="card">
-              <div className="flex items-center space-x-3 mb-6">
-                <div className="p-2 bg-gradient-to-r from-[hsl(200_75%_55%)] to-[hsl(210_75%_35%)] rounded-lg">
-                  <FileText className="h-5 w-5 text-white" />
-                </div>
-                <h3 className="text-xl font-semibold text-foreground">Доступные документы</h3>
-              </div>
-
-              <div className="space-y-3">
-                {documents.map((doc) => (
-                  <div
-                    key={doc.id}
-                    className="flex items-center justify-between p-3 bg-muted/50 rounded-lg"
-                  >
-                    <span className="text-foreground font-medium">{doc.name}</span>
-                    <a
-                      href={doc.url}
-                      className="text-primary hover:text-primary/80 underline font-medium"
-                      download
-                    >
-                      Скачать
-                    </a>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="card">
-              <div className="flex items-center space-x-3 mb-6">
-                <div className="p-2 bg-gradient-to-r from-[hsl(200_75%_55%)] to-[hsl(210_75%_35%)] rounded-lg">
-                  <FileText className="h-5 w-5 text-white" />
-                </div>
-                <h3 className="text-xl font-semibold text-foreground">Загрузите документы</h3>
-              </div>
-
-              <div className="space-y-4">
-                <input
-                  type="file"
-                  multiple
-                  onChange={onFileChange}
-                  className="block w-full text-sm text-muted-foreground file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white cursor-pointer hover:file:bg-primary/90 transition-colors"
-                />
-                {uploadedFiles.length > 0 && (
-                  <div className="space-y-2">
-                    <p className="text-sm font-medium text-foreground">Загруженные файлы:</p>
-                    <ul className="space-y-1">
-                      {uploadedFiles.map((file) => (
-                        <li
-                          key={file.name}
-                          className="text-sm text-muted-foreground bg-muted/50 p-2 rounded"
-                        >
-                          {file.name}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        </section>
 
         {/* Отзывы партнеров */}
         <section className="mb-16">

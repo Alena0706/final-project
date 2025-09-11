@@ -3,7 +3,21 @@ import { useAppDispatch, useAppSelector } from '@/shared/hooks/hooks';
 import React, { useEffect, useRef, useState } from 'react';
 import { io } from 'socket.io-client';
 
-const socket = io('http://localhost:3000', { autoConnect: true });
+const socket = io('http://localhost:3000', { autoConnect: true, transports: ['websocket'] });
+
+// Добавляем логирование для диагностики
+
+socket.on('connect', () => {
+  console.log('✅ Socket.IO подключен:', socket.id);
+});
+
+socket.on('disconnect', () => {
+  console.log('❌ Socket.IO отключен');
+});
+
+socket.on('connect_error', (error) => {
+  console.error('❌ Ошибка подключения Socket.IO:', error);
+});
 
 export default function SupportChat(): React.JSX.Element {
   const dispatch = useAppDispatch();
@@ -25,24 +39,32 @@ export default function SupportChat(): React.JSX.Element {
   }, [messages]);
 
   useEffect(() => {
+    console.log('🔧 Настройка Socket.IO слушателей, admin:', admin);
+
     if (admin) {
+      console.log('📡 Запрашиваем список комнат...');
       socket.emit('getRooms');
     }
 
     socket.on('roomList', (roomsList: string[]) => {
+      console.log('📋 Получен список комнат:', roomsList);
       dispatch(setRooms(roomsList));
     });
 
     socket.on('chatMessage', (msg: unknown) => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
+      console.log('💬 Получено сообщение:', msg);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const message = msg as any;
       dispatch(addMessage(message));
-      
+
       // Проверяем, если это системное сообщение об отключении AI
-      if (message.sender === 'system' && message.message.includes('AI-помощник временно отключен')) {
+      if (
+        message.sender === 'system' &&
+        message.message.includes('AI-помощник временно отключен')
+      ) {
         setAiActive(false);
       }
-      
+
       // Проверяем, если это системное сообщение о возобновлении AI
       if (message.sender === 'system' && message.message.includes('AI-помощник возобновлен')) {
         setAiActive(true);
@@ -50,11 +72,13 @@ export default function SupportChat(): React.JSX.Element {
     });
 
     socket.on('chatHistory', (history: unknown) => {
+      console.log('📜 Получена история чата:', history);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
       dispatch(setHistory(history as any));
     });
 
     return () => {
+      console.log('🧹 Очистка Socket.IO слушателей');
       socket.off('roomList');
       socket.off('chatMessage');
       socket.off('chatHistory');
@@ -91,31 +115,36 @@ export default function SupportChat(): React.JSX.Element {
   }, [isOpen]);
 
   const toggleChat = (): void => {
+    console.log('🔄 Переключение чата, userId:', userId);
     setIsOpen(!isOpen);
     if (userId) {
+      console.log('🏠 Присоединяемся к комнате:', userId.toString());
       dispatch(joinRoom(userId.toString()));
+    } else {
+      console.log('❌ Нет userId для присоединения к комнате');
     }
   };
 
   const handleSendMessage = (): void => {
-    if (!roomId || !inputValue.trim()) return;
-    socket.emit('chatMessage', {
+    console.log('📤 Попытка отправить сообщение:', {
+      roomId,
+      inputValue: inputValue.trim(),
+      admin,
+    });
+
+    if (!roomId || !inputValue.trim()) {
+      console.log('❌ Не удается отправить: нет roomId или пустое сообщение');
+      return;
+    }
+
+    const messageData = {
       roomId,
       sender: admin ? 'admin' : 'user',
       message: inputValue.trim(),
-    });
-    setInputValue('');
-    if (!inputValue.trim()) return;
+    };
 
-    // const newMessage: Message = {
-    //   id: Date.now(), // или используйте uuid
-    //   roomId: userId?.toString() || 'default-room',
-    //   sender: admin ? 'admin' : 'user',
-    //   message: inputValue.trim(),
-    //   createdAt: new Date().toISOString(),
-    // };
-
-    // dispatch(addMessage(newMessage));
+    console.log('📤 Отправляем сообщение:', messageData);
+    socket.emit('chatMessage', messageData);
     setInputValue('');
   };
 
@@ -323,7 +352,7 @@ export default function SupportChat(): React.JSX.Element {
             <div ref={messagesEndRef} />
           </div>
           {/* Статус AI */}
-         {/* // {!aiActive && ( */}
+          {/* // {!aiActive && ( */}
           {/* //   <div style={{  */}
           {/* //     marginBottom: 8, 
           //     padding: '8px 12px', 
@@ -337,7 +366,7 @@ export default function SupportChat(): React.JSX.Element {
           //     AI-помощник отключен. Администратор уведомлен.
           //   </div>
           // )} */}
-          
+
           <div style={{ display: 'flex', gap: 8 }}>
             <input
               type="text"
@@ -394,7 +423,7 @@ export default function SupportChat(): React.JSX.Element {
               Отправить
             </button>
           </div>
-          
+
           {/* Кнопка возобновления AI для админа */}
           {admin && !aiActive && (
             <div style={{ marginTop: 8, textAlign: 'center' }}>

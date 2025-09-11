@@ -52,7 +52,8 @@
   --shadow-elegant: 0 10px 25px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -4px rgba(0, 0, 0, 0.2);
   --shadow-iris: 0 20px 25px -5px hsla(200, 75%, 55%, 0.3),
     0 10px 10px -5px hsla(200, 75%, 55%, 0.1); /* Голубые тени в стиле HeroSection */
-  --shadow-gold: 0 20px 25px -5px rgba(251, 191, 36, 0.3), 0 10px 10px -5px rgba(251, 191, 36, 0.1);
+  --shadow-gold: 0 20px 25px -5px rgba(248, 250, 252, 0.4),
+    0 10px 10px -5px rgba(248, 250, 252, 0.2);
 
   /* Радиусы */
   --radius: 0.75rem;
@@ -69,7 +70,7 @@ body {
 }
 
 /* Скрыть якорные ссылки */
-a[href^="#"] {
+a[href^='#'] {
   position: absolute;
   left: -9999px;
   width: 1px;
@@ -132,7 +133,7 @@ a[href^="#"] {
   }
 
   .dark-glass {
-    background: rgba(0, 0, 0, 0.4);
+    background: rgba(0, 0, 0, 0.6);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -210,6 +211,45 @@ a[href^="#"] {
     opacity, box-shadow, transform, filter, backdrop-filter;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 300ms;
+}
+
+/* Специальные стили для модального окна */
+.modal-container {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.modal-content {
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  background: rgba(0, 0, 0, 0.6) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Отключаем hover эффекты для всех элементов страницы, когда открыто модальное окно */
+.modal-open *:not(.modal-container):not(.modal-container *) {
+  pointer-events: none !important;
+  transition: none !important;
+  transform: none !important;
+  animation: none !important;
+}
+
+.modal-open *:not(.modal-container):not(.modal-container *):hover {
+  transform: none !important;
+  box-shadow: inherit !important;
+  background-color: inherit !important;
+  color: inherit !important;
+  animation: none !important;
+}
+
+/* Включаем pointer events только для модального окна */
+.modal-container {
+  pointer-events: auto !important;
+}
+
+.modal-container * {
+  pointer-events: auto !important;
 }
 
 /* Стили для скролла */
@@ -448,6 +488,15 @@ textarea:disabled::placeholder {
   box-shadow: var(--shadow-iris);
 }
 
+.card-no-hover {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-elegant);
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+}
+
 /* Стили для навигации */
 .navbar {
   background: rgba(15, 15, 23, 0.95);
@@ -620,7 +669,7 @@ input[data-editable-placeholder]:not([value]):not(:focus)::before {
   .page-transition {
     transition: none;
   }
-  
+
   .animate-in {
     animation: none;
   }

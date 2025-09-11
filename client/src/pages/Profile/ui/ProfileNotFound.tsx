@@ -34,6 +34,9 @@ const ProfileNotFound = (): React.JSX.Element => {
             <Link to="/profile/notifications" className="px-3 py-1 bg-muted rounded text-xs hover:bg-muted/80">
               Уведомления
             </Link>
+            <Link to="/profile/franchise" className="px-3 py-1 bg-muted rounded text-xs hover:bg-muted/80">
+              Франшиза
+            </Link>
             <Link to="/profile/personal" className="px-3 py-1 bg-muted rounded text-xs hover:bg-muted/80">
               Данные
             </Link>

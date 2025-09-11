@@ -2,11 +2,11 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 
 export type Message = {
-  id: number; // или _id если используете UUID
+  id?: number; // или _id если используете UUID
   roomId: string;
   sender: 'user' | 'admin' | 'assistant' | 'system';
   message: string;
-  createdAt: string;
+  createdAt?: string;
 };
 
 type ChatState = {

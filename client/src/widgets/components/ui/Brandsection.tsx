@@ -5,7 +5,12 @@ type BadgeProps = React.HTMLAttributes<HTMLSpanElement> & {
   children: React.ReactNode;
 };
 
-const Badge = ({ children, variant = 'filled', className = '', ...props }: BadgeProps): React.JSX.Element => {
+const Badge = ({
+  children,
+  variant = 'filled',
+  className = '',
+  ...props
+}: BadgeProps): React.JSX.Element => {
   const baseStyle =
     'inline-block rounded-full px-4 py-1 font-semibold text-sm uppercase tracking-wide';
   const variantStyle =
@@ -49,25 +54,21 @@ const BrandSection = (): React.JSX.Element => {
   ];
 
   return (
-    <section className="section">
-      <div className="container mx-auto px-4">
-        {/* Описание бренда */}
-        <div className="mb-20">
-          <div className="text-center mb-16 animate-fade-in">
-            <div className="sr-only">
-              <span className="text-foreground font-medium uppercase tracking-wide text-sm">
-                Описание бренда
-              </span>
-            </div>
+    <section className="section relative overflow-hidden">
+      {/* Фоновое изображение */}
+      <div className="absolute inset-0 z-0">
+        <img
+          src="/11.jpg"
+          alt="Фоновое изображение для секции бренда"
+          className="w-full h-full object-cover opacity-15"
+        />
+        <div className="absolute inset-0 bg-gradient-to-br from-background/95 via-background/90 to-background/95" />
+      </div>
 
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Пионеры в области профессиональной фотографии радужки глаза в России
-            </p>
-          </div>
-        </div>
+      <div className="container mx-auto px-4 relative z-10">
         {/* Наша история */}
         <div className="mb-20">
-          <div className="text-center mb-12 animate-fade-in">
+          <div className="text-center mb-8 animate-fade-in">
             <h3 className="heading-3 bg-gradient-to-r from-[hsl(200_80%_70%)] to-[hsl(210_90%_30%)] bg-clip-text text-transparent mb-6">
               Наша история
             </h3>
@@ -132,28 +133,30 @@ const BrandSection = (): React.JSX.Element => {
               Ключевые вехи
             </h3>
           </div>
-          <div className="max-w-4xl mx-auto overflow-x-auto">
-            <div className="flex space-x-6 pb-4">
-              {milestones.map((milestone) => {
+          <div className="max-w-6xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {milestones.map((milestone, index) => {
                 const IconComponent = milestone.icon;
                 return (
                   <div
                     key={`${milestone.year}-${milestone.event}`}
-                    className="flex-shrink-0 flex items-center gap-6 p-6 card group animate-slide-up"
-                    style={{ minWidth: '280px' }}
+                    className="flex items-center gap-4 p-6 card group animate-slide-up hover:shadow-iris transition-all duration-300"
+                    style={{ animationDelay: `${index * 0.1}s` }}
                   >
                     <div className="flex-shrink-0">
-                      <div className="w-12 h-12 bg-gradient-to-r from-[hsl(200_75%_55%)] to-[hsl(210_75%_35%)] rounded-xl flex items-center justify-center shadow-iris group-hover:scale-110 transition-transform duration-300">
-                        <IconComponent className="h-6 w-6 text-white" />
+                      <div className="w-14 h-14 bg-gradient-to-r from-[hsl(200_75%_55%)] to-[hsl(210_75%_35%)] rounded-xl flex items-center justify-center shadow-iris group-hover:scale-110 transition-transform duration-300">
+                        <IconComponent className="h-7 w-7 text-white" />
                       </div>
                     </div>
                     <div className="flex-grow">
                       <div className="flex items-center gap-3 mb-2">
-                        <Badge variant="outline" className="text-xs font-medium">
+                        <Badge variant="outline" className="text-sm font-medium px-3 py-1">
                           {milestone.year}
                         </Badge>
                       </div>
-                      <p className="text-foreground font-medium">{milestone.event}</p>
+                      <p className="text-foreground font-medium text-base leading-relaxed">
+                        {milestone.event}
+                      </p>
                     </div>
                   </div>
                 );
@@ -171,7 +174,17 @@ const BrandSection = (): React.JSX.Element => {
               Присоединяйтесь к растущей сети партнеров и создайте свою историю успеха в уникальной
               нише
             </p>
-            <button className="btn-primary">Связаться с нами</button>
+            <button
+              className="btn-primary"
+              onClick={() => {
+                const contactSection = document.getElementById('contact');
+                if (contactSection) {
+                  contactSection.scrollIntoView({ behavior: 'smooth' });
+                }
+              }}
+            >
+              Связаться с нами
+            </button>
           </div>
         </div>
       </div>

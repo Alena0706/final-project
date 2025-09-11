@@ -2,7 +2,7 @@ import { userRegisterSchema } from '@/entities/auth/model/schemas';
 import { registerUser } from '@/entities/auth/model/thunks';
 import { useAppDispatch, useAppSelector } from '@/shared/hooks/hooks';
 import Spinner from '@/widgets/components/ui/Spinner';
-import { ArrowLeft, Home } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import type { ChangeEventHandler, FormEventHandler } from 'react';
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router';
@@ -180,8 +180,7 @@ export default function SignUpForm(): React.JSX.Element {
             </div>
 
             <div className="flex items-start">
-              <div className="flex items-center h-5">
-              </div>
+              <div className="flex items-center h-5"></div>
             </div>
 
             <button type="submit" className="btn-primary w-full" disabled={status === 'loading'}>
@@ -198,7 +197,10 @@ export default function SignUpForm(): React.JSX.Element {
             <div className="text-center space-y-2">
               <p className="text-sm text-muted-foreground">
                 Уже есть аккаунт?{' '}
-                <Link to="/signin" className="font-medium text-primary hover:text-accent transition-colors duration-200">
+                <Link
+                  to="/signin"
+                  className="font-medium text-primary hover:text-accent transition-colors duration-200"
+                >
                   Войти
                 </Link>
               </p>

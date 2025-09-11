@@ -7,9 +7,11 @@ import { deleteFranchise } from '../model/thunks';
 export default function FranchiseCard({
   franchise,
   setIsOpen,
+  onDetailsClick,
 }: {
   franchise: FranchiseT;
   setIsOpen: () => void;
+  onDetailsClick?: () => void;
 }): React.JSX.Element {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [, setIsPlaying] = useState(false);
@@ -100,6 +102,19 @@ export default function FranchiseCard({
           </div>
         </div>
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+        
+        {/* Кнопка Детали по центру */}
+        {onDetailsClick && (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <button
+              onClick={onDetailsClick}
+              className="px-6 py-3 bg-white/20 backdrop-blur-sm text-white font-semibold rounded-lg hover:bg-white/30 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+            >
+              Детали
+            </button>
+          </div>
+        )}
+        
         <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
           <div className="flex items-center space-x-2 mb-2">
             <MapPin className="h-4 w-4" />

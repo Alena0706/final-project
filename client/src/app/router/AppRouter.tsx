@@ -12,11 +12,13 @@ import ProfileSection from '@/features/profile/ui/ProfileSection';
 import ChangePassword from '@/features/profile/ui/ChangePassword';
 import UserInvoices from '@/features/invoices/ui/UserInvoices';
 import UserNotifications from '@/features/notifications/ui/UserNotifications';
+import FranchiseProfile from '@/features/profile/ui/FranchiseProfile';
 import AdminDashboard from '@/features/admin/ui/AdminDashboard';
 import NotFoundPage from '@/pages/NotFound/ui/NotFoundPage';
 import EmailVerificationPage from '@/pages/EmailVerification/ui/EmailVerificationPage';
 import ProtectedRoute from '@/shared/lib/ProtectedRoute';
 import AuthRoute from '@/shared/lib/AuthRoute';
+import AdminRouteGuard from '@/shared/lib/AdminRouteGuard';
 import PageLoader from '@/widgets/components/ui/PageLoader';
 import PageTransition from '@/widgets/components/ui/PageTransition';
 import AuthTransition from '@/widgets/components/ui/AuthTransition';
@@ -37,7 +39,7 @@ export default function AppRouter(): React.JSX.Element {
             element={
               <ProtectedRoute 
                 isAllowed={userStatus !== 'guest'} 
-                redirectTo="/signup" 
+                redirectTo="/signin" 
                 isLoading={isLoading}
               />
             }
@@ -46,14 +48,17 @@ export default function AppRouter(): React.JSX.Element {
               path="/profile" 
               element={
                 <PageTransition>
-                  <ProfilePage />
+                  <AdminRouteGuard>
+                    <ProfilePage />
+                  </AdminRouteGuard>
                 </PageTransition>
               }
             >
-              <Route index element={<Navigate to="wallet" replace />} />
+              <Route index element={<Navigate to="personal" replace />} />
               <Route path="wallet" element={<WalletTopUp />} />
               <Route path="invoices" element={<UserInvoices />} />
               <Route path="notifications" element={<UserNotifications />} />
+              <Route path="franchise" element={<FranchiseProfile />} />
               <Route path="personal" element={<ProfileSection />} />
               <Route path="password" element={<ChangePassword />} />
               <Route path="*" element={<ProfileNotFound />} />
@@ -97,7 +102,7 @@ export default function AppRouter(): React.JSX.Element {
             element={
               <AuthRoute 
                 isAuthenticated={userStatus === 'logged'} 
-                redirectTo="/profile" 
+                redirectTo="/profile/personal" 
                 isLoading={isLoading}
               >
                 <AuthTransition>
@@ -111,7 +116,7 @@ export default function AppRouter(): React.JSX.Element {
             element={
               <AuthRoute 
                 isAuthenticated={userStatus === 'logged'} 
-                redirectTo="/profile" 
+                redirectTo="/profile/personal" 
                 isLoading={isLoading}
               >
                 <AuthTransition>

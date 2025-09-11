@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, memo } from 'react';
 import { useAppDispatch, useAppSelector } from '@/shared/hooks/hooks';
 import { resendVerificationEmail } from '@/entities/auth/model/thunks';
 
-export default function EmailVerificationBanner(): React.JSX.Element {
+const EmailVerificationBanner = memo((): React.JSX.Element => {
   const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.user.user);
   const [isResending, setIsResending] = useState(false);
@@ -24,7 +24,11 @@ export default function EmailVerificationBanner(): React.JSX.Element {
     }
   };
 
-  if (user?.user?.emailVerified) {
+  // Для админов почта считается подтвержденной по умолчанию
+  const isAdmin = user?.user?.role === 'admin' || user?.user?.admin === true;
+  const isEmailVerified = user?.user?.emailVerified || isAdmin;
+  
+  if (isEmailVerified) {
     return <></>;
   }
 
@@ -87,4 +91,6 @@ export default function EmailVerificationBanner(): React.JSX.Element {
       </div>
     </div>
   );
-}
+});
+
+export default EmailVerificationBanner;

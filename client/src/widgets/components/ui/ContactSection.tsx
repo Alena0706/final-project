@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { Phone, MessageCircle, MapPin, Clock, Send } from 'lucide-react';
-import type {JSX} from 'react';
-
+import { Phone, MapPin, Clock, Send } from 'lucide-react';
+import type { JSX } from 'react';
 
 type CardProps = React.HTMLAttributes<HTMLDivElement> & { children: React.ReactNode };
-const Card = ({ children, className = '', ...props }: CardProps):JSX.Element => (
+
+const Card = ({ children, className = '', ...props }: CardProps): JSX.Element => (
   <div
     className={`glass-effect rounded-xl border border-border/30 hover:border-[hsl(200_80%_70%)]/50 transition-all duration-300 backdrop-blur-md ${className}`}
     {...props}
@@ -14,23 +14,22 @@ const Card = ({ children, className = '', ...props }: CardProps):JSX.Element => 
 );
 
 const CardHeader = ({ children, className = '', ...props }: CardProps): React.ReactElement => (
-  <div className={`p-6 pb-0 ${className}`} {...props}>
+  <div className={`p-4 pb-1 ${className}`} {...props}>
     {children}
   </div>
 );
 
 const CardTitle = ({ children, className = '', ...props }: CardProps): React.ReactElement => (
-  <h3 className={`text-xl font-semibold text-foreground ${className}`} {...props}>
+  <h3 className={`text-lg font-semibold text-foreground ${className}`} {...props}>
     {children}
   </h3>
 );
 
 const CardContent = ({ children, className = '', ...props }: CardProps): React.ReactElement => (
-  <div className={`p-6 ${className}`} {...props}>
+  <div className={`p-4 ${className}`} {...props}>
     {children}
   </div>
 );
-
 
 const faqData = [
   {
@@ -50,7 +49,7 @@ const faqData = [
   },
 ];
 
-const FAQ = ():JSX.Element => {
+const FAQ = (): JSX.Element => {
   const [openId, setOpenId] = useState<string | null>(null);
 
   return (
@@ -85,7 +84,7 @@ const FAQ = ():JSX.Element => {
                 id={`faq-content-${id}`}
                 role="region"
                 aria-labelledby={`faq-header-${id}`}
-                className="px-6 py-4 border-t border-border text-foreground rounded-b-lg transition-colors"
+                className="px-6 py-4 border-t border-border bg-white text-black rounded-b-lg transition-colors"
               >
                 {answer}
               </div>
@@ -96,7 +95,6 @@ const FAQ = ():JSX.Element => {
     </div>
   );
 };
-
 
 const contactInfo = [
   {
@@ -109,7 +107,7 @@ const contactInfo = [
   },
   {
     id: 'contact-telegram',
-    icon: MessageCircle,
+    icon: Send,
     title: 'Telegram',
     details: ['@tvooyvzglyad'],
     subtitle: 'Подписываетесь на наш телеграмм',
@@ -133,107 +131,107 @@ const contactInfo = [
   },
 ];
 
-const ContactSection = ():JSX.Element => (
+const ContactSection = (): JSX.Element => (
   <section id="contact" className="section section-alt">
     <div className="container mx-auto px-4">
-      <div className="text-center mb-16 animate-fade-in">
-        <div className="inline-flex items-center space-x-2 glass-effect rounded-full px-6 py-2 mb-4 ">
-          <span className="text-foreground font-medium uppercase tracking-wide text-sm">
-            Контакты
-          </span>
-        </div>
-        <h2 className="heading-2 bg-gradient-to-r from-[hsl(200_80%_70%)] to-[hsl(210_90%_30%)] bg-clip-text text-transparent mb-6">
+      {/* Заголовок */}
+      <div className="text-center mb-10">
+        <span className="inline-block glass-effect rounded-full px-5 py-1.5 text-xs font-medium uppercase mb-3">
+          Контакты
+        </span>
+        <h2 className="heading-3 bg-gradient-to-r from-[hsl(200_80%_70%)] to-[hsl(210_90%_30%)] bg-clip-text text-transparent mb-4">
           Свяжитесь с нами
         </h2>
-        <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+        <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
           Готовы ответить на все ваши вопросы и помочь начать успешный бизнес
         </p>
       </div>
-      <div className="flex flex-col gap-8">
-       
+
+      {/* Две колонки: контакты + форма */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+        {/* Контакты: четверть grid */}
         <Card>
           <CardHeader>
             <CardTitle>Как с нами связаться</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {contactInfo.map((info) => {
                 const IconComponent = info.icon;
                 return (
                   <div
                     key={info.id}
-                    className="card group animate-slide-up"
-                    style={{ animationDelay: info.animationDelay }}
+                    className="flex flex-col items-center text-center bg-[#18171b] rounded-lg p-6 h-full min-h-[160px] shadow-sm"
                   >
-                    <CardContent>
-                      <div className="flex flex-col items-center text-center space-y-3">
-                        <div className="p-3 bg-gradient-to-r from-[hsl(200_75%_55%)] to-[hsl(210_75%_35%)] rounded-xl group-hover:scale-110 transition-transform duration-300">
-                          <IconComponent className="h-5 w-5 text-white" />
-                        </div>
-                        <h4 className="font-semibold text-foreground">{info.title}</h4>
-                        <div className="space-y-1">
-                          {info.details.map((detail) => (
-                            <p key={detail} className="text-sm text-muted-foreground">
-                              {detail}
-                            </p>
-                          ))}
-                        </div>
-                        <p className="text-xs text-muted-foreground/80">{info.subtitle}</p>
-                      </div>
-                    </CardContent>
+                    <div className="p-3 bg-gradient-to-r from-[hsl(200_75%_55%)] to-[hsl(210_75%_35%)] rounded-xl mb-3">
+                      <IconComponent className="h-6 w-6 text-white" />
+                    </div>
+                    <h4 className="font-semibold text-foreground text-base mb-2">{info.title}</h4>
+                    {info.details.map((detail) => (
+                      <p key={detail} className="text-sm text-muted-foreground">
+                        {detail}
+                      </p>
+                    ))}
+                    <p className="text-xs text-muted-foreground/80 mt-2">{info.subtitle}</p>
                   </div>
                 );
               })}
             </div>
           </CardContent>
         </Card>
-    
+
+        {/* Форма заявки */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
-              <Send className="h-5 w-5 text-primary" />
+              <Send className="h-4 w-4 text-primary" />
               <span>Оставить заявку</span>
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="text-sm font-medium text-foreground mb-2 block">Имя *</label>
-                <input placeholder="Ваше имя" className="form-input" />
+                <input placeholder="Ваше имя" className="form-input h-10 text-base" />
               </div>
               <div>
                 <label className="text-sm font-medium text-foreground mb-2 block">Телефон *</label>
-                <input placeholder="+7 (___) ___-__-__" className="form-input" />
+                <input placeholder="+7 (___) ___-__-__" className="form-input h-10 text-base" />
               </div>
             </div>
             <div>
               <label className="text-sm font-medium text-foreground mb-2 block">Email *</label>
-              <input placeholder="your@email.com" className="form-input" />
+              <input placeholder="your@email.com" className="form-input h-10 text-base" />
             </div>
             <div>
               <label className="text-sm font-medium text-foreground mb-2 block">Город</label>
-              <input placeholder="В каком городе планируете открытие?" className="form-input" />
+              <input
+                placeholder="В каком городе планируете открытие?"
+                className="form-input h-10 text-base"
+              />
             </div>
             <div>
               <label className="text-sm font-medium text-foreground mb-2 block">Сообщение</label>
               <textarea
                 placeholder="Расскажите о ваших планах и вопросах..."
-                className="form-input min-h-[100px] resize-vertical"
+                className="form-input min-h-[90px] resize-vertical text-base"
               />
             </div>
-            <button className="btn-primary w-full">
-              <Send className="h-4 w-4 mr-2" />
+            <button className="btn-primary w-full py-3 text-base flex items-center justify-center gap-2">
               Отправить заявку
             </button>
-            <p className="text-xs text-muted-foreground text-center">
+            <p className="text-xs text-muted-foreground text-center mt-2">
               Нажимая кнопку, вы соглашаетесь с обработкой персональных данных
             </p>
           </CardContent>
         </Card>
-        
+      </div>
+
+      {/* FAQ Below All */}
+      <div className="mt-6">
         <Card>
           <CardHeader>
-            <CardTitle>Часто задаваемые вопросы</CardTitle>
+            <CardTitle className="text-lg">Часто задаваемые вопросы</CardTitle>
           </CardHeader>
           <CardContent>
             <FAQ />

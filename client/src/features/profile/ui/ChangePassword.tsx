@@ -33,7 +33,8 @@ const ChangePassword = (): React.JSX.Element => {
   };
 
   return (
-    <div className="space-y-8">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      {/* Изменение пароля */}
       <div>
         <h2 className="text-xl font-semibold mb-4">Изменение пароля</h2>
         <form onSubmit={handleSubmit} className="max-w-sm">
@@ -85,7 +86,8 @@ const ChangePassword = (): React.JSX.Element => {
         </form>
       </div>
 
-      <div className="border-t pt-8">
+      {/* Двухфакторная аутентификация */}
+      <div>
         <TwoFactorSetup />
       </div>
     </div>
