@@ -16,10 +16,10 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      '/api': 'http://localhost:3000',
-      '/uploads': 'http://localhost:3000',
+      '/api': '/',
+      '/uploads': '/',
       '/socket.io': {
-        target: 'http://localhost:3000',
+        target: '/',
         ws: true,
         changeOrigin: true,
       },
