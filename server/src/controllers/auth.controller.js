@@ -111,6 +111,17 @@ class AuthController {
     try {
       const user = await AuthService.signin(req.body);
 
+            console.log(user)
+
+      // Проверяем, включена ли 2FA у пользователя
+      if (user.secret) {
+        // Если 2FA включен, возвращаем пользователя без токенов
+        // Клиент должен будет запросить верификацию 2FA
+        return res.status(428).json(user);
+      }
+
+      // Если 2FA не включен, возвращаем токены как обычно
+
       const { refreshToken, accessToken } = generateTokens({ user });
 
       res
