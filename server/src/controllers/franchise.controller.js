@@ -15,11 +15,41 @@ class FranchiseController {
 
   static async updateFranchise(req, res) {
     try {
-      if (!res.locals.user.admin) {
-        return res.status(403).json({ message: 'Только админ может вносить изменения' });
+      const userId = res.locals.user.id;
+      const franchiseId = req.body.id;
+
+      console.log('🔍 Universal updateFranchise - user:', res.locals.user);
+      console.log('🔍 Universal updateFranchise - franchiseId:', franchiseId);
+      console.log('🔍 Universal updateFranchise - body:', req.body);
+
+      if (!franchiseId) {
+        return res.status(400).json({ message: 'ID франшизы обязателен для обновления' });
       }
-      const franchise = await FranchiseService.updateFranchise(req.body);
-      res.status(200).json(franchise);
+
+      // Проверяем права доступа: либо админ, либо владелец франшизы
+      const franchise = await Franchise.findByPk(franchiseId);
+      if (!franchise) {
+        return res.status(404).json({ message: 'Франшиза не найдена' });
+      }
+
+      const isAdmin = res.locals.user.admin;
+      const isOwner = franchise.userId === userId;
+
+      console.log('🔍 Universal updateFranchise - isAdmin:', isAdmin);
+      console.log('🔍 Universal updateFranchise - isOwner:', isOwner);
+      console.log('🔍 Universal updateFranchise - franchise.userId:', franchise.userId);
+      console.log('🔍 Universal updateFranchise - current userId:', userId);
+
+      if (!isAdmin && !isOwner) {
+        return res
+          .status(403)
+          .json({ message: 'У вас нет прав для редактирования этой франшизы' });
+      }
+
+      console.log('🔍 Universal updateFranchise - access granted, proceeding...');
+      const updatedFranchise = await FranchiseService.updateFranchise(req.body);
+      console.log('🔍 Universal updateFranchise - success:', updatedFranchise);
+      res.status(200).json(updatedFranchise);
     } catch (error) {
       console.error('Error updating franchise:', error);
       res.status(500).json({ message: error.message });
@@ -28,11 +58,17 @@ class FranchiseController {
 
   static async createFranchise(req, res) {
     try {
-      if (!res.locals.user.admin) {
-        return res.status(403).json({ message: 'Только админ может вносить изменения' });
-      }
+      const userId = res.locals.user.id;
+      const isAdmin = res.locals.user.admin;
+
+      // Подготавливаем данные франшизы
+      const franchiseData = {
+        ...req.body,
+        userId: isAdmin ? req.body.userId || userId : userId, // Админ может указать userId, пользователь использует свой
+      };
+
       // Создаём запись франшизы в БД
-      await FranchiseService.createFranchise(req.body);
+      await FranchiseService.createFranchise(franchiseData);
       const franchise = await FranchiseService.getFranchise(req.body.name);
       const { id } = franchise.get();
       console.log(id, 'franchise');
@@ -89,20 +125,43 @@ class FranchiseController {
 
   static async uploadImage(req, res) {
     try {
-      if (!res.locals.user.admin) {
-        return res.status(403).json({ message: 'Только админ может вносить изменения' });
-      }
+      const userId = res.locals.user.id;
+      const franchiseId = parseInt(req.body.franchiseId);
+
+      console.log('🔍 Universal uploadImage - user:', res.locals.user);
+      console.log('🔍 Universal uploadImage - franchiseId:', franchiseId);
 
       if (!req.file) {
         return res.status(400).json({ message: 'Файл изображения не найден' });
       }
 
-      const franchiseId = parseInt(req.body.franchiseId);
       if (isNaN(franchiseId)) {
         return res.status(400).json({ message: 'Некорректный ID франшизы' });
       }
 
+      // Проверяем права доступа: либо админ, либо владелец франшизы
+      const franchise = await Franchise.findByPk(franchiseId);
+      if (!franchise) {
+        return res.status(404).json({ message: 'Франшиза не найдена' });
+      }
+
+      const isAdmin = res.locals.user.admin;
+      const isOwner = franchise.userId === userId;
+
+      console.log('🔍 Universal uploadImage - isAdmin:', isAdmin);
+      console.log('🔍 Universal uploadImage - isOwner:', isOwner);
+      console.log('🔍 Universal uploadImage - franchise.userId:', franchise.userId);
+      console.log('🔍 Universal uploadImage - current userId:', userId);
+
+      if (!isAdmin && !isOwner) {
+        return res
+          .status(403)
+          .json({ message: 'У вас нет прав для загрузки изображения к этой франшизе' });
+      }
+
+      console.log('🔍 Universal uploadImage - access granted, proceeding...');
       const updatedFranchise = await FranchiseService.uploadImage(req.file, franchiseId);
+      console.log('🔍 Universal uploadImage - success:', updatedFranchise);
       res.status(200).json(updatedFranchise);
     } catch (error) {
       console.error('Error uploading image:', error);
@@ -128,44 +187,13 @@ class FranchiseController {
       const userId = res.locals.user.id;
       const franchiseData = {
         ...req.body,
-        userId
+        userId,
       };
 
       const franchise = await FranchiseService.createFranchise(franchiseData);
       res.status(201).json(franchise);
     } catch (error) {
       console.error('Error creating user franchise:', error);
-      res.status(500).json({ message: error.message });
-    }
-  }
-
-  // Обновить франшизу пользователя
-  static async updateUserFranchise(req, res) {
-    try {
-      const userId = res.locals.user.id;
-      const franchiseId = parseInt(req.params.id);
-
-      if (isNaN(franchiseId)) {
-        return res.status(400).json({ message: 'Некорректный ID франшизы' });
-      }
-
-      // Проверяем, что франшиза принадлежит пользователю
-      const franchise = await Franchise.findOne({
-        where: { id: franchiseId, userId }
-      });
-
-      if (!franchise) {
-        return res.status(404).json({ message: 'Франшиза не найдена' });
-      }
-
-      const updatedFranchise = await FranchiseService.updateFranchise({
-        ...req.body,
-        id: franchiseId
-      });
-
-      res.status(200).json(updatedFranchise);
-    } catch (error) {
-      console.error('Error updating user franchise:', error);
       res.status(500).json({ message: error.message });
     }
   }
@@ -182,48 +210,19 @@ class FranchiseController {
 
       // Проверяем, что франшиза принадлежит пользователю
       const franchise = await Franchise.findOne({
-        where: { id: franchiseId, userId }
+        where: { id: franchiseId, userId },
       });
 
       if (!franchise) {
-        return res.status(404).json({ message: 'Франшиза не найдена' });
+        return res
+          .status(403)
+          .json({ message: 'У вас нет прав для удаления этой франшизы' });
       }
 
       await FranchiseService.deleteFranchise(franchiseId);
       res.status(204).send();
     } catch (error) {
       console.error('Error deleting user franchise:', error);
-      res.status(500).json({ message: error.message });
-    }
-  }
-
-  // Загрузить изображение франшизы пользователем
-  static async uploadUserFranchiseImage(req, res) {
-    try {
-      const userId = res.locals.user.id;
-      const franchiseId = parseInt(req.params.id);
-
-      if (isNaN(franchiseId)) {
-        return res.status(400).json({ message: 'Некорректный ID франшизы' });
-      }
-
-      if (!req.file) {
-        return res.status(400).json({ message: 'Файл изображения не найден' });
-      }
-
-      // Проверяем, что франшиза принадлежит пользователю
-      const franchise = await Franchise.findOne({
-        where: { id: franchiseId, userId }
-      });
-
-      if (!franchise) {
-        return res.status(404).json({ message: 'Франшиза не найдена' });
-      }
-
-      const updatedFranchise = await FranchiseService.uploadImage(req.file, franchiseId);
-      res.status(200).json(updatedFranchise);
-    } catch (error) {
-      console.error('Error uploading user franchise image:', error);
       res.status(500).json({ message: error.message });
     }
   }

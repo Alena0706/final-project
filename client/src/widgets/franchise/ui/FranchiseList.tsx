@@ -8,7 +8,7 @@ import {
   updateFranchise,
   uploadImage,
 } from '@/entities/openFrancise/model/thunks';
-
+import { Plus, Building2 } from 'lucide-react';
 import CreateFranchiseModal from '@/widgets/modalFranchise/ui/CreateFranchiseModal';
 
 export default function FranchiseList(): React.JSX.Element {
@@ -99,9 +99,9 @@ export default function FranchiseList(): React.JSX.Element {
         <div className="flex justify-center mb-8">
           <button
             onClick={openCreateModal}
-            className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-green-600 to-green-700 text-white font-medium rounded-xl hover:from-green-700 hover:to-green-800 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+            className="inline-flex items-center px-6 py-3 bg-primary/10 text-primary border border-primary/20 font-medium rounded-lg hover:bg-primary/20 hover:border-primary/40 focus:ring-2 focus:ring-primary/20 transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-1 hover:scale-105 group"
           >
-            <span className="mr-2">✨</span>
+            <Plus className="h-5 w-5 mr-2" />
             Создать новую франшизу
           </button>
         </div>
@@ -115,21 +115,19 @@ export default function FranchiseList(): React.JSX.Element {
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
             {franchises.map((f) => (
-              <FranchiseCard 
-                key={f.id} 
-                franchise={f} 
-                setIsOpen={() => openEditModal(f)} 
-              />
+              <FranchiseCard key={f.id} franchise={f} setIsOpen={() => openEditModal(f)} />
             ))}
           </div>
 
           {franchises.length === 0 && franchiseStatus === 'loaded' && (
             <div className="text-center py-12">
-              <div className="text-6xl mb-4">🏪</div>
-              <h3 className="text-xl font-semibold text-gray-600 mb-2">Франшиз пока нет</h3>
-              <p className="text-gray-500">
+              <div className="w-16 h-16 mx-auto mb-4 bg-muted rounded-full flex items-center justify-center">
+                <Building2 className="h-8 w-8 text-muted-foreground" />
+              </div>
+              <h3 className="text-xl font-semibold text-foreground mb-2">Франшиз пока нет</h3>
+              <p className="text-muted-foreground">
                 {admin
                   ? 'Создайте первую франшизу, чтобы начать!'
                   : 'Скоро здесь появятся наши франшизы'}

@@ -1,39 +1,43 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useAppSelector, useAppDispatch } from '@/shared/hooks/hooks';
-import { FileText, Upload, Download, Trash2, ArrowLeft, Building2, MapPin, Phone, Calendar, Edit } from 'lucide-react';
+import {
+  FileText,
+  Upload,
+  Download,
+  Trash2,
+  ArrowLeft,
+  Building2,
+  MapPin,
+  Phone,
+  Calendar,
+  Edit,
+} from 'lucide-react';
 import axiosInstance from '@/shared/api/axiosInstance';
 import EditFranchiseModal from '@/widgets/modalFranchise/ui/EditFranchiseModal';
-import { deleteFranchise, updateFranchise, uploadImage } from '@/entities/openFrancise/model/thunks';
+import {
+  deleteFranchise,
+  updateFranchise,
+  uploadImage,
+} from '@/entities/openFrancise/model/thunks';
 import { formatDate } from '@/shared/lib/dateUtils';
+import type { FranchiseT } from '@/entities/openFrancise/model/types';
 
-interface Document {
+
+type Document = {
   id: number;
   contract?: string;
   receipt?: string;
   userId: number;
   createdAt: string;
   updatedAt: string;
-}
 
-interface Franchise {
-  id: number;
-  name: string;
-  address: string;
-  workPhone: string;
-  city: string;
-  description: string;
-  image: string | null;
-  video: string | null;
-  userId: number;
-  createdAt: string;
-  updatedAt: string;
-}
+};
 
-interface FranchiseDetailViewProps {
-  franchise: Franchise;
+type FranchiseDetailViewProps = {
+  franchise: FranchiseT;
   onBack: () => void;
-  onFranchiseUpdate: (updatedFranchise: Franchise) => void;
-}
+  onFranchiseUpdate: (updatedFranchise: FranchiseT) => void;
+};
 
 const FranchiseDetailView: React.FC<FranchiseDetailViewProps> = ({
   franchise,
@@ -55,7 +59,7 @@ const FranchiseDetailView: React.FC<FranchiseDetailViewProps> = ({
 
   // Загрузка документов франшизы
   useEffect(() => {
-    const loadDocuments = async () => {
+    const loadDocuments = async (): Promise<void> => {
       try {
         setIsLoading(true);
         const response = await axiosInstance.get('/documents');
@@ -74,7 +78,7 @@ const FranchiseDetailView: React.FC<FranchiseDetailViewProps> = ({
 
   // Обновляем imageKey при изменении изображения франшизы
   useEffect(() => {
-    setImageKey(prev => prev + 1);
+    setImageKey((prev) => prev + 1);
   }, [franchise.image]);
 
   // Анимация появления модального окна удаления
@@ -115,7 +119,7 @@ const FranchiseDetailView: React.FC<FranchiseDetailViewProps> = ({
         },
       });
 
-      setDocuments(prev => [response.data, ...prev]);
+      setDocuments((prev) => [response.data, ...prev]);
     } catch (error) {
       console.error('Ошибка загрузки контракта:', error);
     } finally {
@@ -139,7 +143,7 @@ const FranchiseDetailView: React.FC<FranchiseDetailViewProps> = ({
         },
       });
 
-      setDocuments(prev => [response.data, ...prev]);
+      setDocuments((prev) => [response.data, ...prev]);
     } catch (error) {
       console.error('Ошибка загрузки чека:', error);
     } finally {
@@ -147,12 +151,11 @@ const FranchiseDetailView: React.FC<FranchiseDetailViewProps> = ({
     }
   }, []);
 
-
   // Обработчик удаления документа
   const handleDeleteDocument = useCallback(async (documentId: number) => {
     try {
       await axiosInstance.delete(`/documents/${documentId}`);
-      setDocuments(prev => prev.filter(doc => doc.id !== documentId));
+      setDocuments((prev) => prev.filter((doc) => doc.id !== documentId));
     } catch (error) {
       console.error('Ошибка удаления документа:', error);
     }
@@ -175,128 +178,150 @@ const FranchiseDetailView: React.FC<FranchiseDetailViewProps> = ({
   }, [dispatch, franchise.id, onBack]);
 
   // Обработчик сохранения франшизы
-  const handleSaveFranchise = useCallback(async (
-    updated: any,
-    franchiseId: number,
-    image: File | null,
-    video: File | null,
-  ): Promise<void> => {
-    setError(null);
-    try {
-      // Сначала обновляем основные данные франшизы
-      let updatedFranchise = await dispatch(updateFranchise({ ...updated, id: franchiseId })).unwrap();
+  const handleSaveFranchise = useCallback(
+    async (
+      updated: any,
+      franchiseId: number,
+      image: File | null,
+      video: File | null,
+    ): Promise<void> => {
+      setError(null);
+      try {
+        // Сначала обновляем основные данные франшизы
+        let updatedFranchise = await dispatch(
+          updateFranchise({ ...updated, id: franchiseId }),
+        ).unwrap();
 
-      // Затем загружаем изображение, если оно есть
-      if (image) {
-        updatedFranchise = await dispatch(uploadImage({ image, franchiseId })).unwrap();
-        // Принудительно обновляем изображение
-        setImageKey(prev => prev + 1);
+        // Затем загружаем изображение, если оно есть
+        if (image) {
+          updatedFranchise = await dispatch(uploadImage({ image, franchiseId })).unwrap();
+          // Принудительно обновляем изображение
+          setImageKey((prev) => prev + 1);
+        }
+
+        setShowEditModal(false);
+        onFranchiseUpdate(updatedFranchise as FranchiseT);
+      } catch (error: any) {
+        console.error('Error saving franchise:', error);
+
+        // Более детальная обработка ошибок
+        let errorMessage = 'Ошибка при сохранении франшизы. Попробуйте еще раз.';
+
+        if (error?.response?.status === 403) {
+          errorMessage = 'У вас нет прав для редактирования этой франшизы.';
+        } else if (error?.response?.status === 400) {
+          errorMessage = 'Некорректные данные франшизы.';
+        } else if (error?.response?.status === 500) {
+          errorMessage = 'Ошибка сервера. Попробуйте позже.';
+        } else if (error?.message) {
+          errorMessage = error.message;
+        }
+
+        setError(errorMessage);
+        throw error; // Пробрасываем ошибку дальше для обработки в модальном окне
       }
-
-      setShowEditModal(false);
-      onFranchiseUpdate(updatedFranchise as Franchise);
-    } catch (error) {
-      console.error('Error saving franchise:', error);
-      setError('Ошибка при сохранении франшизы. Проверьте подключение к интернету и попробуйте еще раз.');
-      throw error; // Пробрасываем ошибку дальше для обработки в модальном окне
-    }
-  }, [dispatch, onFranchiseUpdate]);
+    },
+    [dispatch, onFranchiseUpdate],
+  );
 
   // Мемоизируем заголовок и кнопки действий
-  const headerSection = useMemo(() => (
-    <div className="flex items-center justify-between">
-      <div className="flex items-center gap-4">
-        <button
-          onClick={onBack}
-          className="p-2 hover:bg-muted rounded-lg transition-colors"
-        >
-          <ArrowLeft className="h-5 w-5" />
-        </button>
-        <div>
-          <h2 className="text-2xl font-bold text-foreground">{franchise.name}</h2>
-          <p className="text-muted-foreground">Управление франшизой и документами</p>
+  const headerSection = useMemo(
+    () => (
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <button onClick={onBack} className="p-2 hover:bg-muted rounded-lg transition-colors">
+            <ArrowLeft className="h-5 w-5" />
+          </button>
+          <div>
+            <h2 className="text-2xl font-bold text-foreground">{franchise.name}</h2>
+            <p className="text-muted-foreground">Управление франшизой и документами</p>
+          </div>
+        </div>
+
+        {/* Кнопки действий */}
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleEditFranchise}
+            className="p-2 bg-primary/10 text-primary border border-primary/20 rounded-lg hover:bg-primary/20 hover:border-primary/40 focus:ring-2 focus:ring-primary/20 transition-all duration-200 shadow-sm hover:shadow-md hover:scale-105 group"
+            title="Редактировать франшизу"
+          >
+            <Edit className="h-5 w-5" />
+          </button>
+          <button
+            onClick={handleDeleteFranchise}
+            className="p-2 bg-destructive/10 text-destructive border border-destructive/20 rounded-lg hover:bg-destructive/20 hover:border-destructive/40 focus:ring-2 focus:ring-destructive/20 transition-all duration-200 shadow-sm hover:shadow-md hover:scale-105 group"
+            title="Удалить франшизу"
+          >
+            <Trash2 className="h-5 w-5" />
+          </button>
         </div>
       </div>
-      
-      {/* Кнопки действий */}
-      <div className="flex items-center gap-2">
-        <button
-          onClick={handleEditFranchise}
-          className="p-2 hover:bg-muted rounded-lg transition-colors"
-          title="Редактировать франшизу"
-        >
-          <Edit className="h-5 w-5 text-muted-foreground" />
-        </button>
-        <button
-          onClick={handleDeleteFranchise}
-          className="p-2 hover:bg-muted rounded-lg transition-colors text-destructive"
-          title="Удалить франшизу"
-        >
-          <Trash2 className="h-5 w-5" />
-        </button>
-      </div>
-    </div>
-  ), [franchise.name, onBack, handleEditFranchise, handleDeleteFranchise]);
+    ),
+    [franchise.name, onBack, handleEditFranchise, handleDeleteFranchise],
+  );
 
   // Мемоизируем информацию о франшизе
-  const franchiseInfo = useMemo(() => (
-    <div className="card">
-      <div className="p-6">
-        <h3 className="text-lg font-semibold text-foreground mb-4">Информация о франшизе</h3>
-        
-        {/* Изображение франшизы */}
-        <div className="mb-6">
-          {franchise.image ? (
-            <img
-              key={`${franchise.image}-${imageKey}`} // Принудительное обновление при изменении изображения
-              src={`/api/uploads/${franchise.image}?t=${Date.now()}`} // Добавляем timestamp для обхода кеша
-              alt={franchise.name}
-              className="w-full h-48 object-cover rounded-lg mb-2"
-            />
-          ) : (
-            <div className="w-full h-48 bg-muted rounded-lg flex items-center justify-center mb-2">
-              <Building2 className="h-12 w-12 text-muted-foreground" />
-            </div>
-          )}
-        </div>
+  const franchiseInfo = useMemo(
+    () => (
+      <div className="card">
+        <div className="p-6">
+          <h3 className="text-lg font-semibold text-foreground mb-4">Информация о франшизе</h3>
 
-        {/* Детали франшизы */}
-        <div className="space-y-4">
-          <div className="flex items-start gap-3">
-            <MapPin className="h-5 w-5 text-muted-foreground mt-0.5" />
-            <div>
-              <p className="text-sm font-medium text-foreground">Адрес</p>
-              <p className="text-sm text-muted-foreground">{franchise.address}</p>
-            </div>
+          {/* Изображение франшизы */}
+          <div className="mb-6">
+            {franchise.image ? (
+              <img
+                key={`${franchise.image}-${imageKey}`} // Принудительное обновление при изменении изображения
+                src={`/api/uploads/${franchise.image}?t=${Date.now()}`} // Добавляем timestamp для обхода кеша
+                alt={franchise.name}
+                className="w-full h-48 object-cover rounded-lg mb-2"
+              />
+            ) : (
+              <div className="w-full h-48 bg-muted rounded-lg flex items-center justify-center mb-2">
+                <Building2 className="h-12 w-12 text-muted-foreground" />
+              </div>
+            )}
           </div>
 
-          <div className="flex items-start gap-3">
-            <Phone className="h-5 w-5 text-muted-foreground mt-0.5" />
-            <div>
-              <p className="text-sm font-medium text-foreground">Телефон</p>
-              <p className="text-sm text-muted-foreground">{franchise.workPhone}</p>
+          {/* Детали франшизы */}
+          <div className="space-y-4">
+            <div className="flex items-start gap-3">
+              <MapPin className="h-5 w-5 text-muted-foreground mt-0.5" />
+              <div>
+                <p className="text-sm font-medium text-foreground">Адрес</p>
+                <p className="text-sm text-muted-foreground">{franchise.address}</p>
+              </div>
             </div>
-          </div>
 
-          <div className="flex items-start gap-3">
-            <Building2 className="h-5 w-5 text-muted-foreground mt-0.5" />
-            <div>
-              <p className="text-sm font-medium text-foreground">Город</p>
-              <p className="text-sm text-muted-foreground">{franchise.city}</p>
+            <div className="flex items-start gap-3">
+              <Phone className="h-5 w-5 text-muted-foreground mt-0.5" />
+              <div>
+                <p className="text-sm font-medium text-foreground">Телефон</p>
+                <p className="text-sm text-muted-foreground">{franchise.workPhone}</p>
+              </div>
             </div>
-          </div>
 
-          <div className="flex items-start gap-3">
-            <Calendar className="h-5 w-5 text-muted-foreground mt-0.5" />
-            <div>
-              <p className="text-sm font-medium text-foreground">Дата создания</p>
-              <p className="text-sm text-muted-foreground">{formatDate(franchise.createdAt)}</p>
+            <div className="flex items-start gap-3">
+              <Building2 className="h-5 w-5 text-muted-foreground mt-0.5" />
+              <div>
+                <p className="text-sm font-medium text-foreground">Город</p>
+                <p className="text-sm text-muted-foreground">{franchise.city}</p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-3">
+              <Calendar className="h-5 w-5 text-muted-foreground mt-0.5" />
+              <div>
+                <p className="text-sm font-medium text-foreground">Дата создания</p>
+                <p className="text-sm text-muted-foreground">{formatDate(franchise.createdAt)}</p>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  ), [franchise, imageKey]);
+    ),
+    [franchise, imageKey],
+  );
 
   if (isLoading) {
     return (
@@ -319,7 +344,7 @@ const FranchiseDetailView: React.FC<FranchiseDetailViewProps> = ({
         <div className="card">
           <div className="p-6">
             <h3 className="text-lg font-semibold text-foreground mb-4">Документы</h3>
-            
+
             {/* Загрузка контракта */}
             <div className="mb-6">
               <h4 className="text-sm font-medium text-foreground mb-2">Договор</h4>
@@ -388,7 +413,10 @@ const FranchiseDetailView: React.FC<FranchiseDetailViewProps> = ({
               {documents.length > 0 ? (
                 <div className="space-y-2">
                   {documents.map((doc) => (
-                    <div key={doc.id} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg hover:bg-muted/70 transition-colors">
+                    <div
+                      key={doc.id}
+                      className="flex items-center justify-between p-3 bg-muted/50 rounded-lg hover:bg-muted/70 transition-colors"
+                    >
                       <div className="flex items-center gap-2">
                         <FileText className="h-4 w-4 text-muted-foreground" />
                         <span className="text-sm text-foreground">
@@ -458,19 +486,22 @@ const FranchiseDetailView: React.FC<FranchiseDetailViewProps> = ({
             isDeleteModalVisible ? 'opacity-100' : 'opacity-0'
           }`}
           onClick={() => setShowDeleteModal(false)}
-          style={{ 
+          style={{
             willChange: 'opacity',
-            transition: 'opacity 300ms cubic-bezier(0.4, 0, 0.2, 1)'
+            transition: 'opacity 300ms cubic-bezier(0.4, 0, 0.2, 1)',
           }}
         >
           <div
             className={`modal-content rounded-xl shadow-elegant p-6 w-full max-w-md mx-4 text-foreground ${
-              isDeleteModalVisible ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-95 translate-y-4'
+              isDeleteModalVisible
+                ? 'opacity-100 scale-100 translate-y-0'
+                : 'opacity-0 scale-95 translate-y-4'
             }`}
             onClick={(e) => e.stopPropagation()}
             style={{
               willChange: 'opacity, transform',
-              transition: 'opacity 300ms cubic-bezier(0.4, 0, 0.2, 1), transform 300ms cubic-bezier(0.4, 0, 0.2, 1)'
+              transition:
+                'opacity 300ms cubic-bezier(0.4, 0, 0.2, 1), transform 300ms cubic-bezier(0.4, 0, 0.2, 1)',
             }}
           >
             <div className="flex items-center gap-3 mb-4">
@@ -482,12 +513,12 @@ const FranchiseDetailView: React.FC<FranchiseDetailViewProps> = ({
                 <p className="text-sm text-muted-foreground">Это действие нельзя отменить</p>
               </div>
             </div>
-            
+
             <p className="text-sm text-foreground mb-6">
-              Вы уверены, что хотите удалить франшизу <strong>"{franchise.name}"</strong>? 
-              Все связанные данные будут безвозвратно удалены.
+              Вы уверены, что хотите удалить франшизу <strong>"{franchise.name}"</strong>? Все
+              связанные данные будут безвозвратно удалены.
             </p>
-            
+
             <div className="flex gap-3 justify-end">
               <button
                 onClick={() => setShowDeleteModal(false)}

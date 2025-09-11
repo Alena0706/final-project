@@ -1,5 +1,6 @@
 import { updateUser, uploadAvatar } from '@/entities/auth/model/thunks';
 import { useAppDispatch, useAppSelector } from '@/shared/hooks/hooks';
+import FileUpload from '@/shared/ui/FileUpload';
 import React, { useState } from 'react';
 import { FaPencilAlt } from 'react-icons/fa';
 
@@ -40,14 +41,6 @@ export default function ProfileSection(): React.JSX.Element {
     (formData.email.trim() !== '' && formData.email !== (user?.email ?? '')) ||
     (formData.phone.trim() !== '' && formData.phone !== (user?.phone ?? '')) ||
     (formData.city.trim() !== '' && formData.city !== (user?.city ?? ''));
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setSelectedFile(file);
-      setPreviewUrl(URL.createObjectURL(file));
-    }
-  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const fieldName = e.target.name as keyof typeof formData;
@@ -147,6 +140,8 @@ export default function ProfileSection(): React.JSX.Element {
     }
   };
 
+  const baseUrl = import.meta.env.DEV ? 'http://localhost:3000' : 'https://yourview.ignorelist.com';
+
   return (
     <div className="max-w-4xl mx-auto">
       <h2 className="text-3xl font-extrabold mb-8 text-gradient-primary text-center">
@@ -156,7 +151,7 @@ export default function ProfileSection(): React.JSX.Element {
         <div className="flex flex-col items-center">
           {avatar || previewUrl ? (
             <img
-              src={previewUrl ?? `http://localhost:5173/${avatar ?? ''}`}
+              src={previewUrl ?? `${baseUrl}/${avatar ?? ''}`}
               alt="Аватар"
               className="w-32 h-32 rounded-full object-cover mb-5 border-4 border-primary shadow-iris"
             />
@@ -165,20 +160,23 @@ export default function ProfileSection(): React.JSX.Element {
               Нет аватара
             </div>
           )}
-          <label
-            htmlFor="avatarInput"
-            className="cursor-pointer px-5 py-2 bg-gradient-primary text-white rounded-lg hover:shadow-iris transition-all duration-300 shadow-md"
-          >
-            Изменить аватар
-          </label>
 
-          <input
-            id="avatarInput"
-            type="file"
-            accept="image/jpeg,image/jpg,image/png"
-            className="hidden"
-            onChange={handleFileChange}
-          />
+          <div className="w-full max-w-xs">
+            <FileUpload
+              type="image"
+              label=""
+              accept="image/jpeg,image/jpg,image/png"
+              onFileSelect={(file) => {
+                setSelectedFile(file);
+                if (file) {
+                  setPreviewUrl(URL.createObjectURL(file));
+                } else {
+                  setPreviewUrl(undefined);
+                }
+              }}
+              selectedFile={selectedFile}
+            />
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

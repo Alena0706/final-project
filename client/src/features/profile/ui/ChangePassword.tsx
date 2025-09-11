@@ -1,6 +1,7 @@
 
 import TwoFactorAuth from '@/entities/2fa/ui/TwoFactorAuth';
 import { updateUser } from '@/entities/auth/model/thunks';
+import { userUpdateSchema } from '@/entities/auth/model/schemas';
 import { useAppDispatch } from '@/shared/hooks/hooks';
 import React, { useState } from 'react';
 
@@ -11,26 +12,42 @@ const ChangePassword = (): React.JSX.Element => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
 
-  const handleSubmit = (e: React.FormEvent): void => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
+    setError(null);
+    setSuccess(false);
+    setValidationErrors({});
+
+    // Проверка совпадения паролей
     if (newPassword !== confirmPassword) {
       setError('Новый пароль и подтверждение не совпадают');
-      setSuccess(false);
       return;
     }
-    if (newPassword.length < 6) {
-      setError('Новый пароль должен содержать не менее 6 символов');
-      setSuccess(false);
+
+    // Валидация нового пароля с помощью Zod
+    const validationResult = userUpdateSchema.shape.password.safeParse(newPassword);
+    
+    if (!validationResult.success) {
+      const errors: Record<string, string> = {};
+      validationResult.error.errors.forEach((error) => {
+        errors.password = error.message;
+      });
+      setValidationErrors(errors);
       return;
     }
-    setError(null);
-    void dispatch(updateUser({ oldpassword: currentPassword, password: newPassword }));
-    console.log('Изменение пароля');
-    setSuccess(true);
-    setCurrentPassword('');
-    setNewPassword('');
-    setConfirmPassword('');
+
+    try {
+      await dispatch(updateUser({ oldpassword: currentPassword, password: newPassword })).unwrap();
+      setSuccess(true);
+      setCurrentPassword('');
+      setNewPassword('');
+      setConfirmPassword('');
+    } catch (err) {
+      setError('Ошибка при изменении пароля');
+      console.error(err);
+    }
   };
 
   return (
@@ -59,9 +76,14 @@ const ChangePassword = (): React.JSX.Element => {
             id="newPassword"
             value={newPassword}
             onChange={(e) => setNewPassword(e.target.value)}
-            className="w-full border rounded px-3 py-2 mb-3 focus:outline-[hsl(200_75%_55%)]"
+            className={`w-full border rounded px-3 py-2 mb-3 focus:outline-[hsl(200_75%_55%)] ${
+              validationErrors.password ? 'border-red-500' : ''
+            }`}
             required
           />
+          {validationErrors.password && (
+            <p className="text-red-500 text-sm mb-2">{validationErrors.password}</p>
+          )}
 
           <label htmlFor="confirmPassword" className="block mb-2 font-medium">
             Подтверждение нового пароля
