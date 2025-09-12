@@ -12,7 +12,7 @@ franchiseRouter.post(
 );
 
 // Админские роуты
-franchiseRouter.get('/', verifyAccessToken, FranchiseController.getAllFranchises);
+franchiseRouter.get('/', FranchiseController.getAllFranchises);
 franchiseRouter.patch('/', verifyAccessToken, FranchiseController.updateFranchise);
 franchiseRouter.post(
   '/',
