@@ -9,6 +9,7 @@ import {
   markAsRead,
   markAllAsRead,
   removeNotification,
+  addNotification,
 } from './slice';
 
 // Получить уведомления пользователя
@@ -154,3 +155,6 @@ export const sendUserNotification = createAsyncThunk(
     }
   },
 );
+
+// Экспортируем addNotification для использования в WebSocket
+export { addNotification };

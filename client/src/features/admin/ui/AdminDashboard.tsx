@@ -4,10 +4,13 @@ import { fetchAllInvoices, createInvoice, cancelInvoice } from '@/entities/invoi
 import {
   fetchAllNotifications,
   sendBroadcastNotification,
+  addNotification,
 } from '@/entities/notification/model/thunks';
 import UserService, { type User } from '@/entities/user/api/userService';
 import type { SendNotificationRequest } from '@/entities/notification/api/notificationService';
 import type { CreateInvoiceRequest } from '@/entities/invoice/api/invoiceService';
+import axiosInstance from '@/shared/api/axiosInstance';
+import { io } from 'socket.io-client';
 
 const AdminDashboard: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -23,6 +26,11 @@ const AdminDashboard: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [loadingUsers, setLoadingUsers] = useState(false);
   const [usersLoaded, setUsersLoaded] = useState(false);
+  
+  // Состояние для поиска и фильтров
+  const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [userFilter, setUserFilter] = useState('all');
 
   // Загружаем пользователей при монтировании компонента
   useEffect(() => {
@@ -75,6 +83,92 @@ const AdminDashboard: React.FC = () => {
     }
   }, [activeTab, dispatch, user, status]); // Добавляем user и status в зависимости
 
+  // Мемоизируем проверку прав доступа
+  const isAdmin = useMemo(() => user && status === 'logged' && user.user?.admin, [user, status]);
+
+  // Функции фильтрации
+  const filteredInvoices = useMemo(() => {
+    let filtered = invoices;
+    
+    // Фильтр по статусу
+    if (statusFilter !== 'all') {
+      filtered = filtered.filter(invoice => invoice.status === statusFilter);
+    }
+    
+    // Фильтр по пользователю
+    if (userFilter !== 'all') {
+      filtered = filtered.filter(invoice => invoice.userId === parseInt(userFilter));
+    }
+    
+    // Поиск по тексту
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(invoice => 
+        invoice.id.toString().includes(query) ||
+        invoice.description.toLowerCase().includes(query) ||
+        invoice.user?.name.toLowerCase().includes(query) ||
+        invoice.user?.email.toLowerCase().includes(query) ||
+        invoice.amount.toString().includes(query)
+      );
+    }
+    
+    return filtered;
+  }, [invoices, statusFilter, userFilter, searchQuery]);
+
+  const filteredNotifications = useMemo(() => {
+    let filtered = notifications;
+    
+    // Поиск по тексту
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(notification => 
+        notification.title.toLowerCase().includes(query) ||
+        notification.message.toLowerCase().includes(query) ||
+        notification.type.toLowerCase().includes(query)
+      );
+    }
+    
+    return filtered;
+  }, [notifications, searchQuery]);
+
+
+  // WebSocket подключение для админа (уведомления)
+  useEffect(() => {
+    if (!isAdmin || !user?.user?.id) {
+      console.log('❌ Админ не авторизован, пропускаем WebSocket подключение');
+      return;
+    }
+
+    console.log(`🔌 Админ подключается к WebSocket, userId: ${user.user.id}`);
+    const socket = io('/', { autoConnect: true, transports: ['websocket'] });
+
+    socket.on('connect', () => {
+      console.log(`✅ Админ WebSocket подключен, userId: ${user.user.id}`);
+      // Присоединяемся к персональной комнате уведомлений админа
+      socket.emit('joinNotificationRoom', user.user.id);
+      console.log(`🏠 Админ присоединился к комнате уведомлений: notifications_${user.user.id}`);
+    });
+
+    socket.on('newNotification', (notification) => {
+      console.log(`🔔 Админ получил уведомление:`, notification);
+      console.log(`🔔 Тип уведомления: ${notification.type}`);
+      console.log(`🔔 Заголовок: ${notification.title}`);
+      console.log(`🔔 Сообщение: ${notification.message}`);
+      // Добавляем уведомление в Redux store
+      dispatch(addNotification(notification));
+      console.log(`✅ Уведомление добавлено в Redux store`);
+    });
+
+    socket.on('disconnect', () => {
+      console.log(`❌ Админ WebSocket отключен, userId: ${user.user.id}`);
+    });
+
+    return () => {
+      console.log(`🔌 Отключаем WebSocket для админа ${user.user.id}`);
+      socket.disconnect();
+    };
+  }, [isAdmin, user?.user?.id, dispatch]);
+
   // Формы
   const [invoiceForm, setInvoiceForm] = useState<CreateInvoiceRequest>({
     userId: 0,
@@ -89,9 +183,6 @@ const AdminDashboard: React.FC = () => {
     sendEmail: false,
     userType: 'all',
   });
-
-  // Мемоизируем проверку прав доступа
-  const isAdmin = useMemo(() => user && status === 'logged' && user.user?.admin, [user, status]);
 
   const handleCreateInvoice = useCallback(
     async (e: React.FormEvent) => {
@@ -144,6 +235,25 @@ const AdminDashboard: React.FC = () => {
       }),
     [],
   );
+
+  const getNotificationTypeLabel = useCallback((type: string) => {
+    switch (type) {
+      case 'invoice_reminder':
+        return 'Напоминание о счете';
+      case 'payment_reminder':
+        return 'Напоминание об оплате';
+      case 'invoice_generated':
+        return 'Счет создан';
+      case 'payment_received':
+        return 'Платеж получен';
+      case 'manual':
+        return 'Уведомление';
+      case 'franchise_application':
+        return 'Заявки';
+      default:
+        return type;
+    }
+  }, []);
 
   const formatCurrency = useCallback(
     (amount: number) =>
@@ -201,6 +311,7 @@ const AdminDashboard: React.FC = () => {
       <div className="text-center">
         <h1 className="text-4xl font-bold text-gradient-primary mb-4">Админская панель</h1>
         <p className="text-lg text-muted-foreground">Управление счетами и уведомлениями</p>
+        
       </div>
 
       {/* Табы */}
@@ -227,6 +338,95 @@ const AdminDashboard: React.FC = () => {
         </nav>
       </div>
 
+      {/* Поиск и быстрые фильтры */}
+      <div className="mt-8 px-4 md:px-8 lg:px-12">
+        <div className="bg-background border border-border rounded-xl p-6 shadow-sm">
+          {/* Поиск и сброс */}
+          <div className="flex gap-4 mb-6">
+            <div className="flex-1">
+              <label className="block text-sm font-medium text-foreground mb-2">
+                Поиск
+              </label>
+              <input
+                type="text"
+                placeholder={
+                  activeTab === 'invoices' 
+                    ? 'Поиск по ID, описанию, пользователю, email или сумме...'
+                    : 'Поиск по заголовку, сообщению или типу...'
+                }
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+              />
+            </div>
+            
+            <div className="flex items-end">
+              <button
+                onClick={() => {
+                  setSearchQuery('');
+                  setStatusFilter('all');
+                  setUserFilter('all');
+                }}
+                className="px-4 py-2 bg-muted text-muted-foreground rounded-lg hover:bg-muted/80 transition-colors text-sm font-medium"
+              >
+                Сбросить фильтры
+              </button>
+            </div>
+          </div>
+
+          {/* Быстрые фильтры по статусу для счетов */}
+          {activeTab === 'invoices' && (
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-3">
+                Быстрые фильтры по статусу
+              </label>
+              <div className="flex flex-wrap gap-2">
+                <button
+                  onClick={() => setStatusFilter('all')}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                    statusFilter === 'all'
+                      ? 'bg-primary text-primary-foreground shadow-md'
+                      : 'bg-muted text-muted-foreground hover:bg-muted/80 hover:shadow-sm'
+                  }`}
+                >
+                  Все ({invoices.length})
+                </button>
+                <button
+                  onClick={() => setStatusFilter('pending')}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                    statusFilter === 'pending'
+                      ? 'bg-yellow-500 text-white shadow-md'
+                      : 'bg-muted text-muted-foreground hover:bg-yellow-100 hover:text-yellow-700 hover:shadow-sm'
+                  }`}
+                >
+                  Ожидает оплаты ({invoices.filter(i => i.status === 'pending').length})
+                </button>
+                <button
+                  onClick={() => setStatusFilter('paid')}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                    statusFilter === 'paid'
+                      ? 'bg-green-500 text-white shadow-md'
+                      : 'bg-muted text-muted-foreground hover:bg-green-100 hover:text-green-700 hover:shadow-sm'
+                  }`}
+                >
+                  Оплачен ({invoices.filter(i => i.status === 'paid').length})
+                </button>
+                <button
+                  onClick={() => setStatusFilter('cancelled')}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                    statusFilter === 'cancelled'
+                      ? 'bg-red-500 text-white shadow-md'
+                      : 'bg-muted text-muted-foreground hover:bg-red-100 hover:text-red-700 hover:shadow-sm'
+                  }`}
+                >
+                  Отменен ({invoices.filter(i => i.status === 'cancelled').length})
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
       {/* Контент табов */}
       <div className="mt-8 px-4 md:px-8 lg:px-12">
         {activeTab === 'invoices' && (
@@ -239,9 +439,35 @@ const AdminDashboard: React.FC = () => {
               <div className="flex justify-center py-8">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
               </div>
+            ) : filteredInvoices.length === 0 ? (
+              <div className="text-center py-12">
+                <h3 className="text-xl font-semibold text-foreground mb-2">
+                  {searchQuery || statusFilter !== 'all' 
+                    ? 'Ничего не найдено' 
+                    : 'Нет счетов'
+                  }
+                </h3>
+                <p className="text-muted-foreground mb-4">
+                  {searchQuery || statusFilter !== 'all'
+                    ? 'Попробуйте изменить параметры поиска или фильтры'
+                    : 'Счета появятся здесь после создания'
+                  }
+                </p>
+                {(searchQuery || statusFilter !== 'all') && (
+                  <button
+                    onClick={() => {
+                      setSearchQuery('');
+                      setStatusFilter('all');
+                    }}
+                    className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
+                  >
+                    Сбросить фильтры
+                  </button>
+                )}
+              </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-8">
-                {invoices.map((invoice) => (
+                {filteredInvoices.map((invoice) => (
                   <div
                     key={invoice.id}
                     className="bg-background border border-border rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow"
@@ -314,9 +540,32 @@ const AdminDashboard: React.FC = () => {
               <div className="flex justify-center py-8">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
               </div>
+            ) : filteredNotifications.length === 0 ? (
+              <div className="text-center py-12">
+                <h3 className="text-xl font-semibold text-foreground mb-2">
+                  {searchQuery 
+                    ? 'Ничего не найдено' 
+                    : 'Нет уведомлений'
+                  }
+                </h3>
+                <p className="text-muted-foreground mb-4">
+                  {searchQuery
+                    ? 'Попробуйте изменить параметры поиска'
+                    : 'Уведомления появятся здесь после отправки'
+                  }
+                </p>
+                {searchQuery && (
+                  <button
+                    onClick={() => setSearchQuery('')}
+                    className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
+                  >
+                    Сбросить поиск
+                  </button>
+                )}
+              </div>
             ) : (
               <div className="max-w-4xl mx-auto space-y-4 pb-8">
-                {notifications.map((notification) => (
+                {filteredNotifications.map((notification) => (
                   <div
                     key={notification.id}
                     className="bg-background border border-border rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow"
@@ -359,7 +608,9 @@ const AdminDashboard: React.FC = () => {
                         </div>
                         <div>
                           <span className="text-sm text-muted-foreground">Тип:</span>
-                          <p className="text-sm text-foreground">{notification.type}</p>
+                          <p className="text-sm text-foreground">
+                            {getNotificationTypeLabel(notification.type)}
+                          </p>
                         </div>
                       </div>
                     </div>

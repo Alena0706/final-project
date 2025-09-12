@@ -119,6 +119,12 @@ class InvoiceService {
     const response = await axiosInstance.patch(`/invoices/${invoiceId}/cancel`);
     return response.data;
   }
+
+  // Удалить счет (админ, только отмененные)
+  static async deleteInvoice(invoiceId: number): Promise<{ success: boolean; message: string }> {
+    const response = await axiosInstance.delete(`/invoices/${invoiceId}`);
+    return response.data;
+  }
 }
 
 export default InvoiceService;

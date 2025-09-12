@@ -65,6 +65,8 @@ const UserNotifications: React.FC = () => {
         return '💳';
       case 'manual':
         return '📢';
+      case 'franchise_application':
+        return '📝';
       default:
         return '🔔';
     }
@@ -82,8 +84,29 @@ const UserNotifications: React.FC = () => {
         return 'bg-orange-100 text-orange-800';
       case 'manual':
         return 'bg-purple-100 text-purple-800';
+      case 'franchise_application':
+        return 'bg-orange-100 text-orange-800';
       default:
         return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  const getTypeLabel = (type: string) => {
+    switch (type) {
+      case 'invoice_reminder':
+        return 'Напоминание о счете';
+      case 'payment_reminder':
+        return 'Напоминание об оплате';
+      case 'invoice_generated':
+        return 'Счет создан';
+      case 'payment_received':
+        return 'Платеж получен';
+      case 'manual':
+        return 'Уведомление';
+      case 'franchise_application':
+        return 'Заявки';
+      default:
+        return type;
     }
   };
 
@@ -120,7 +143,7 @@ const UserNotifications: React.FC = () => {
           <select
             value={isReadFilter}
             onChange={(e) => setIsReadFilter(e.target.value)}
-            className="px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+            className="px-3 py-2 border border-white/10 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-transparent text-foreground"
           >
             <option value="">Все уведомления</option>
             <option value="false">Непрочитанные</option>
@@ -129,7 +152,7 @@ const UserNotifications: React.FC = () => {
           {unreadCount > 0 && (
             <button
               onClick={handleMarkAllAsRead}
-              className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+              className="px-4 py-2 bg-white/10 text-foreground rounded-lg hover:bg-white/20 transition-colors"
             >
               Отметить все как прочитанные
             </button>
@@ -138,16 +161,16 @@ const UserNotifications: React.FC = () => {
       </div>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+        <div className="bg-red-500/20 border border-red-500/30 text-red-400 px-4 py-3 rounded-lg">
           {error}
         </div>
       )}
 
       {notifications.length === 0 ? (
         <div className="text-center py-12">
-          <div className="text-gray-400 text-6xl mb-4">🔔</div>
-          <h3 className="text-xl font-semibold text-gray-600 mb-2">Уведомлений пока нет</h3>
-          <p className="text-gray-500">
+          <div className="text-muted-foreground text-6xl mb-4">🔔</div>
+          <h3 className="text-xl font-semibold text-muted-foreground mb-2">Уведомлений пока нет</h3>
+          <p className="text-muted-foreground">
             Когда появятся новые уведомления, они будут отображаться здесь
           </p>
         </div>
@@ -156,8 +179,8 @@ const UserNotifications: React.FC = () => {
           {notifications.map((notification) => (
             <div
               key={notification.id}
-              className={`bg-white border rounded-lg p-4 shadow-sm hover:shadow-md transition-all ${
-                !notification.isRead ? 'border-primary border-l-4' : 'border-border'
+              className={`dark-glass border rounded-lg p-4 shadow-sm hover:shadow-md transition-all ${
+                !notification.isRead ? 'border-primary border-l-4' : 'border-white/10'
               }`}
             >
               <div className="flex items-start space-x-3">
@@ -166,7 +189,7 @@ const UserNotifications: React.FC = () => {
                   <div className="flex items-center justify-between mb-2">
                     <h3
                       className={`text-lg font-semibold ${
-                        !notification.isRead ? 'text-gray-900' : 'text-gray-600'
+                        !notification.isRead ? 'text-foreground' : 'text-muted-foreground'
                       }`}
                     >
                       {notification.title}
@@ -177,7 +200,7 @@ const UserNotifications: React.FC = () => {
                           notification.type,
                         )}`}
                       >
-                        {notification.type}
+                        {getTypeLabel(notification.type)}
                       </span>
                       {!notification.isRead && (
                         <div className="w-2 h-2 bg-primary rounded-full"></div>
@@ -185,11 +208,11 @@ const UserNotifications: React.FC = () => {
                     </div>
                   </div>
 
-                  <p className={`text-gray-600 mb-3 ${!notification.isRead ? 'font-medium' : ''}`}>
+                  <p className={`text-muted-foreground mb-3 ${!notification.isRead ? 'font-medium' : ''}`}>
                     {notification.message}
                   </p>
 
-                  <div className="flex items-center justify-between text-sm text-gray-500">
+                  <div className="flex items-center justify-between text-sm text-muted-foreground">
                     <span>{formatDate(notification.sentAt || notification.createdAt)}</span>
                     <div className="flex space-x-2">
                       {!notification.isRead && (
@@ -221,17 +244,17 @@ const UserNotifications: React.FC = () => {
           <button
             onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
             disabled={currentPage === 1}
-            className="px-3 py-2 border border-border rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+            className="px-3 py-2 border border-white/10 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-white/5 text-foreground"
           >
             Назад
           </button>
-          <span className="px-4 py-2 text-sm text-gray-600">
+          <span className="px-4 py-2 text-sm text-muted-foreground">
             Страница {currentPage} из {pagination.pages}
           </span>
           <button
             onClick={() => setCurrentPage((prev) => Math.min(pagination.pages, prev + 1))}
             disabled={currentPage === pagination.pages}
-            className="px-3 py-2 border border-border rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+            className="px-3 py-2 border border-white/10 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-white/5 text-foreground"
           >
             Вперед
           </button>

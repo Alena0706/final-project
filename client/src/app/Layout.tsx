@@ -1,6 +1,7 @@
 import SupportChat from '@/widgets/Chat/ui/SupportChat';
 import Navigation from '@/widgets/components/ui/Navigation';
 import ScrollToTopButton from '@/widgets/components/ui/ScrollToTopButton';
+import NotificationToast from '@/widgets/components/ui/NotificationToast';
 import { useAppSelector } from '@/shared/hooks/hooks';
 
 import React from 'react';
@@ -16,6 +17,7 @@ export default function Layout(): React.JSX.Element {
         <Outlet />
         {userStatus === 'logged' && <SupportChat />}
         <ScrollToTopButton />
+        {userStatus === 'logged' && <NotificationToast />}
       </main>
     </div>
   );

@@ -49,6 +49,12 @@ export const invoiceSlice = createSlice({
         state.currentInvoice = action.payload;
       }
     },
+    removeInvoice(state, action: PayloadAction<number>) {
+      state.invoices = state.invoices.filter(invoice => invoice.id !== action.payload);
+      if (state.currentInvoice?.id === action.payload) {
+        state.currentInvoice = null;
+      }
+    },
     setLoading(state, action: PayloadAction<boolean>) {
       state.loading = action.payload;
     },
@@ -76,6 +82,7 @@ export const {
   setCurrentInvoice,
   addInvoice,
   updateInvoice,
+  removeInvoice,
   setLoading,
   setError,
   setPagination,

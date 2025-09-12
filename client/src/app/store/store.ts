@@ -11,6 +11,7 @@ import invoiceReducer from '@/entities/invoice/model/slice';
 import notificationReducer from '@/entities/notification/model/slice';
 import twoFactorReducer from '@/entities/2fa/model/slice';
 import modalReducer from '@/entities/modal/model/slice';
+import usersReducer from '@/entities/user/model/slice';
 
 // Конфигурация для персистентности чата
 const chatPersistConfig = {
@@ -36,6 +37,7 @@ const rootReducer = combineReducers({
   invoice: invoiceReducer,
   notification: notificationReducer,
   modal: modalReducer,
+  users: usersReducer,
 });
 
 export const store = configureStore({

@@ -1,5 +1,6 @@
 const { Notification, User } = require('../../db/models');
 const emailService = require('../services/email.service');
+const { sendNotificationToUser, sendNotificationToAdmins } = require('../services/websocket.service');
 
 class NotificationController {
   // Получить уведомления пользователя
@@ -258,6 +259,22 @@ class NotificationController {
         sentAt: new Date()
       });
 
+      // Отправляем уведомление через WebSocket
+      try {
+        sendNotificationToUser(userId, {
+          id: notification.id,
+          userId: notification.userId,
+          type: notification.type,
+          title: notification.title,
+          message: notification.message,
+          isRead: notification.isRead,
+          sentAt: notification.sentAt,
+          createdAt: notification.createdAt
+        });
+      } catch (wsError) {
+        // Не прерываем выполнение, если WebSocket не работает
+      }
+
       // Отправляем email если требуется
       if (sendEmail) {
         const user = await User.findByPk(userId);
@@ -274,6 +291,87 @@ class NotificationController {
       return notification;
     } catch (error) {
       console.error('Create notification error:', error);
+      throw error;
+    }
+  }
+
+  // Создать уведомление для всех админов (внутренний метод)
+  static async createAdminNotification(type, title, message) {
+    try {
+      console.log(`🔔 createAdminNotification вызвана с параметрами:`, { type, title, message });
+      
+      // Находим всех админов
+      const admins = await User.findAll({
+        where: { admin: true },
+        attributes: ['id', 'name', 'email']
+      });
+
+      console.log(`👥 Найдено админов для уведомления: ${admins.length}`);
+      console.log(`👥 Админы:`, admins.map(a => ({ id: a.id, name: a.name, email: a.email })));
+
+      const notifications = [];
+
+      // Создаем уведомление для каждого админа
+      for (const admin of admins) {
+        try {
+          console.log(`📝 Создаем уведомление для админа ${admin.id} (${admin.name})`);
+          const notification = await Notification.create({
+            userId: admin.id,
+            type,
+            title,
+            message,
+            sentAt: new Date()
+          });
+
+          console.log(`✅ Создано уведомление для админа ${admin.id}: ${title} (ID: ${notification.id})`);
+          notifications.push(notification);
+        } catch (error) {
+          console.error(`❌ Error creating notification for admin ${admin.id}:`, error);
+        }
+      }
+
+      // Отправляем уведомление через WebSocket каждому админу
+      if (notifications.length > 0) {
+        try {
+          console.log(`📤 Начинаем отправку WebSocket уведомлений для ${notifications.length} админов`);
+          const { sendNotificationToUser } = require('../services/websocket.service');
+          
+          // Отправляем уведомление каждому админу через его персональную комнату
+          for (const notification of notifications) {
+            try {
+              console.log(`📤 Отправляем WebSocket уведомление админу ${notification.userId} (${notification.title})`);
+              console.log(`📤 Данные уведомления:`, {
+                id: notification.id,
+                userId: notification.userId,
+                type: notification.type,
+                title: notification.title,
+                message: notification.message
+              });
+              sendNotificationToUser(notification.userId, {
+                id: notification.id,
+                userId: notification.userId,
+                type: notification.type,
+                title: notification.title,
+                message: notification.message,
+                isRead: notification.isRead,
+                sentAt: notification.sentAt,
+                createdAt: notification.createdAt
+              });
+              console.log(`✅ WebSocket уведомление отправлено админу ${notification.userId}`);
+            } catch (wsError) {
+              console.error(`❌ Ошибка отправки WebSocket уведомления админу ${notification.userId}:`, wsError);
+            }
+          }
+        } catch (wsError) {
+          console.error('❌ Error sending WebSocket notification to admins:', wsError);
+        }
+      } else {
+        console.log('❌ Нет уведомлений для отправки через WebSocket');
+      }
+
+      return notifications;
+    } catch (error) {
+      console.error('Create admin notification error:', error);
       throw error;
     }
   }
@@ -311,6 +409,24 @@ class NotificationController {
             message,
             sentAt: new Date()
           });
+
+          // Отправляем уведомление через WebSocket
+          try {
+            const { sendNotificationToUser } = require('../services/websocket.service');
+            sendNotificationToUser(user.id, {
+              id: notification.id,
+              userId: notification.userId,
+              type: notification.type,
+              title: notification.title,
+              message: notification.message,
+              isRead: notification.isRead,
+              sentAt: notification.sentAt,
+              createdAt: notification.createdAt
+            });
+            console.log(`📤 Уведомление отправлено пользователю ${user.id} через WebSocket`);
+          } catch (wsError) {
+            console.error(`❌ Ошибка отправки WebSocket уведомления пользователю ${user.id}:`, wsError);
+          }
           
           // Отправляем email
           if (user.email) {
@@ -371,6 +487,22 @@ class NotificationController {
         message,
         sentAt: new Date()
       });
+      
+      // Отправляем уведомление через WebSocket
+      try {
+        sendNotificationToUser(userId, {
+          id: notification.id,
+          userId: notification.userId,
+          type: notification.type,
+          title: notification.title,
+          message: notification.message,
+          isRead: notification.isRead,
+          sentAt: notification.sentAt,
+          createdAt: notification.createdAt
+        });
+      } catch (wsError) {
+        // Не прерываем выполнение, если WebSocket не работает
+      }
       
       // Отправляем email если требуется
       if (sendEmail && user.email) {
