@@ -29,10 +29,10 @@ const Card = ({ children, className = '', ...props }: CardProps): React.JSX.Elem
 const FranchisePage = (): React.JSX.Element => {
   const user = useAppSelector((store) => store.user.user?.user);
   // Состояния для калькулятора
-  const [avgMonthlyRevenue, setAvgMonthlyRevenue] = useState('');
-  const [monthlyCosts, setMonthlyCosts] = useState('');
-  const [paushalnyVznos, setPaushalnyVznos] = useState('');
-  const [investment, setInvestment] = useState('');
+  const [avgMonthlyRevenue, setAvgMonthlyRevenue] = useState('300000');
+  const [monthlyCosts, setMonthlyCosts] = useState('100000');
+  const [paushalnyVznos, setPaushalnyVznos] = useState('150000');
+  const [investment, setInvestment] = useState('50000');
   const [isModalOpen, setModalOpen] = useState(false);
 
   const closeModal = (): void => setModalOpen(false);
@@ -301,11 +301,11 @@ const FranchisePage = (): React.JSX.Element => {
                   margin={{ top: 20, right: 30, bottom: 20, left: 20 }}
                 >
                   <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--muted))" />
-                  <XAxis dataKey="month" stroke="hsl(var(--muted-foreground))" fontSize={12} />
+                  <XAxis dataKey="month" stroke="#ffffff" fontSize={16} />
                   <YAxis
                     tickFormatter={(val) => `${(val / 1000).toString()}k ₽`}
-                    stroke="hsl(var(--muted-foreground))"
-                    fontSize={12}
+                    stroke="#ffffff"
+                    fontSize={16}
                   />
                   <Tooltip
                     formatter={(value: number, name: string) => [

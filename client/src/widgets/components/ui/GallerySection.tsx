@@ -158,7 +158,7 @@ const GallerySection = (): React.JSX.Element => {
           </p>
         </div>
         <FranchiseList />
-        <div className="text-center mt-16 animate-slide-up" style={{ animationDelay: '0.6s' }}>
+        {/* <div className="text-center mt-16 animate-slide-up" style={{ animationDelay: '0.6s' }}> */}
           {/* <div className="card inline-block">
             <h3 className="text-2xl font-bold mb-4 text-foreground">Хотите увидеть больше?</h3>
             <p className="text-muted-foreground mb-6 max-w-md">
@@ -166,7 +166,7 @@ const GallerySection = (): React.JSX.Element => {
             </p>
             <button className="btn-primary">Запросить полную галерею</button>
           </div> */}
-        </div>
+        {/* </div> */}
       </div>
     </section>
   );
