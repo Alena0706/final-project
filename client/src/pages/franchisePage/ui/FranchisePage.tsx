@@ -49,7 +49,6 @@ const FranchisePage = (): React.JSX.Element => {
   const annualProfit = netMonthlyProfit * 12;
   const roi = totalInvestment > 0 ? (annualProfit / totalInvestment) * 100 : 0;
 
-
   // Пример данных отзывов
   const reviews = [
     { id: 1, usr: 'Иван', text: 'Отличная франшиза, быстрый старт и поддержка на высоте.' },
@@ -98,10 +97,42 @@ const FranchisePage = (): React.JSX.Element => {
           <div className="mb-4">
             <h1 className="heading-2 text-gradient-primary">Франшиза "Твой взгляд"</h1>
           </div>
-          <p className="text-muted-foreground text-xl">
+          <h2 className="text-muted-foreground text-xl">
             Уникальная возможность стать частью инновационного бизнеса
-          </p>
+          </h2>
         </div>
+
+             {/* Отзывы партнеров */}
+        <section className="mb-16">
+          <div className="text-center mb-12">
+            <h3 className="heading-2 bg-gradient-to-r from-[hsl(200_80%_70%)] to-[hsl(210_90%_30%)] bg-clip-text text-transparent mb-6">
+              Отзывы партнеров
+            </h3>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              Реальные истории успеха наших партнеров
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+            {reviews.map(({ id, usr, text }) => (
+              <div
+                key={id}
+                className="card group animate-slide-up"
+                style={{ animationDelay: `${id * 0.1}s` }}
+              >
+                <div className="p-6">
+                  <div className="flex items-center space-x-3 mb-4">
+                    <div className="w-10 h-10 bg-gradient-to-r from-[hsl(200_75%_55%)] to-[hsl(210_75%_35%)] rounded-full flex items-center justify-center text-white font-semibold">
+                      {usr.charAt(0)}
+                    </div>
+                    <h3 className="font-semibold text-foreground">{usr}</h3>
+                  </div>
+                  <p className="text-muted-foreground leading-relaxed">"{text}"</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
 
         {/* Преимущества франшизы */}
         <section className="mb-16">
@@ -364,39 +395,6 @@ const FranchisePage = (): React.JSX.Element => {
             >
               Обратная связь
             </button>
-          </div>
-        </section>
-
-
-        {/* Отзывы партнеров */}
-        <section className="mb-16">
-          <div className="text-center mb-12">
-            <h2 className="heading-2 bg-gradient-to-r from-[hsl(200_80%_70%)] to-[hsl(210_90%_30%)] bg-clip-text text-transparent mb-6">
-              Отзывы партнеров
-            </h2>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Реальные истории успеха наших партнеров
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
-            {reviews.map(({ id, usr, text }) => (
-              <div
-                key={id}
-                className="card group animate-slide-up"
-                style={{ animationDelay: `${id * 0.1}s` }}
-              >
-                <div className="p-6">
-                  <div className="flex items-center space-x-3 mb-4">
-                    <div className="w-10 h-10 bg-gradient-to-r from-[hsl(200_75%_55%)] to-[hsl(210_75%_35%)] rounded-full flex items-center justify-center text-white font-semibold">
-                      {usr.charAt(0)}
-                    </div>
-                    <h3 className="font-semibold text-foreground">{usr}</h3>
-                  </div>
-                  <p className="text-muted-foreground leading-relaxed">"{text}"</p>
-                </div>
-              </div>
-            ))}
           </div>
         </section>
 
