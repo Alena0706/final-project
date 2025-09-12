@@ -120,9 +120,10 @@ export default function SignInForm(): React.JSX.Element {
 
           <form className="space-y-6" noValidate onSubmit={handleSubmit}>
             {/* Отображение ошибок */}
+
             {(error ?? validationError) && (
               <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
-                {error ?? validationError}
+                {error === 'Request failed with status code 500' ? 'Неверные данные' : undefined}
               </div>
             )}
 
