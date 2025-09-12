@@ -1,4 +1,4 @@
-import { addMessage, joinRoom, setHistory, setRooms, clearMessages } from '@/entities/chat/model/slice';
+import { addMessage, joinRoom, setHistory, setRooms, clearMessages, Message } from '@/entities/chat/model/slice';
 import { useAppDispatch, useAppSelector } from '@/shared/hooks/hooks';
 import React, { useEffect, useRef, useState } from 'react';
 import { io } from 'socket.io-client';
@@ -229,8 +229,8 @@ export default function SupportChat(): React.JSX.Element | null {
   // Добавляем приветственное сообщение только если чат действительно пустой
   useEffect(() => {
     if (userId && messages.length === 0 && !welcomeShown && isOpen) {
-      const welcomeMessage = {
-        id: 'welcome-' + Date.now(),
+      const welcomeMessage: Message = {
+        id: Math.floor(Date.now()/1000000),
         roomId: userId.toString(),
         sender: 'assistant',
         message: 'Добрый день! На связи - ИИ-Ассистент. Готов рассказать о магии фотографии радужки глаза, ответить на все вопросы о франшизе и помочь найти нужную информацию на сайте.',
