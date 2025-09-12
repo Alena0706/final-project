@@ -19,7 +19,7 @@ export default function NotificationBell(): React.JSX.Element {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   
-  const { notifications, unreadCount, loading } = useAppSelector(
+  const { notifications, unreadCount, loading, error } = useAppSelector(
     (state) => state.notification,
   );
   const userId = useAppSelector((store) => store.user.user?.user.id);
@@ -88,7 +88,12 @@ export default function NotificationBell(): React.JSX.Element {
   useEffect(() => {
     if (userId) {
       console.log('📊 Загружаем счетчик непрочитанных уведомлений...');
-      dispatch(fetchUnreadCount());
+      dispatch(fetchUnreadCount()).catch((error) => {
+        // Игнорируем ошибки загрузки количества уведомлений, так как они не критичны
+        if (!error?.message?.includes('количества уведомлений')) {
+          console.error('Ошибка загрузки уведомлений:', error);
+        }
+      });
     }
   }, [userId]); // Убираем dispatch из зависимостей
 

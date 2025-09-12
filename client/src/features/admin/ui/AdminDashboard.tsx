@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useAppDispatch, useAppSelector } from '@/shared/hooks/hooks';
-import { fetchAllInvoices, createInvoice, cancelInvoice } from '@/entities/invoice/model/thunks';
+import { fetchAllInvoices, createInvoice, cancelInvoice, deleteInvoice } from '@/entities/invoice/model/thunks';
 import {
   fetchAllNotifications,
   sendBroadcastNotification,
@@ -10,6 +10,7 @@ import UserService, { type User } from '@/entities/user/api/userService';
 import type { SendNotificationRequest } from '@/entities/notification/api/notificationService';
 import type { CreateInvoiceRequest } from '@/entities/invoice/api/invoiceService';
 import axiosInstance from '@/shared/api/axiosInstance';
+import { BaseModal } from '@/shared/ui/BaseModal';
 import { io } from 'socket.io-client';
 
 const AdminDashboard: React.FC = () => {
@@ -26,6 +27,10 @@ const AdminDashboard: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [loadingUsers, setLoadingUsers] = useState(false);
   const [usersLoaded, setUsersLoaded] = useState(false);
+  
+  // Состояние для модального окна подтверждения удаления
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [invoiceToDelete, setInvoiceToDelete] = useState<number | null>(null);
   
   // Состояние для поиска и фильтров
   const [searchQuery, setSearchQuery] = useState('');
@@ -226,6 +231,35 @@ const AdminDashboard: React.FC = () => {
     [dispatch],
   );
 
+  const handleDeleteInvoice = useCallback(
+    (invoiceId: number) => {
+      setInvoiceToDelete(invoiceId);
+      setDeleteModalOpen(true);
+    },
+    [],
+  );
+
+  const confirmDeleteInvoice = useCallback(
+    async () => {
+      if (invoiceToDelete) {
+        try {
+          await dispatch(deleteInvoice(invoiceToDelete)).unwrap();
+          void dispatch(fetchAllInvoices({}));
+          setDeleteModalOpen(false);
+          setInvoiceToDelete(null);
+        } catch (error) {
+          console.error('Ошибка удаления счета:', error);
+        }
+      }
+    },
+    [dispatch, invoiceToDelete],
+  );
+
+  const cancelDeleteInvoice = useCallback(() => {
+    setDeleteModalOpen(false);
+    setInvoiceToDelete(null);
+  }, []);
+
   const formatDate = useCallback(
     (dateString: string) =>
       new Date(dateString).toLocaleDateString('ru-RU', {
@@ -367,7 +401,7 @@ const AdminDashboard: React.FC = () => {
                   setStatusFilter('all');
                   setUserFilter('all');
                 }}
-                className="px-4 py-2 bg-muted text-muted-foreground rounded-lg hover:bg-muted/80 transition-colors text-sm font-medium"
+                className="px-4 py-2 bg-muted text-muted-foreground rounded-lg hover:bg-muted/80 hover:text-foreground hover:shadow-md transition-all duration-200 text-sm font-medium"
               >
                 Сбросить фильтры
               </button>
@@ -377,9 +411,6 @@ const AdminDashboard: React.FC = () => {
           {/* Быстрые фильтры по статусу для счетов */}
           {activeTab === 'invoices' && (
             <div>
-              <label className="block text-sm font-medium text-foreground mb-3">
-                Быстрые фильтры по статусу
-              </label>
               <div className="flex flex-wrap gap-2">
                 <button
                   onClick={() => setStatusFilter('all')}
@@ -459,7 +490,7 @@ const AdminDashboard: React.FC = () => {
                       setSearchQuery('');
                       setStatusFilter('all');
                     }}
-                    className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
+                    className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 hover:shadow-lg hover:scale-105 transition-all duration-200"
                   >
                     Сбросить фильтры
                   </button>
@@ -514,14 +545,25 @@ const AdminDashboard: React.FC = () => {
                         </div>
                       </div>
 
-                      {(invoice.status === 'pending' || invoice.status === 'overdue') && (
-                        <button
-                          onClick={() => handleCancelInvoice(invoice.id)}
-                          className="w-full mt-4 px-4 py-2 text-sm font-medium text-red-600 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 transition-colors"
-                        >
-                          Отменить счет
-                        </button>
-                      )}
+                      <div className="mt-4 space-y-2">
+                        {(invoice.status === 'pending' || invoice.status === 'overdue') && (
+                          <button
+                            onClick={() => handleCancelInvoice(invoice.id)}
+                            className="w-full px-4 py-2 text-sm font-medium text-red-600 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 transition-colors"
+                          >
+                            Отменить счет
+                          </button>
+                        )}
+                        
+                        {invoice.status === 'cancelled' && (
+                          <button
+                            onClick={() => handleDeleteInvoice(invoice.id)}
+                            className="w-full px-4 py-2 text-sm font-medium text-red-600 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 transition-colors"
+                          >
+                            Удалить счет
+                          </button>
+                        )}
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -711,9 +753,21 @@ const AdminDashboard: React.FC = () => {
 
                 <button
                   type="submit"
-                  className="w-full bg-primary text-white py-3 px-6 rounded-lg hover:bg-primary/90 transition-colors font-medium"
+                  disabled={invoiceLoading}
+                  className={`w-full py-3 px-6 rounded-lg font-medium transition-all duration-200 ${
+                    invoiceLoading
+                      ? 'bg-gray-400 text-gray-200 cursor-not-allowed'
+                      : 'bg-primary text-white hover:bg-primary/90 hover:shadow-lg hover:scale-105'
+                  }`}
                 >
-                  Создать счет
+                  {invoiceLoading ? (
+                    <div className="flex items-center justify-center space-x-2">
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                      <span>Создание счета...</span>
+                    </div>
+                  ) : (
+                    'Создать счет'
+                  )}
                 </button>
               </form>
             </div>
@@ -801,15 +855,69 @@ const AdminDashboard: React.FC = () => {
 
                 <button
                   type="submit"
-                  className="w-full bg-blue-500 text-white py-3 px-6 rounded-lg hover:bg-blue-600 transition-colors font-medium"
+                  disabled={notificationLoading}
+                  className={`w-full py-3 px-6 rounded-lg font-medium transition-all duration-200 ${
+                    notificationLoading
+                      ? 'bg-gray-400 text-gray-200 cursor-not-allowed'
+                      : 'bg-blue-500 text-white hover:bg-blue-600 hover:shadow-lg hover:scale-105'
+                  }`}
                 >
-                  Отправить уведомление
+                  {notificationLoading ? (
+                    <div className="flex items-center justify-center space-x-2">
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                      <span>Отправка уведомления...</span>
+                    </div>
+                  ) : (
+                    'Отправить уведомление'
+                  )}
                 </button>
               </form>
             </div>
           </div>
         )}
       </div>
+
+      {/* Модальное окно подтверждения удаления */}
+      <BaseModal
+        isOpen={deleteModalOpen}
+        onClose={cancelDeleteInvoice}
+        title="Подтверждение удаления"
+        size="sm"
+        closeOnBackdropClick={true}
+      >
+        <div className="space-y-4">
+          <div className="text-center">
+            <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 mb-4">
+              <svg className="h-6 w-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+              </svg>
+            </div>
+            <h3 className="text-lg font-medium text-foreground mb-2">
+              Удалить счет?
+            </h3>
+            <p className="text-sm text-muted-foreground">
+              Вы уверены, что хотите удалить этот счет? Это действие нельзя отменить.
+            </p>
+          </div>
+          
+          <div className="flex space-x-3 pt-4">
+            <button
+              type="button"
+              onClick={cancelDeleteInvoice}
+              className="flex-1 px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 border border-gray-300 rounded-lg hover:bg-gray-200 transition-colors"
+            >
+              Отмена
+            </button>
+            <button
+              type="button"
+              onClick={confirmDeleteInvoice}
+              className="flex-1 px-4 py-2 text-sm font-medium text-white bg-red-600 border border-red-600 rounded-lg hover:bg-red-700 transition-colors"
+            >
+              Удалить
+            </button>
+          </div>
+        </div>
+      </BaseModal>
     </div>
   );
 };
