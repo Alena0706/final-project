@@ -1,4 +1,11 @@
-import { addMessage, joinRoom, setHistory, setRooms, clearMessages, Message } from '@/entities/chat/model/slice';
+import {
+  addMessage,
+  joinRoom,
+  setHistory,
+  setRooms,
+  clearMessages,
+  Message,
+} from '@/entities/chat/model/slice';
 import { useAppDispatch, useAppSelector } from '@/shared/hooks/hooks';
 import React, { useEffect, useRef, useState } from 'react';
 import { io } from 'socket.io-client';
@@ -45,26 +52,26 @@ export default function SupportChat(): React.JSX.Element | null {
     if (roomId === '1') {
       return 'Админская';
     }
-    
+
     const userId = parseInt(roomId);
-    const user = users.find(u => u.id === userId);
-    
+    const user = users.find((u) => u.id === userId);
+
     console.log('🔍 getUserNameByRoomId:', {
       roomId,
       userId,
       usersCount: users.length,
-      users: users.map(u => ({ id: u.id, name: u.name })),
-      foundUser: user
+      users: users.map((u) => ({ id: u.id, name: u.name })),
+      foundUser: user,
     });
-    
+
     return user ? user.name : `Пользователь ${roomId}`;
   };
 
   // Функция для фильтрации комнат
   const getFilteredRooms = () => {
     if (!roomSearch.trim()) return rooms;
-    
-    return rooms.filter(room => {
+
+    return rooms.filter((room) => {
       const roomName = getUserNameByRoomId(room).toLowerCase();
       return roomName.includes(roomSearch.toLowerCase());
     });
@@ -80,14 +87,14 @@ export default function SupportChat(): React.JSX.Element | null {
       }
       return acc;
     },
-    { adminRoom: null as string | null, userRooms: [] as string[] }
+    { adminRoom: null as string | null, userRooms: [] as string[] },
   );
 
   // Компонент для отображения кнопки комнаты
   const RoomButton = ({ room, isCompact = false }: { room: string; isCompact?: boolean }) => {
     const isActive = room === roomId;
     const roomName = getUserNameByRoomId(room);
-    
+
     return (
       <button
         onClick={() => handleRoomSelect(room)}
@@ -121,20 +128,24 @@ export default function SupportChat(): React.JSX.Element | null {
           }
         }}
       >
-        <span style={{ 
-          overflow: 'hidden', 
-          textOverflow: 'ellipsis', 
-          whiteSpace: 'nowrap',
-          flex: 1 
-        }}>
+        <span
+          style={{
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+            flex: 1,
+          }}
+        >
           {roomName}
         </span>
         {isActive && (
-          <span style={{ 
-            fontSize: 10, 
-            opacity: 0.8, 
-            marginLeft: 8 
-          }}>
+          <span
+            style={{
+              fontSize: 10,
+              opacity: 0.8,
+              marginLeft: 8,
+            }}
+          >
             ●
           </span>
         )}
@@ -175,7 +186,7 @@ export default function SupportChat(): React.JSX.Element | null {
     socket.on('roomList', (roomsList: string[]) => {
       console.log('📋 Получен список комнат:', roomsList);
       dispatch(setRooms(roomsList));
-      
+
       // Загружаем пользователей, если их еще нет
       if (admin && users.length === 0) {
         console.log('📡 Загружаем пользователей после получения списка комнат...');
@@ -187,7 +198,9 @@ export default function SupportChat(): React.JSX.Element | null {
       console.log('💬 Получено сообщение:', msg);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const message = msg as any;
-      console.log(`💬 Добавляем сообщение в Redux: sender=${message.sender}, message="${message.message}"`);
+      console.log(
+        `💬 Добавляем сообщение в Redux: sender=${message.sender}, message="${message.message}"`,
+      );
       dispatch(addMessage(message));
 
       // Проверяем, если это системное сообщение об отключении AI
@@ -230,10 +243,11 @@ export default function SupportChat(): React.JSX.Element | null {
   useEffect(() => {
     if (userId && messages.length === 0 && !welcomeShown && isOpen) {
       const welcomeMessage: Message = {
-        id: Math.floor(Date.now()/1000000),
+        id: Math.floor(Date.now() / 1000000),
         roomId: userId.toString(),
         sender: 'assistant',
-        message: 'Добрый день! На связи - ИИ-Ассистент. Готов рассказать о магии фотографии радужки глаза, ответить на все вопросы о франшизе и помочь найти нужную информацию на сайте.',
+        message:
+          'Добрый день! На связи - ИИ-Ассистент. Готов рассказать о магии фотографии радужки глаза, ответить на все вопросы о франшизе и помочь найти нужную информацию на сайте.',
         createdAt: new Date().toISOString(),
       };
       dispatch(addMessage(welcomeMessage));
@@ -292,15 +306,15 @@ export default function SupportChat(): React.JSX.Element | null {
     // Определяем отправителя: если админ находится в комнате пользователя, то он отвечает как админ
     // Если админ в своей комнате, то он пишет как пользователь
     const isAdminRespondingToUser = admin && roomId !== userId?.toString();
-    
+
     console.log('🔍 Отладка отправителя:', {
       admin,
       roomId,
       userId: userId?.toString(),
       isAdminRespondingToUser,
-      finalSender: isAdminRespondingToUser ? 'admin' : 'user'
+      finalSender: isAdminRespondingToUser ? 'admin' : 'user',
     });
-    
+
     const messageData = {
       roomId,
       sender: isAdminRespondingToUser ? 'admin' : 'user',
@@ -338,12 +352,12 @@ export default function SupportChat(): React.JSX.Element | null {
       alert('У вас нет прав доступа к админ-панели');
       return;
     }
-    
+
     if (link.startsWith('/profile') && userStatus === 'guest') {
       void navigate('/signin');
       return;
     }
-    
+
     if (link.startsWith('/')) {
       // Внутренняя ссылка - используем роутер
       void navigate(link);
@@ -365,9 +379,7 @@ export default function SupportChat(): React.JSX.Element | null {
       // Добавляем текст до кнопки
       if (match.index > lastIndex) {
         parts.push(
-          <span key={`text-${String(lastIndex)}`}>
-            {message.slice(lastIndex, match.index)}
-          </span>
+          <span key={`text-${String(lastIndex)}`}>{message.slice(lastIndex, match.index)}</span>,
         );
       }
 
@@ -392,16 +404,18 @@ export default function SupportChat(): React.JSX.Element | null {
             transition: 'all 0.2s ease',
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.background = 'linear-gradient(135deg, hsl(200, 80%, 60%), hsl(210, 80%, 40%))';
+            e.currentTarget.style.background =
+              'linear-gradient(135deg, hsl(200, 80%, 60%), hsl(210, 80%, 40%))';
             e.currentTarget.style.transform = 'translateY(-1px)';
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.background = 'linear-gradient(135deg, hsl(200, 75%, 55%), hsl(210, 75%, 35%))';
+            e.currentTarget.style.background =
+              'linear-gradient(135deg, hsl(200, 75%, 55%), hsl(210, 75%, 35%))';
             e.currentTarget.style.transform = 'translateY(0)';
           }}
         >
           {buttonText}
-        </button>
+        </button>,
       );
 
       lastIndex = match.index + match[0].length;
@@ -409,11 +423,7 @@ export default function SupportChat(): React.JSX.Element | null {
 
     // Добавляем оставшийся текст
     if (lastIndex < message.length) {
-      parts.push(
-        <span key={`text-${String(lastIndex)}`}>
-          {message.slice(lastIndex)}
-        </span>
-      );
+      parts.push(<span key={`text-${String(lastIndex)}`}>{message.slice(lastIndex)}</span>);
     }
 
     return parts;
@@ -475,18 +485,22 @@ export default function SupportChat(): React.JSX.Element | null {
           {admin && (
             <div style={{ marginBottom: 12 }}>
               {/* Заголовок и поиск */}
-              <div style={{ 
-                display: 'flex', 
-                justifyContent: 'space-between', 
-                alignItems: 'center',
-                marginBottom: 8 
-              }}>
-                <h3 style={{
-                  color: 'hsl(200, 80%, 70%)',
-                  fontSize: 14,
-                  fontWeight: 600,
-                  margin: 0,
-                }}>
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  marginBottom: 8,
+                }}
+              >
+                <h3
+                  style={{
+                    color: 'hsl(200, 80%, 70%)',
+                    fontSize: 14,
+                    fontWeight: 600,
+                    margin: 0,
+                  }}
+                >
                   Комнаты ({rooms.length})
                 </h3>
                 <input
@@ -510,13 +524,15 @@ export default function SupportChat(): React.JSX.Element | null {
               {/* Админская комната */}
               {adminRoom && (
                 <div style={{ marginBottom: 8 }}>
-                  <div style={{ 
-                    fontSize: 10, 
-                    color: 'hsl(200, 80%, 60%)', 
-                    marginBottom: 4,
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.5px'
-                  }}>
+                  <div
+                    style={{
+                      fontSize: 10,
+                      color: 'hsl(200, 80%, 60%)',
+                      marginBottom: 4,
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.5px',
+                    }}
+                  >
                     Админ
                   </div>
                   <RoomButton room={adminRoom} />
@@ -526,23 +542,27 @@ export default function SupportChat(): React.JSX.Element | null {
               {/* Пользовательские комнаты */}
               {userRooms.length > 0 && (
                 <div>
-                  <div style={{ 
-                    fontSize: 10, 
-                    color: 'hsl(200, 80%, 60%)', 
-                    marginBottom: 4,
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.5px'
-                  }}>
+                  <div
+                    style={{
+                      fontSize: 10,
+                      color: 'hsl(200, 80%, 60%)',
+                      marginBottom: 4,
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.5px',
+                    }}
+                  >
                     Пользователи ({userRooms.length})
                   </div>
-                  <div style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
-                    gap: 6,
-                    maxHeight: admin ? 200 : 120,
-                    overflowY: 'auto',
-                    paddingRight: 4,
-                  }}>
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
+                      gap: 6,
+                      maxHeight: admin ? 200 : 120,
+                      overflowY: 'auto',
+                      paddingRight: 4,
+                    }}
+                  >
                     {userRooms.map((room) => (
                       <RoomButton key={room} room={room} isCompact={true} />
                     ))}
@@ -552,32 +572,36 @@ export default function SupportChat(): React.JSX.Element | null {
 
               {/* Сообщение если комнат нет */}
               {getFilteredRooms().length === 0 && roomSearch && (
-                <div style={{
-                  textAlign: 'center',
-                  color: 'hsl(200, 80%, 60%)',
-                  fontSize: 12,
-                  padding: 8,
-                }}>
+                <div
+                  style={{
+                    textAlign: 'center',
+                    color: 'hsl(200, 80%, 60%)',
+                    fontSize: 12,
+                    padding: 8,
+                  }}
+                >
                   Комнаты не найдены
                 </div>
               )}
             </div>
           )}
-          
+
           {/* Заголовок с названием текущей комнаты - только для админа */}
           {roomId && admin && (
             <div style={{ marginBottom: 8, textAlign: 'center' }}>
-              <h3 style={{
-                color: 'hsl(200, 80%, 70%)',
-                fontSize: 14,
-                fontWeight: 600,
-                margin: 0,
-              }}>
+              <h3
+                style={{
+                  color: 'hsl(200, 80%, 70%)',
+                  fontSize: 14,
+                  fontWeight: 600,
+                  margin: 0,
+                }}
+              >
                 {getUserNameByRoomId(roomId)}
               </h3>
             </div>
           )}
-          
+
           <div
             style={{
               flexGrow: 1,
@@ -664,9 +688,9 @@ export default function SupportChat(): React.JSX.Element | null {
                   userName,
                   admin,
                   roomId,
-                  userId: userId?.toString()
+                  userId: userId?.toString(),
                 });
-                
+
                 // Если админ находится в комнате пользователя, то сообщения от 'user' - это сообщения пользователя
                 // Если админ в своей комнате, то сообщения от 'user' - это его собственные сообщения
                 if (msg.sender === 'user') {

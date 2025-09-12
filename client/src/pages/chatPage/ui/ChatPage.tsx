@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
-import { addMessage, joinRoom, setHistory } from '@/entities/chat/model/slice';
+import { addMessage, joinRoom, Message, setHistory } from '@/entities/chat/model/slice';
 import { useAppDispatch, useAppSelector } from '@/shared/hooks/hooks';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 
 const socket = io(import.meta.env.DEV ? 'http://localhost:3000' : '/', { autoConnect: true });
 
@@ -46,9 +46,7 @@ export default function ChatPage(): React.JSX.Element {
       // Добавляем текст до кнопки
       if (match.index > lastIndex) {
         parts.push(
-          <span key={`text-${String(lastIndex)}`}>
-            {message.slice(lastIndex, match.index)}
-          </span>
+          <span key={`text-${String(lastIndex)}`}>{message.slice(lastIndex, match.index)}</span>,
         );
       }
 
@@ -73,16 +71,18 @@ export default function ChatPage(): React.JSX.Element {
             transition: 'all 0.2s ease',
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.background = 'linear-gradient(135deg, hsl(200, 80%, 60%), hsl(210, 80%, 40%))';
+            e.currentTarget.style.background =
+              'linear-gradient(135deg, hsl(200, 80%, 60%), hsl(210, 80%, 40%))';
             e.currentTarget.style.transform = 'translateY(-1px)';
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.background = 'linear-gradient(135deg, hsl(200, 75%, 55%), hsl(210, 75%, 35%))';
+            e.currentTarget.style.background =
+              'linear-gradient(135deg, hsl(200, 75%, 55%), hsl(210, 75%, 35%))';
             e.currentTarget.style.transform = 'translateY(0)';
           }}
         >
           {buttonText}
-        </button>
+        </button>,
       );
 
       lastIndex = match.index + match[0].length;
@@ -90,11 +90,7 @@ export default function ChatPage(): React.JSX.Element {
 
     // Добавляем оставшийся текст
     if (lastIndex < message.length) {
-      parts.push(
-        <span key={`text-${String(lastIndex)}`}>
-          {message.slice(lastIndex)}
-        </span>
-      );
+      parts.push(<span key={`text-${String(lastIndex)}`}>{message.slice(lastIndex)}</span>);
     }
 
     return parts;
@@ -110,14 +106,15 @@ export default function ChatPage(): React.JSX.Element {
     socket.on('chatHistory', (history: any) => {
       console.log('📜 ChatPage: Получена история чата:', history);
       dispatch(setHistory(history));
-      
+
       // Если нет сообщений после загрузки истории, добавляем приветствие
       if (history.length === 0 && messages.length === 0) {
-        const welcomeMessage = {
-          id: 'welcome-' + Date.now(),
+        const welcomeMessage: Message = {
+          id: Date.now(),
           roomId: roomId || 'default',
           sender: 'assistant',
-          message: 'Добрый день! На связи - ИИ-Ассистент. Готов рассказать о магии фотографии радужки глаза, ответить на все вопросы о франшизе и помочь найти нужную информацию на сайте.',
+          message:
+            'Добрый день! На связи - ИИ-Ассистент. Готов рассказать о магии фотографии радужки глаза, ответить на все вопросы о франшизе и помочь найти нужную информацию на сайте.',
           createdAt: new Date().toISOString(),
         };
         dispatch(addMessage(welcomeMessage));
