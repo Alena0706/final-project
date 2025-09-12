@@ -28,15 +28,15 @@ const UserInvoices: React.FC = () => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'paid':
-        return 'bg-green-100 text-green-800';
+        return 'bg-green-500/20 text-green-400 border border-green-500/30';
       case 'pending':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30';
       case 'overdue':
-        return 'bg-red-100 text-red-800';
+        return 'bg-red-500/20 text-red-400 border border-red-500/30';
       case 'cancelled':
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-gray-500/20 text-gray-400 border border-gray-500/30';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-gray-500/20 text-gray-400 border border-gray-500/30';
     }
   };
 
@@ -86,7 +86,7 @@ const UserInvoices: React.FC = () => {
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+            className="px-3 py-2 border border-white/10 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-transparent text-foreground"
           >
             <option value="">Все статусы</option>
             <option value="pending">Ожидает оплаты</option>
@@ -98,28 +98,28 @@ const UserInvoices: React.FC = () => {
       </div>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+        <div className="bg-red-500/20 border border-red-500/30 text-red-400 px-4 py-3 rounded-lg">
           {error}
         </div>
       )}
 
       {invoices.length === 0 ? (
         <div className="text-center py-12">
-          <div className="text-gray-400 text-6xl mb-4">📄</div>
-          <h3 className="text-xl font-semibold text-gray-600 mb-2">Счетов пока нет</h3>
-          <p className="text-gray-500">Когда вам будут выставлены счета, они появятся здесь</p>
+          <div className="text-muted-foreground text-6xl mb-4">📄</div>
+          <h3 className="text-xl font-semibold text-muted-foreground mb-2">Счетов пока нет</h3>
+          <p className="text-muted-foreground">Когда вам будут выставлены счета, они появятся здесь</p>
         </div>
       ) : (
         <div className="space-y-4">
           {invoices.map((invoice) => (
             <div
               key={invoice.id}
-              className="bg-white border border-border rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow"
+              className="dark-glass border border-white/10 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow"
             >
               <div className="flex justify-between items-start mb-4">
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900">Счет #{invoice.id}</h3>
-                  <p className="text-gray-600">{invoice.description}</p>
+                  <h3 className="text-lg font-semibold text-foreground">Счет #{invoice.id}</h3>
+                  <p className="text-muted-foreground">{invoice.description}</p>
                 </div>
                 <div className="text-right">
                   <span
@@ -129,7 +129,7 @@ const UserInvoices: React.FC = () => {
                   >
                     {getStatusText(invoice.status)}
                   </span>
-                  <p className="text-2xl font-bold text-gray-900 mt-2">
+                  <p className="text-2xl font-bold text-foreground mt-2">
                     {formatCurrency(invoice.amount)}
                   </p>
                 </div>
@@ -137,17 +137,17 @@ const UserInvoices: React.FC = () => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                 <div>
-                  <p className="text-sm text-gray-500">Срок оплаты</p>
-                  <p className="font-medium">{formatDate(invoice.dueDate)}</p>
+                  <p className="text-sm text-muted-foreground">Срок оплаты</p>
+                  <p className="font-medium text-foreground">{formatDate(invoice.dueDate)}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500">Дата создания</p>
-                  <p className="font-medium">{formatDate(invoice.createdAt)}</p>
+                  <p className="text-sm text-muted-foreground">Дата создания</p>
+                  <p className="font-medium text-foreground">{formatDate(invoice.createdAt)}</p>
                 </div>
                 {invoice.paidAt && (
                   <div>
-                    <p className="text-sm text-gray-500">Дата оплаты</p>
-                    <p className="font-medium">{formatDate(invoice.paidAt)}</p>
+                    <p className="text-sm text-muted-foreground">Дата оплаты</p>
+                    <p className="font-medium text-foreground">{formatDate(invoice.paidAt)}</p>
                   </div>
                 )}
               </div>
@@ -165,12 +165,12 @@ const UserInvoices: React.FC = () => {
               )}
 
               {invoice.payments && invoice.payments.length > 0 && (
-                <div className="mt-4 pt-4 border-t border-gray-200">
-                  <h4 className="text-sm font-medium text-gray-700 mb-2">История платежей</h4>
+                <div className="mt-4 pt-4 border-t border-white/10">
+                  <h4 className="text-sm font-medium text-foreground mb-2">История платежей</h4>
                   {invoice.payments.map((payment) => (
                     <div key={payment.id} className="flex justify-between items-center text-sm">
-                      <span>{formatCurrency(payment.amount)}</span>
-                      <span className="text-gray-500">{formatDate(payment.createdAt)}</span>
+                      <span className="text-foreground">{formatCurrency(payment.amount)}</span>
+                      <span className="text-muted-foreground">{formatDate(payment.createdAt)}</span>
                     </div>
                   ))}
                 </div>
@@ -186,17 +186,17 @@ const UserInvoices: React.FC = () => {
           <button
             onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
             disabled={currentPage === 1}
-            className="px-3 py-2 border border-border rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+            className="px-3 py-2 border border-white/10 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-white/5 text-foreground"
           >
             Назад
           </button>
-          <span className="px-4 py-2 text-sm text-gray-600">
+          <span className="px-4 py-2 text-sm text-muted-foreground">
             Страница {currentPage} из {pagination.pages}
           </span>
           <button
             onClick={() => setCurrentPage((prev) => Math.min(pagination.pages, prev + 1))}
             disabled={currentPage === pagination.pages}
-            className="px-3 py-2 border border-border rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+            className="px-3 py-2 border border-white/10 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-white/5 text-foreground"
           >
             Вперед
           </button>

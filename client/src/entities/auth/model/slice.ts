@@ -13,6 +13,7 @@ import {
 } from './thunks';
 import { verify2FALogin } from '@/entities/2fa/model/thunks';
 import { set2FAStatus } from '@/entities/2fa/model/slice';
+import { clearMessages, joinRoom } from '@/entities/chat/model/slice';
 import type { AxiosError } from 'axios';
 
 const initialState: UserStateT = {

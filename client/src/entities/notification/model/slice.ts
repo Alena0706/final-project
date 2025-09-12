@@ -36,9 +36,13 @@ export const notificationSlice = createSlice({
       state.notifications = action.payload;
     },
     addNotification(state, action: PayloadAction<Notification>) {
-      state.notifications.unshift(action.payload);
-      if (!action.payload.isRead) {
-        state.unreadCount += 1;
+      // Проверяем, нет ли уже уведомления с таким ID
+      const existingIndex = state.notifications.findIndex(n => n.id === action.payload.id);
+      if (existingIndex === -1) {
+        state.notifications.unshift(action.payload);
+        if (!action.payload.isRead) {
+          state.unreadCount += 1;
+        }
       }
     },
     markAsRead(state, action: PayloadAction<number>) {

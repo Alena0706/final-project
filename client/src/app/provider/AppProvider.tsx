@@ -1,7 +1,8 @@
 import React from 'react';
 import { Provider } from 'react-redux';
+import { PersistGate } from 'redux-persist/integration/react';
 import { BrowserRouter } from 'react-router';
-import { store } from '../store/store';
+import { store, persistor } from '../store/store';
 
 type Props = {
   children: React.JSX.Element;
@@ -9,8 +10,12 @@ type Props = {
 
 export default function AppProvider({ children }: Props): React.JSX.Element {
   return (
-    <BrowserRouter>
-      <Provider store={store}>{children}</Provider>
-    </BrowserRouter>
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
+        <BrowserRouter>
+          {children}
+        </BrowserRouter>
+      </PersistGate>
+    </Provider>
   );
 }

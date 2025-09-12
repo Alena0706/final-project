@@ -27,7 +27,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
-        isIn: [['invoice_reminder', 'payment_reminder', 'invoice_generated', 'payment_received', 'manual']]
+        isIn: [['invoice_reminder', 'payment_reminder', 'invoice_generated', 'payment_received', 'manual', 'franchise_application']]
       }
     },
     title: {
@@ -55,3 +55,4 @@ module.exports = (sequelize, DataTypes) => {
   
   return Notification;
 };
+

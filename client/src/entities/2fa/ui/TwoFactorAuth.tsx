@@ -4,6 +4,7 @@ import QRCode from 'qrcode';
 import { register2FA } from '../model/thunks';
 import { clearError, clearSuccessMessage, reset2FAState } from '../model/slice';
 import VerifyFactor from './VerifyFactor';
+import { getAccessToken } from '@/shared/api/axiosInstance';
 
 export default function TwoFactorAuth(): React.JSX.Element {
   const dispatch = useAppDispatch();
@@ -19,7 +20,8 @@ export default function TwoFactorAuth(): React.JSX.Element {
   const { user } = useAppSelector((state) => state.user);
 
   // Проверяем, есть ли у пользователя настроенная 2FA
-  const has2FAEnabled = isEnabled || (user?.user?.secret && user.user.secret.length > 0);
+  // Приоритет отдается Redux store, а не user store
+  const has2FAEnabled = isEnabled;
 
   // Генерация QR кода
   const generateQR = async (url: string): Promise<void> => {
@@ -40,10 +42,24 @@ export default function TwoFactorAuth(): React.JSX.Element {
 
   const handleGenerateQR = async (): Promise<void> => {
     try {
+      console.log('🔄 Начинаем генерацию 2FA...');
+      
+      // Проверяем наличие токена перед запросом
+      const token = getAccessToken();
+      console.log('🔑 Токен в localStorage:', token ? `${token.substring(0, 20)}...` : 'отсутствует');
+      
       await dispatch(register2FA()).unwrap();
+      console.log('✅ 2FA успешно сгенерирован');
       setShowQR(true);
     } catch (error) {
-      console.error('Ошибка генерации 2FA:', error);
+      console.error('❌ Ошибка генерации 2FA:', error);
+      // Проверяем, является ли это ошибкой авторизации
+      if (error && typeof error === 'object' && 'message' in error) {
+        const errorMessage = (error as { message: string }).message;
+        if (errorMessage.includes('401') || errorMessage.includes('Unauthorized')) {
+          console.log('🔑 Ошибка авторизации - возможно, токен истек');
+        }
+      }
     }
   };
 
@@ -78,6 +94,15 @@ export default function TwoFactorAuth(): React.JSX.Element {
       return () => clearTimeout(timer);
     }
   }, [successMessage, dispatch]);
+
+  // Очищаем состояние после отключения 2FA
+  useEffect(() => {
+    if (!isEnabled && successMessage?.includes('отключен')) {
+      setShowQR(false);
+      setShowVerify(false);
+      setShowDisable(false);
+    }
+  }, [isEnabled, successMessage]);
 
   if (showVerify) {
     return <VerifyFactor mode="verify" onSuccess={handleVerifySuccess} onCancel={handleCancel} />;

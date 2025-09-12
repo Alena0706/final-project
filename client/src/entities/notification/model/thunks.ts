@@ -9,14 +9,16 @@ import {
   markAsRead,
   markAllAsRead,
   removeNotification,
+  addNotification,
 } from './slice';
+import { forceRefreshTokens } from '@/shared/api/axiosInstance';
 
 // Получить уведомления пользователя
 export const fetchUserNotifications = createAsyncThunk(
   'notification/fetchUserNotifications',
   async (
     params: { page?: number; limit?: number; isRead?: boolean; type?: string } = {},
-    { dispatch },
+    { dispatch, rejectWithValue },
   ) => {
     try {
       dispatch(setLoading(true));
@@ -25,8 +27,26 @@ export const fetchUserNotifications = createAsyncThunk(
       dispatch(setPagination(response.data.pagination));
       return response.data;
     } catch (error: any) {
+      // Если получили 401, пытаемся обновить токены и повторить запрос
+      if (error?.response?.status === 401) {
+        console.log('🔄 Получен 401 при загрузке уведомлений, пытаемся обновить токены...');
+        const refreshSuccess = await forceRefreshTokens();
+        if (refreshSuccess) {
+          console.log('🔄 Повторяем загрузку уведомлений с обновленным токеном...');
+          try {
+            const response = await NotificationService.getUserNotifications(params);
+            dispatch(setNotifications(response.data.notifications));
+            dispatch(setPagination(response.data.pagination));
+            return response.data;
+          } catch (retryError) {
+            console.error('❌ Повторная попытка загрузки уведомлений не удалась:', retryError);
+            dispatch(setError('Ошибка загрузки уведомлений'));
+            return rejectWithValue(retryError);
+          }
+        }
+      }
       dispatch(setError(error.response?.data?.message || 'Ошибка загрузки уведомлений'));
-      throw error;
+      return rejectWithValue(error);
     } finally {
       dispatch(setLoading(false));
     }
@@ -64,14 +84,31 @@ export const fetchAllNotifications = createAsyncThunk(
 // Получить количество непрочитанных уведомлений
 export const fetchUnreadCount = createAsyncThunk(
   'notification/fetchUnreadCount',
-  async (_, { dispatch }) => {
+  async (_, { dispatch, rejectWithValue }) => {
     try {
       const response = await NotificationService.getUnreadCount();
       dispatch(setUnreadCount(response.data.unreadCount));
       return response.data.unreadCount;
     } catch (error: any) {
+      // Если получили 401, пытаемся обновить токены и повторить запрос
+      if (error?.response?.status === 401) {
+        console.log('🔄 Получен 401 при загрузке количества уведомлений, пытаемся обновить токены...');
+        const refreshSuccess = await forceRefreshTokens();
+        if (refreshSuccess) {
+          console.log('🔄 Повторяем загрузку количества уведомлений с обновленным токеном...');
+          try {
+            const response = await NotificationService.getUnreadCount();
+            dispatch(setUnreadCount(response.data.unreadCount));
+            return response.data.unreadCount;
+          } catch (retryError) {
+            console.error('❌ Повторная попытка загрузки количества уведомлений не удалась:', retryError);
+            dispatch(setError('Ошибка загрузки количества уведомлений'));
+            return rejectWithValue(retryError);
+          }
+        }
+      }
       dispatch(setError(error.response?.data?.message || 'Ошибка загрузки количества уведомлений'));
-      throw error;
+      return rejectWithValue(error);
     }
   },
 );
@@ -154,3 +191,6 @@ export const sendUserNotification = createAsyncThunk(
     }
   },
 );
+
+// Экспортируем addNotification для использования в WebSocket
+export { addNotification };

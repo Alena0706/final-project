@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router';
 import { User, Settings, LogOut, Shield } from 'lucide-react';
 import { useAppDispatch, useAppSelector } from '@/shared/hooks/hooks';
 import { logoutUser } from '@/entities/auth/model/thunks';
+import NotificationBell from './NotificationBell';
 
 export default function UserAvatar(): React.JSX.Element {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -69,7 +70,12 @@ export default function UserAvatar(): React.JSX.Element {
   };
 
   return (
-    <div className="relative" ref={dropdownRef}>
+    <div className="flex items-center gap-2">
+      {/* Колокольчик уведомлений */}
+      <NotificationBell />
+      
+      {/* Аватар пользователя */}
+      <div className="relative" ref={dropdownRef}>
       {/* Аватарка */}
       <button
         onClick={() => setIsDropdownOpen(!isDropdownOpen)}
@@ -138,6 +144,7 @@ export default function UserAvatar(): React.JSX.Element {
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 }

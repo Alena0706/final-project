@@ -28,3 +28,4 @@ export default function AuthRoute({
   // Если не авторизован - показываем страницы входа/регистрации
   return children;
 }
+

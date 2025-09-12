@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Phone, MapPin, Clock, Send } from 'lucide-react';
-import type { ChangeEventHandler, JSX } from 'react';
+import type { JSX } from 'react';
+import ApplicationForm from './ApplicationForm';
 
 type CardProps = React.HTMLAttributes<HTMLDivElement> & { children: React.ReactNode };
 
@@ -50,7 +51,7 @@ const faqData = [
 ];
 
 const FAQ = (): JSX.Element => {
-  const [openId, setOpenId] = useState<string | null>(null);
+  const [openId, setOpenId] = React.useState<string | null>(null);
 
   return (
     <div className="space-y-4">
@@ -132,38 +133,6 @@ const contactInfo = [
 ];
 
 const ContactSection = (): JSX.Element => {
-  const [phone, setPhone] = useState('+7');
-
-  function formatPhone(value: string): string {
-    const digits = value.replace(/\D/g, '');
-
-    let formatted = '+7';
-    if (digits.length > 1) {
-      formatted += '-';
-    }
-    if (digits.length >= 2) {
-      formatted += digits.substring(1, 4);
-    }
-    if (digits.length >= 5) {
-      formatted += `-${digits.substring(4, 7)}`;
-    }
-    if (digits.length >= 8) {
-      formatted += `-${digits.substring(7, 9)}`;
-    }
-    if (digits.length >= 10) {
-      formatted += `-${digits.substring(9, 11)}`;
-    }
-
-    return formatted;
-  }
-
-  const handlePhoneChange: ChangeEventHandler<HTMLInputElement> = (e) => {
-    const input = e.target.value;
-    if (input.length > 16) return;
-
-    const formatted = formatPhone(input);
-    setPhone(formatted);
-  };
 
   return (
     <section id="contact" className="section section-alt">
@@ -222,48 +191,8 @@ const ContactSection = (): JSX.Element => {
                 <span>Оставить заявку</span>
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="text-sm font-medium text-foreground mb-2 block">Имя *</label>
-                  <input placeholder="Ваше имя" className="form-input h-10 text-base" />
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-foreground mb-2 block">
-                    Телефон *
-                  </label>
-                  <input
-                    onChange={handlePhoneChange}
-                    value={phone}
-                    placeholder="+7 (___) ___-__-__"
-                    className="form-input h-10 text-base"
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-foreground mb-2 block">Email *</label>
-                <input placeholder="your@email.com" className="form-input h-10 text-base" />
-              </div>
-              <div>
-                <label className="text-sm font-medium text-foreground mb-2 block">Город</label>
-                <input
-                  placeholder="В каком городе планируете открытие?"
-                  className="form-input h-10 text-base"
-                />
-              </div>
-              <div>
-                <label className="text-sm font-medium text-foreground mb-2 block">Сообщение</label>
-                <textarea
-                  placeholder="Расскажите о ваших планах и вопросах..."
-                  className="form-input min-h-[90px] resize-vertical text-base"
-                />
-              </div>
-              <button className="btn-primary w-full py-3 text-base flex items-center justify-center gap-2">
-                Отправить заявку
-              </button>
-              <p className="text-xs text-muted-foreground text-center mt-2">
-                Нажимая кнопку, вы соглашаетесь с обработкой персональных данных
-              </p>
+            <CardContent>
+              <ApplicationForm />
             </CardContent>
           </Card>
         </div>

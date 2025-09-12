@@ -16,6 +16,7 @@ const userTabs = [
 const adminTabs = [
   { id: 'personal', label: 'Персональные данные' },
   { id: 'password', label: 'Безопасность' },
+  { id: 'notifications', label: 'Уведомления' },
 ];
 
 const ProfilePage = memo((): React.JSX.Element => {

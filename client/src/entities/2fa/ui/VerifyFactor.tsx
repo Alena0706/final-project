@@ -37,6 +37,13 @@ export default function VerifyFactor({
       }
     } catch (error) {
       console.error('2FA verification error:', error);
+      // Показываем пользователю более понятное сообщение об ошибке
+      if (error && typeof error === 'object' && 'message' in error) {
+        const errorMessage = (error as { message: string }).message;
+        if (errorMessage.includes('401') || errorMessage.includes('Unauthorized')) {
+          console.log('🔑 Ошибка авторизации - возможно, токен истек');
+        }
+      }
     }
   };
 

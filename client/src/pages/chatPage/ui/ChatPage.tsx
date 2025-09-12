@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
 import { addMessage, joinRoom, setHistory } from '@/entities/chat/model/slice';
 import { useAppDispatch, useAppSelector } from '@/shared/hooks/hooks';
+import { useNavigate } from 'react-router-dom';
 
 const socket = io(import.meta.env.DEV ? 'http://localhost:3000' : '/', { autoConnect: true });
 
@@ -20,12 +21,84 @@ socket.on('connect_error', (error) => {
 
 export default function ChatPage(): React.JSX.Element {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const messages = useAppSelector((store) => store.chat.messages);
   const roomId = useAppSelector((store) => store.chat.roomId);
   const userName = useAppSelector((store) => store.user.user?.user.name);
   const [input, setInput] = useState('');
   const [roomInput, setRoomInput] = useState('');
   const [sender, setSender] = useState<'user' | 'admin'>('user');
+
+  const handleButtonClick = (link: string): void => {
+    console.log('🔗 ChatPage: Переход по ссылке:', link);
+    navigate(link);
+  };
+
+  // Функция для рендеринга сообщений с кнопками
+  const renderMessageWithButtons = (message: string): React.ReactNode[] => {
+    const buttonRegex = /\[КНОПКА:([^:]+):([^\]]+)\]/g;
+    const parts: React.ReactNode[] = [];
+    let lastIndex = 0;
+    let match: RegExpExecArray | null;
+
+    // eslint-disable-next-line no-cond-assign
+    while ((match = buttonRegex.exec(message)) !== null) {
+      // Добавляем текст до кнопки
+      if (match.index > lastIndex) {
+        parts.push(
+          <span key={`text-${String(lastIndex)}`}>
+            {message.slice(lastIndex, match.index)}
+          </span>
+        );
+      }
+
+      // Добавляем кнопку
+      const buttonText = match[1];
+      const buttonLink = match[2];
+      parts.push(
+        <button
+          key={`button-${String(match.index)}`}
+          onClick={() => handleButtonClick(buttonLink)}
+          style={{
+            display: 'inline-block',
+            background: 'linear-gradient(135deg, hsl(200, 75%, 55%), hsl(210, 75%, 35%))',
+            color: 'white',
+            padding: '4px 12px',
+            borderRadius: '6px',
+            fontSize: '12px',
+            fontWeight: '500',
+            margin: '0 4px',
+            border: 'none',
+            cursor: 'pointer',
+            transition: 'all 0.2s ease',
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = 'linear-gradient(135deg, hsl(200, 80%, 60%), hsl(210, 80%, 40%))';
+            e.currentTarget.style.transform = 'translateY(-1px)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = 'linear-gradient(135deg, hsl(200, 75%, 55%), hsl(210, 75%, 35%))';
+            e.currentTarget.style.transform = 'translateY(0)';
+          }}
+        >
+          {buttonText}
+        </button>
+      );
+
+      lastIndex = match.index + match[0].length;
+    }
+
+    // Добавляем оставшийся текст
+    if (lastIndex < message.length) {
+      parts.push(
+        <span key={`text-${String(lastIndex)}`}>
+          {message.slice(lastIndex)}
+        </span>
+      );
+    }
+
+    return parts;
+  };
 
   useEffect(() => {
     console.log('🔧 ChatPage: Настройка Socket.IO слушателей');
@@ -37,13 +110,25 @@ export default function ChatPage(): React.JSX.Element {
     socket.on('chatHistory', (history: any) => {
       console.log('📜 ChatPage: Получена история чата:', history);
       dispatch(setHistory(history));
+      
+      // Если нет сообщений после загрузки истории, добавляем приветствие
+      if (history.length === 0 && messages.length === 0) {
+        const welcomeMessage = {
+          id: 'welcome-' + Date.now(),
+          roomId: roomId || 'default',
+          sender: 'assistant',
+          message: 'Добрый день! На связи - ИИ-Ассистент. Готов рассказать о магии фотографии радужки глаза, ответить на все вопросы о франшизе и помочь найти нужную информацию на сайте.',
+          createdAt: new Date().toISOString(),
+        };
+        dispatch(addMessage(welcomeMessage));
+      }
     });
     return () => {
       console.log('🧹 ChatPage: Очистка Socket.IO слушателей');
       socket.off('chatMessage');
       socket.off('chatHistory');
     };
-  }, [dispatch]);
+  }, [dispatch, messages.length, roomId]);
 
   const handleJoinRoom = (): void => {
     console.log('🏠 ChatPage: Попытка присоединиться к комнате:', roomInput);
@@ -91,7 +176,7 @@ export default function ChatPage(): React.JSX.Element {
 
           return (
             <div key={m.id} style={{ textAlign: m.sender === 'user' ? 'right' : 'left' }}>
-              <b>{getSenderName()}: </b> {m.message}
+              <b>{getSenderName()}: </b> {renderMessageWithButtons(m.message)}
             </div>
           );
         })}

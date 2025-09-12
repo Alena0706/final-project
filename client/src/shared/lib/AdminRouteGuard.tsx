@@ -15,7 +15,7 @@ const AdminRouteGuard: React.FC<AdminRouteGuardProps> = ({ children }) => {
   
   // Если пользователь админ, но пытается зайти на недоступную страницу
   if (isAdmin) {
-    const adminRestrictedRoutes = ['wallet', 'invoices', 'notifications', 'franchise'];
+    const adminRestrictedRoutes = ['wallet', 'invoices', 'franchise'];
     const currentPath = location.pathname.split('/').pop();
     
     if (currentPath && adminRestrictedRoutes.includes(currentPath)) {

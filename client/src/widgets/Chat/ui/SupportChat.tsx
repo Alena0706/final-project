@@ -1,8 +1,9 @@
-import { addMessage, joinRoom, setHistory, setRooms } from '@/entities/chat/model/slice';
+import { addMessage, joinRoom, setHistory, setRooms, clearMessages } from '@/entities/chat/model/slice';
 import { useAppDispatch, useAppSelector } from '@/shared/hooks/hooks';
 import React, { useEffect, useRef, useState } from 'react';
 import { io } from 'socket.io-client';
 import { useNavigate } from 'react-router';
+import { getAllUsers } from '@/entities/user/model/thunks';
 
 const socket = io('/', { autoConnect: true, transports: ['websocket'] });
 
@@ -31,16 +32,137 @@ export default function SupportChat(): React.JSX.Element {
   const userStatus = useAppSelector((store) => store.user.status);
   const roomId = useAppSelector((store) => store.chat.roomId);
   const rooms = useAppSelector((store) => store.chat.rooms);
+  const users = useAppSelector((store) => store.users.users);
   const [isOpen, setIsOpen] = useState(false);
   const [inputValue, setInputValue] = useState<string>('');
   const [aiActive, setAiActive] = useState(true);
+  const [welcomeShown, setWelcomeShown] = useState(false);
+  const [roomSearch, setRoomSearch] = useState<string>('');
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
+
+  // Функция для получения имени пользователя по ID комнаты
+  const getUserNameByRoomId = (roomId: string): string => {
+    if (roomId === '1') {
+      return 'Админская';
+    }
+    
+    const userId = parseInt(roomId);
+    const user = users.find(u => u.id === userId);
+    
+    console.log('🔍 getUserNameByRoomId:', {
+      roomId,
+      userId,
+      usersCount: users.length,
+      users: users.map(u => ({ id: u.id, name: u.name })),
+      foundUser: user
+    });
+    
+    return user ? user.name : `Пользователь ${roomId}`;
+  };
+
+  // Функция для фильтрации комнат
+  const getFilteredRooms = () => {
+    if (!roomSearch.trim()) return rooms;
+    
+    return rooms.filter(room => {
+      const roomName = getUserNameByRoomId(room).toLowerCase();
+      return roomName.includes(roomSearch.toLowerCase());
+    });
+  };
+
+  // Разделяем комнаты на админскую и пользовательские
+  const { adminRoom, userRooms } = getFilteredRooms().reduce(
+    (acc, room) => {
+      if (room === '1') {
+        acc.adminRoom = room;
+      } else {
+        acc.userRooms.push(room);
+      }
+      return acc;
+    },
+    { adminRoom: null as string | null, userRooms: [] as string[] }
+  );
+
+  // Компонент для отображения кнопки комнаты
+  const RoomButton = ({ room, isCompact = false }: { room: string; isCompact?: boolean }) => {
+    const isActive = room === roomId;
+    const roomName = getUserNameByRoomId(room);
+    
+    return (
+      <button
+        onClick={() => handleRoomSelect(room)}
+        style={{
+          background: isActive ? 'hsl(200, 80%, 70%)' : 'transparent',
+          border: `1px solid ${isActive ? 'hsl(200, 80%, 50%)' : 'hsl(200, 80%, 70%)'}`,
+          color: 'white',
+          padding: isCompact ? '6px 10px' : '8px 12px',
+          borderRadius: 8,
+          fontSize: isCompact ? 11 : 12,
+          cursor: 'pointer',
+          transition: 'all 0.2s ease',
+          opacity: isActive ? 1 : 0.8,
+          width: isCompact ? 'auto' : '100%',
+          textAlign: 'left',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          minHeight: isCompact ? 32 : 36,
+        }}
+        onMouseEnter={(e) => {
+          if (!isActive) {
+            e.currentTarget.style.background = 'hsl(200, 80%, 70%)';
+            e.currentTarget.style.opacity = '1';
+          }
+        }}
+        onMouseLeave={(e) => {
+          if (!isActive) {
+            e.currentTarget.style.background = 'transparent';
+            e.currentTarget.style.opacity = '0.8';
+          }
+        }}
+      >
+        <span style={{ 
+          overflow: 'hidden', 
+          textOverflow: 'ellipsis', 
+          whiteSpace: 'nowrap',
+          flex: 1 
+        }}>
+          {roomName}
+        </span>
+        {isActive && (
+          <span style={{ 
+            fontSize: 10, 
+            opacity: 0.8, 
+            marginLeft: 8 
+          }}>
+            ●
+          </span>
+        )}
+      </button>
+    );
+  };
 
   useEffect(() => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, [messages]);
+
+  // Сбрасываем флаг приветствия и очищаем чат при смене пользователя
+  useEffect(() => {
+    setWelcomeShown(false);
+    // Очищаем сообщения при смене пользователя
+    dispatch(clearMessages());
+  }, [userId, dispatch]);
+
+  // Загружаем пользователей для админа
+  useEffect(() => {
+    console.log('🔄 Проверка загрузки пользователей:', { admin, usersCount: users.length });
+    if (admin && users.length === 0) {
+      console.log('📡 Загружаем пользователей...');
+      dispatch(getAllUsers());
+    }
+  }, [admin, users.length, dispatch]);
 
   useEffect(() => {
     console.log('🔧 Настройка Socket.IO слушателей, admin:', admin);
@@ -53,12 +175,19 @@ export default function SupportChat(): React.JSX.Element {
     socket.on('roomList', (roomsList: string[]) => {
       console.log('📋 Получен список комнат:', roomsList);
       dispatch(setRooms(roomsList));
+      
+      // Загружаем пользователей, если их еще нет
+      if (admin && users.length === 0) {
+        console.log('📡 Загружаем пользователей после получения списка комнат...');
+        dispatch(getAllUsers());
+      }
     });
 
     socket.on('chatMessage', (msg: unknown) => {
       console.log('💬 Получено сообщение:', msg);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const message = msg as any;
+      console.log(`💬 Добавляем сообщение в Redux: sender=${message.sender}, message="${message.message}"`);
       dispatch(addMessage(message));
 
       // Проверяем, если это системное сообщение об отключении AI
@@ -90,10 +219,27 @@ export default function SupportChat(): React.JSX.Element {
   }, [admin, dispatch]);
 
   useEffect(() => {
+    console.log('🔄 useEffect roomId изменился:', { roomId, admin });
     if (roomId) {
+      console.log('📡 Присоединяемся к комнате:', roomId);
       socket.emit('joinRoom', roomId);
     }
   }, [roomId]);
+
+  // Добавляем приветственное сообщение только если чат действительно пустой
+  useEffect(() => {
+    if (userId && messages.length === 0 && !welcomeShown && isOpen) {
+      const welcomeMessage = {
+        id: 'welcome-' + Date.now(),
+        roomId: userId.toString(),
+        sender: 'assistant',
+        message: 'Добрый день! На связи - ИИ-Ассистент. Готов рассказать о магии фотографии радужки глаза, ответить на все вопросы о франшизе и помочь найти нужную информацию на сайте.',
+        createdAt: new Date().toISOString(),
+      };
+      dispatch(addMessage(welcomeMessage));
+      setWelcomeShown(true);
+    }
+  }, [userId, messages.length, welcomeShown, isOpen, dispatch]);
 
   // Закрытие чата при клике вне его области
   useEffect(() => {
@@ -124,6 +270,8 @@ export default function SupportChat(): React.JSX.Element {
     if (userId) {
       console.log('🏠 Присоединяемся к комнате:', userId.toString());
       dispatch(joinRoom(userId.toString()));
+      // Запрашиваем историю чата при открытии
+      socket.emit('joinRoom', userId.toString());
     } else {
       console.log('❌ Нет userId для присоединения к комнате');
     }
@@ -141,9 +289,21 @@ export default function SupportChat(): React.JSX.Element {
       return;
     }
 
+    // Определяем отправителя: если админ находится в комнате пользователя, то он отвечает как админ
+    // Если админ в своей комнате, то он пишет как пользователь
+    const isAdminRespondingToUser = admin && roomId !== userId?.toString();
+    
+    console.log('🔍 Отладка отправителя:', {
+      admin,
+      roomId,
+      userId: userId?.toString(),
+      isAdminRespondingToUser,
+      finalSender: isAdminRespondingToUser ? 'admin' : 'user'
+    });
+    
     const messageData = {
       roomId,
-      sender: admin ? 'admin' : 'user',
+      sender: isAdminRespondingToUser ? 'admin' : 'user',
       message: inputValue.trim(),
     };
 
@@ -153,7 +313,11 @@ export default function SupportChat(): React.JSX.Element {
   };
 
   const handleRoomSelect = (selectedRoomId: string | null): void => {
+    console.log('🔄 handleRoomSelect вызвана:', { selectedRoomId, currentRoomId: roomId });
     if (selectedRoomId) {
+      console.log('📡 Переключаемся на комнату:', selectedRoomId);
+      // Очищаем сообщения при переключении комнат
+      dispatch(clearMessages());
       dispatch(joinRoom(selectedRoomId));
       socket.emit('joinRoom', selectedRoomId);
     }
@@ -255,6 +419,11 @@ export default function SupportChat(): React.JSX.Element {
     return parts;
   };
 
+  // Показываем кнопку чата только для авторизованных пользователей
+  if (userStatus !== 'logged') {
+    return null;
+  }
+
   return (
     <>
       {/* Кнопка Чат */}
@@ -289,8 +458,8 @@ export default function SupportChat(): React.JSX.Element {
             position: 'fixed',
             bottom: 90,
             right: 20,
-            width: 320,
-            maxHeight: 400,
+            width: admin ? 400 : 320,
+            maxHeight: admin ? 800 : 400,
             background: 'linear-gradient(135deg, hsl(0, 0%, 16%) 0%, hsl(0, 0%, 20%) 100%)',
             border: '1px solid hsl(200, 80%, 70%)',
             boxShadow:
@@ -305,47 +474,110 @@ export default function SupportChat(): React.JSX.Element {
         >
           {admin && (
             <div style={{ marginBottom: 12 }}>
-              <h3
-                style={{
+              {/* Заголовок и поиск */}
+              <div style={{ 
+                display: 'flex', 
+                justifyContent: 'space-between', 
+                alignItems: 'center',
+                marginBottom: 8 
+              }}>
+                <h3 style={{
                   color: 'hsl(200, 80%, 70%)',
                   fontSize: 14,
                   fontWeight: 600,
-                  marginBottom: 8,
-                }}
-              >
-                Все комнаты:
-              </h3>
-              <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-                {rooms.map((room) => (
-                  <li key={room} style={{ marginBottom: 4 }}>
-                    <button
-                      onClick={() => handleRoomSelect(room)}
-                      style={{
-                        background: 'transparent',
-                        border: '1px solid hsl(200, 80%, 70%)',
-                        color: 'white',
-                        padding: '4px 8px',
-                        borderRadius: 6,
-                        fontSize: 12,
-                        cursor: 'pointer',
-                        transition: 'all 0.3s ease',
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.background = 'hsl(200, 80%, 70%)';
-                        e.currentTarget.style.color = 'white';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.background = 'transparent';
-                        e.currentTarget.style.color = 'white';
-                      }}
-                    >
-                      {room === '1' ? 'комната администрации' : `Пользователь ${room}`}
-                    </button>
-                  </li>
-                ))}
-              </ul>
+                  margin: 0,
+                }}>
+                  Комнаты ({rooms.length})
+                </h3>
+                <input
+                  type="text"
+                  placeholder="Поиск..."
+                  value={roomSearch}
+                  onChange={(e) => setRoomSearch(e.target.value)}
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    border: '1px solid hsl(200, 80%, 70%)',
+                    borderRadius: 6,
+                    padding: '4px 8px',
+                    color: 'white',
+                    fontSize: 11,
+                    width: 80,
+                    outline: 'none',
+                  }}
+                />
+              </div>
+
+              {/* Админская комната */}
+              {adminRoom && (
+                <div style={{ marginBottom: 8 }}>
+                  <div style={{ 
+                    fontSize: 10, 
+                    color: 'hsl(200, 80%, 60%)', 
+                    marginBottom: 4,
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.5px'
+                  }}>
+                    Админ
+                  </div>
+                  <RoomButton room={adminRoom} />
+                </div>
+              )}
+
+              {/* Пользовательские комнаты */}
+              {userRooms.length > 0 && (
+                <div>
+                  <div style={{ 
+                    fontSize: 10, 
+                    color: 'hsl(200, 80%, 60%)', 
+                    marginBottom: 4,
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.5px'
+                  }}>
+                    Пользователи ({userRooms.length})
+                  </div>
+                  <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
+                    gap: 6,
+                    maxHeight: admin ? 200 : 120,
+                    overflowY: 'auto',
+                    paddingRight: 4,
+                  }}>
+                    {userRooms.map((room) => (
+                      <RoomButton key={room} room={room} isCompact={true} />
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Сообщение если комнат нет */}
+              {getFilteredRooms().length === 0 && roomSearch && (
+                <div style={{
+                  textAlign: 'center',
+                  color: 'hsl(200, 80%, 60%)',
+                  fontSize: 12,
+                  padding: 8,
+                }}>
+                  Комнаты не найдены
+                </div>
+              )}
             </div>
           )}
+          
+          {/* Заголовок с названием текущей комнаты - только для админа */}
+          {roomId && admin && (
+            <div style={{ marginBottom: 8, textAlign: 'center' }}>
+              <h3 style={{
+                color: 'hsl(200, 80%, 70%)',
+                fontSize: 14,
+                fontWeight: 600,
+                margin: 0,
+              }}>
+                {getUserNameByRoomId(roomId)}
+              </h3>
+            </div>
+          )}
+          
           <div
             style={{
               flexGrow: 1,
@@ -356,6 +588,7 @@ export default function SupportChat(): React.JSX.Element {
               borderRadius: 8,
               marginBottom: 12,
               backdropFilter: 'blur(10px)',
+              minHeight: admin ? 300 : 200,
             }}
           >
             {messages.length === 0 && (
@@ -426,7 +659,25 @@ export default function SupportChat(): React.JSX.Element {
               // Определяем, нужно ли показывать подпись
               const showLabel = msg.sender !== 'system';
               const getLabelText = (): string => {
-                if (msg.sender === 'user') return userName ?? 'Пользователь';
+                console.log('🏷️ Определяем подпись для сообщения:', {
+                  sender: msg.sender,
+                  userName,
+                  admin,
+                  roomId,
+                  userId: userId?.toString()
+                });
+                
+                // Если админ находится в комнате пользователя, то сообщения от 'user' - это сообщения пользователя
+                // Если админ в своей комнате, то сообщения от 'user' - это его собственные сообщения
+                if (msg.sender === 'user') {
+                  // Если админ в чужой комнате, то 'user' = пользователь
+                  // Если админ в своей комнате, то 'user' = админ
+                  if (admin && roomId !== userId?.toString()) {
+                    return 'Пользователь';
+                  } else {
+                    return userName ?? 'Пользователь';
+                  }
+                }
                 if (msg.sender === 'assistant') return 'AI-помощник';
                 if (msg.sender === 'admin') return 'Администратор';
                 return msg.sender;

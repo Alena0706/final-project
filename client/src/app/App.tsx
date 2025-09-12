@@ -5,6 +5,8 @@ import { useAppDispatch, useAppSelector } from '@/shared/hooks/hooks';
 import { refreshUser } from '@/entities/auth/model/thunks';
 import { fetchWallet } from '@/entities/wallet/model/thunks';
 import { initialize2FAStatus } from '@/entities/2fa/model/thunks';
+import { clearMessages } from '@/entities/chat/model/slice';
+import { fetchUserNotifications, fetchUnreadCount } from '@/entities/notification/model/thunks';
 
 function App(): React.JSX.Element {
   const dispatch = useAppDispatch();
@@ -17,18 +19,24 @@ function App(): React.JSX.Element {
     void dispatch(refreshUser());
   }, [dispatch]);
 
-  // Загружаем кошелек и инициализируем 2FA статус после успешной авторизации
+  // Загружаем кошелек, уведомления и инициализируем 2FA статус после успешной авторизации
   useEffect(() => {
     if (userStatus === 'logged') {
+      console.log('🔄 Загружаем данные пользователя...');
       void dispatch(fetchWallet());
+      void dispatch(fetchUserNotifications({ page: 1, limit: 20 }));
+      void dispatch(fetchUnreadCount());
 
       // Инициализируем статус 2FA на основе данных пользователя
       const userData = JSON.parse(localStorage.getItem('user') ?? '{}');
       if (userData?.user?.secret) {
         void dispatch(initialize2FAStatus({ secret: userData.user.secret }));
       }
+    } else if (userStatus === 'guest') {
+      // Очищаем чат при переходе в статус гостя
+      dispatch(clearMessages());
     }
-  }, [userStatus, dispatch]);
+  }, [userStatus]); // Убираем dispatch из зависимостей
 
   // Обработка подтверждения email из URL параметров
   useEffect(() => {

@@ -22,4 +22,7 @@ invoiceRouter.post('/:invoiceId/pay', verifyAccessToken, InvoiceController.payIn
 // Отменить счет (только админ)
 invoiceRouter.patch('/:invoiceId/cancel', verifyAccessToken, requireAdmin, InvoiceController.cancelInvoice);
 
+// Удалить счет (только админ, только отмененные)
+invoiceRouter.delete('/:invoiceId', verifyAccessToken, requireAdmin, InvoiceController.deleteInvoice);
+
 module.exports = invoiceRouter;
