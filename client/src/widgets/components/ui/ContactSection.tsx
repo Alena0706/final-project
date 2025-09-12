@@ -133,6 +133,25 @@ const contactInfo = [
 ];
 
 const ContactSection = (): JSX.Element => {
+  // Функция открытия нужной программы/ссылки по типу контакта
+  const handleIconClick = (id: string, details: string[]): void => {
+    switch(id) {
+      case 'contact-phone':
+        // Открыть приложение для звонков с номером
+        window.open(`tel:${details[0].replace(/\D/g, '')}`, '_self');
+        break;
+      case 'contact-telegram':
+        // Открыть телеграм по ссылке
+        window.open(`https://t.me/${details[0].replace('@', '')}`, '_blank');
+        break;
+      case 'contact-office':
+        // Открыть карты с адресом (Google Maps)
+        window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(details[0])}`, '_blank');
+        break;
+      default:
+        break;
+    }
+  };
 
   return (
     <section id="contact" className="section section-alt">
@@ -166,7 +185,12 @@ const ContactSection = (): JSX.Element => {
                       key={info.id}
                       className="flex flex-col items-center text-center bg-[#18171b] rounded-lg p-6 h-full min-h-[160px] shadow-sm"
                     >
-                      <div className="p-3 bg-gradient-to-r from-[hsl(200_75%_55%)] to-[hsl(210_75%_35%)] rounded-xl mb-3">
+                      <div 
+                        onClick={() => handleIconClick(info.id, info.details)}
+                        style={{ cursor: 'pointer' }}
+                        className="p-3 bg-gradient-to-r from-[hsl(200_75%_55%)] to-[hsl(210_75%_35%)] rounded-xl mb-3"
+                        title={`Открыть ${info.title}`}
+                      >
                         <IconComponent className="h-6 w-6 text-white" />
                       </div>
                       <h4 className="font-semibold text-foreground text-base mb-2">{info.title}</h4>
