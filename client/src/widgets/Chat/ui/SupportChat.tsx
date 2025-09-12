@@ -21,7 +21,7 @@ socket.on('connect_error', (error) => {
   console.error('❌ Ошибка подключения Socket.IO:', error);
 });
 
-export default function SupportChat(): React.JSX.Element {
+export default function SupportChat(): React.JSX.Element | null {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
