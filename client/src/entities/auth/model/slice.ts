@@ -135,7 +135,7 @@ export const userSlice = createSlice({
         }
       })
       .addCase(loginUser.pending, (state) => {
-        state.status = 'loading';
+        // state.status = 'loading';
         state.error = null;
       });
 
@@ -150,6 +150,7 @@ export const userSlice = createSlice({
         state.status = 'guest';
         if (action.error.name !== `AxiosError`) {
           state.error = action.error.message ?? 'Unknown error';
+          
         } else {
           state.error = null;
         }
