@@ -1,4 +1,3 @@
-
 'use strict';
 
 /** @type {import('sequelize-cli').Migration} */
@@ -127,7 +126,7 @@ module.exports = {
           workPhone: '+7 (908) 520-98-86',
           userId: 2,
           image: 'imageFranchise/volgograd.webp',
-          video: 'videoFranchise/1757509379593.mp4',
+          video: 'videoFranchise/volgograd.mp4',
           description: '​Фотоателье радужки глаза',
           city: 'г. Волгоград',
           createdAt: new Date(),
