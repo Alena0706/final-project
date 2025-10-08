@@ -174,7 +174,7 @@ const ApplicationForm: React.FC = () => {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="btn-primary w-full py-3 text-base flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="btn-primary w-full py-3 text-base flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
         >
           {isSubmitting ? (
             <>

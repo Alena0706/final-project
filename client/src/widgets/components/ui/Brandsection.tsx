@@ -175,7 +175,7 @@ const BrandSection = (): React.JSX.Element => {
               нише
             </p>
             <button
-              className="btn-primary"
+              className="btn-primary cursor-pointer"
               onClick={() => {
                 const contactSection = document.getElementById('contact');
                 if (contactSection) {

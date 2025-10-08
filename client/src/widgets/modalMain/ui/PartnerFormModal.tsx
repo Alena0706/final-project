@@ -163,14 +163,14 @@ const PartnerFormModal: React.FC<PartnerFormModalProps> = ({ isOpen, onClose, us
           <div className="flex justify-center space-x-4 pt-4">
             <button
               type="button"
-              className="px-8 py-3 rounded-lg bg-gray-300 hover:bg-gray-400 text-gray-700 font-semibold text-lg transition-colors duration-200"
+              className="px-8 py-3 rounded-lg bg-gray-300 hover:bg-gray-400 text-gray-700 font-semibold text-lg transition-colors duration-200 cursor-pointer"
               onClick={onClose}
             >
               Отмена
             </button>
             <button
               type="submit"
-              className="px-8 py-3 rounded-lg bg-gradient-to-r from-[hsl(200_75%_55%)] to-[hsl(210_75%_35%)] text-white font-semibold text-lg hover:from-[hsl(200_80%_60%)] hover:to-[hsl(210_80%_40%)] transition-all duration-300 shadow-lg hover:shadow-xl"
+              className="px-8 py-3 rounded-lg bg-gradient-to-r from-[hsl(200_75%_55%)] to-[hsl(210_75%_35%)] text-white font-semibold text-lg hover:from-[hsl(200_80%_60%)] hover:to-[hsl(210_80%_40%)] transition-all duration-300 shadow-lg hover:shadow-xl cursor-pointer"
             >
               Отправить заявку
             </button>

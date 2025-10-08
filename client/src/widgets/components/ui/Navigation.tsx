@@ -145,7 +145,7 @@ const Navigation = (): React.JSX.Element => {
               <button
                 key={item.href}
                 onClick={() => scrollToSection(item.href)}
-                className={`text-sm font-medium transition-all duration-300 px-3 py-2 rounded-lg ${
+                className={`text-sm font-medium transition-all duration-300 px-3 py-2 rounded-lg cursor-pointer ${
                   isActive(item.href)
                     ? 'text-[hsl(200_80%_70%)] bg-[hsl(200_80%_70%)]/10'
                     : 'text-muted-foreground hover:text-[hsl(200_80%_70%)] hover:bg-[hsl(200_80%_70%)]/5'
