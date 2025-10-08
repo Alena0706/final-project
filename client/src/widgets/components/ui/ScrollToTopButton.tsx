@@ -35,7 +35,7 @@ const ScrollToTopButton: React.FC = () => {
   return (
     <button
       onClick={scrollToTop}
-      className="fixed right-6 top-1/2 -translate-y-1/2 z-50 bg-gradient-to-r from-[hsl(200_75%_55%)] to-[hsl(210_75%_35%)] hover:from-[hsl(200_80%_60%)] hover:to-[hsl(210_80%_40%)] text-white p-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-[hsl(200_80%_70%)] focus:ring-offset-2 group"
+      className="fixed right-6 bottom-10 z-50 bg-gradient-to-r from-[hsl(200_75%_55%)] to-[hsl(210_75%_35%)] hover:from-[hsl(200_80%_60%)] hover:to-[hsl(210_80%_40%)] text-white p-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-[hsl(200_80%_70%)] focus:ring-offset-2 group cursor-pointer"
       aria-label="Прокрутить наверх"
     >
       <ArrowUp className="h-5 w-5 group-hover:-translate-y-0.5 transition-transform duration-200" />

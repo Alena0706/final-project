@@ -62,7 +62,7 @@ const FAQ = (): JSX.Element => {
             <button
               type="button"
               onClick={() => setOpenId(isOpen ? null : id)}
-              className="w-full flex justify-between items-center px-6 py-4 font-semibold text-foreground focus:outline-none focus:ring-2 focus:ring-primary rounded-lg transition-colors"
+              className="w-full flex justify-between items-center px-6 py-4 font-semibold text-foreground focus:outline-none focus:ring-2 focus:ring-primary rounded-lg transition-colors cursor-pointer"
               aria-expanded={isOpen}
               aria-controls={`faq-content-${id}`}
               id={`faq-header-${id}`}
@@ -158,9 +158,6 @@ const ContactSection = (): JSX.Element => {
       <div className="container mx-auto px-4">
         {/* Заголовок */}
         <div className="text-center mb-10">
-          <span className="inline-block glass-effect rounded-full px-5 py-1.5 text-xs font-medium uppercase mb-3">
-            Контакты
-          </span>
           <h2 className="heading-3 bg-gradient-to-r from-[hsl(200_80%_70%)] to-[hsl(210_90%_30%)] bg-clip-text text-transparent mb-4">
             Свяжитесь с нами
           </h2>

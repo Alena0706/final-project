@@ -390,7 +390,7 @@ const FranchisePage = (): React.JSX.Element => {
             </Link>
 
             <button
-              className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-[hsl(200_75%_55%)] to-[hsl(210_75%_35%)] text-white text-lg font-semibold rounded-xl shadow-iris hover:shadow-gold transition-all duration-300"
+              className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-[hsl(200_75%_55%)] to-[hsl(210_75%_35%)] text-white text-lg font-semibold rounded-xl shadow-iris hover:shadow-gold transition-all duration-300 cursor-pointer"
               onClick={() => setModalOpen(true)}
             >
               Обратная связь

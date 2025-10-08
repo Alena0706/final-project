@@ -172,7 +172,7 @@ export default function SignInForm(): React.JSX.Element {
               </a>
             </div>
 
-            <button type="submit" className="btn-primary w-full" disabled={status === 'loading'}>
+            <button type="submit" className="btn-primary w-full cursor-pointer" disabled={status === 'loading'}>
               {status === 'loading' ? (
                 <div className="flex items-center justify-center gap-2">
                   <Spinner size="sm" />

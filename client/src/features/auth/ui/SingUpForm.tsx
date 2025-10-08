@@ -282,7 +282,7 @@ export default function SignUpForm(): React.JSX.Element {
               <div className="flex items-center h-5"></div>
             </div>
 
-            <button type="submit" className="btn-primary w-full" disabled={status === 'loading'}>
+            <button type="submit" className="btn-primary w-full cursor-pointer" disabled={status === 'loading'}>
               {status === 'loading' ? (
                 <div className="flex items-center justify-center gap-2">
                   <Spinner size="sm" />

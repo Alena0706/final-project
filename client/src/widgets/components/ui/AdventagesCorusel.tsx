@@ -148,12 +148,12 @@ const AdvantagesCarousel = (): JSX.Element => {
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <button
                   onClick={() => setModalOpen(true)}
-                  className="px-6 py-3 bg-gradient-to-r from-[hsl(200,75%,55%)] to-[hsl(210,75%,35%)] text-white rounded-xl font-medium shadow-iris hover:shadow-gold transition-all duration-300"
+                  className="px-6 py-3 bg-gradient-to-r from-[hsl(200,75%,55%)] to-[hsl(210,75%,35%)] text-white rounded-xl font-medium shadow-iris hover:shadow-gold transition-all duration-300 cursor-pointer"
                 >
                   Узнать условия
                 </button>
                 <a href={Презентация} download>
-                  <button className="px-6 py-3 bg-[#18171b] border border-border text-foreground rounded-xl font-medium hover:bg-muted transition-colors">
+                  <button className="px-6 py-3 bg-[#18171b] border border-border text-foreground rounded-xl font-medium hover:bg-muted transition-colors cursor-pointer">
                     Скачать презентацию
                   </button>
                 </a>
